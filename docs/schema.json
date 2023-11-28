@@ -13,10 +13,10 @@
             "description": "Unix time of sending the message",
             "type": "number"
         },
-        "message": {
+        "text": {
             "description": "Text of message",
             "type": "string"
         }
     },
-    "required": [ "senderIp", "time", "message" ]
+    "required": [ "senderIp", "time", "text" ]
 }

@@ -2,11 +2,9 @@
 
 #include "../src/message_serializer.h"
 
-using Catch::Matchers::WithinAbs;
-
 TEST_CASE("Message Serialization") {
     SECTION("integer time") {
-        Message message{
+        Message message {
             "127.0.0.1",
             1700000000,
             "hello"
@@ -22,7 +20,7 @@ TEST_CASE("Message Serialization") {
 
     /*
     SECTION("floating point time") {
-        Message message{
+        Message message {
             "127.0.0.1",
             1700000000.5,
             "hello"
@@ -35,7 +33,7 @@ TEST_CASE("Message Serialization") {
     */
 
     SECTION("empty strings in senderIp and text fields") {
-        Message message{
+        Message message {
             "",
             0,
             ""
@@ -47,7 +45,7 @@ TEST_CASE("Message Serialization") {
     }
 
     SECTION("no required text field") {
-        Message message{
+        Message message {
             "127.0.0.1",
             1700000000
         };

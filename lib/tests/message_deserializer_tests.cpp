@@ -4,7 +4,7 @@
 
 TEST_CASE("Message Deserialization") {
     SECTION("integer time") {
-        json::object jsonMessage{
+        json::object jsonMessage {
             { "senderIp", "127.0.0.1" },
             { "time", 1700000000 },
             { "text", "hello"}
@@ -16,7 +16,7 @@ TEST_CASE("Message Deserialization") {
     }
 
     SECTION("floating point time") {
-        json::object jsonMessage{
+        json::object jsonMessage {
             { "senderIp", "127.0.0.1" },
             { "time", 1700000000.5 },
             { "text", "hello"}
@@ -28,7 +28,7 @@ TEST_CASE("Message Deserialization") {
     }
 
     SECTION("empty strings in senderIp and text fields") {
-        json::object jsonMessage{
+        json::object jsonMessage {
             { "senderIp", "" },
             { "time", 0 },
             { "text", ""}
@@ -40,7 +40,7 @@ TEST_CASE("Message Deserialization") {
     }
 
     SECTION("unnecessary extra fields") {
-        json::object jsonMessage{
+        json::object jsonMessage {
             { "senderIp", "127.0.0.1" },
             { "some unnecessary extra field 1", 5},
             { "time", 1700000000 },
@@ -54,7 +54,7 @@ TEST_CASE("Message Deserialization") {
     }
 
     SECTION("no required time field") {
-        json::object jsonMessage{
+        json::object jsonMessage {
             { "senderIp", "127.0.0.1" },
             { "some unnecessary extra field 1", 5},
             { "text", "hello"},
@@ -69,7 +69,7 @@ TEST_CASE("Message Deserialization") {
     }
 
     SECTION("string time") {
-        json::object jsonMessage{
+        json::object jsonMessage {
             { "senderIp", "127.0.0.1" },
             { "time", "1700000000" },
             { "text", "hello"}
@@ -78,7 +78,7 @@ TEST_CASE("Message Deserialization") {
     }
 
     SECTION("integer senderIp") {
-        json::object jsonMessage{
+        json::object jsonMessage {
             { "senderIp", 127000000001 },
             { "time", 1700000000 },
             { "text", "hello"}
@@ -87,7 +87,7 @@ TEST_CASE("Message Deserialization") {
     }
 
     SECTION("boolean text") {
-        json::object jsonMessage{
+        json::object jsonMessage {
             { "senderIp", "127.0.0.1" },
             { "time", 1700000000 },
             { "text", false}

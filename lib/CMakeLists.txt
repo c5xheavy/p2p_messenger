@@ -23,6 +23,36 @@ add_executable(messenger
     src/datagram_deserializer.cpp
 )
 
+add_executable(sender
+    src/sender.cpp
+    src/boost_json.cpp
+    src/message.h
+    src/message_serializer.h
+    src/message_serializer.cpp
+    src/message_deserializer.h
+    src/message_deserializer.cpp
+    src/datagram.h
+    src/datagram_serializer.h
+    src/datagram_serializer.cpp
+    src/datagram_deserializer.h
+    src/datagram_deserializer.cpp
+)
+
+add_executable(recipient
+    src/recipient.cpp
+    src/boost_json.cpp
+    src/message.h
+    src/message_serializer.h
+    src/message_serializer.cpp
+    src/message_deserializer.h
+    src/message_deserializer.cpp
+    src/datagram.h
+    src/datagram_serializer.h
+    src/datagram_serializer.cpp
+    src/datagram_deserializer.h
+    src/datagram_deserializer.cpp
+)
+
 add_executable(messenger_tests
     src/boost_json.cpp
     src/message.h

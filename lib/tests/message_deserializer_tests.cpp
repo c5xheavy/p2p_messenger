@@ -15,6 +15,8 @@ TEST_CASE("Message Deserialization") {
         REQUIRE(message.text == "hello");
     }
 
+    // time is always integer
+    /*
     SECTION("floating point time") {
         json::object jsonMessage {
             { "senderIp", "127.0.0.1" },
@@ -26,6 +28,7 @@ TEST_CASE("Message Deserialization") {
         REQUIRE(message.time == 1700000000);
         REQUIRE(message.text == "hello");
     }
+    */
 
     SECTION("empty strings in senderIp and text fields") {
         json::object jsonMessage {

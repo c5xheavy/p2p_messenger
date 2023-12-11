@@ -9,8 +9,13 @@
 namespace net = boost::asio;
 using net::ip::udp;
 
-int main() {
-    std::uint16_t port = 3333;
+int main(int argc, const char** argv) {
+    if (argc != 2) {
+        std::cout << "Usage: " << argv[0] << " <port>" << std::endl;
+        return 1;
+    }
+
+    std::uint16_t port = std::stoi(argv[1]);
     std::size_t max_buffer_size = 1024;
 
     try {

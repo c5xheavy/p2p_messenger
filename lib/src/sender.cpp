@@ -10,9 +10,14 @@
 namespace net = boost::asio;
 using net::ip::udp;
 
-int main() {
-    std::string ip = "127.0.0.1";
-    std::uint16_t port = 3333;
+int main(int argc, const char** argv) {
+    if (argc != 3) {
+        std::cout << "Usage: " << argv[0] << " <IP>  <port>" << std::endl;
+        return 1;
+    }
+
+    std::string ip = argv[1];
+    std::uint16_t port = std::stoi(argv[2]);
 
     try {
         Datagram datagram {

@@ -1,13 +1,11 @@
 #include "datagram_deserializer.h"
 #include "message_deserializer.h"
 
-#include <iostream>
-
 Datagram DatagramDeserializer::DatagramFromBuffer(const Buffer& buffer) {
     Datagram datagram{};
-    int i = 0;
+    std::size_t i = 0;
     for (std::size_t j = 0; j < 8; ++j) {
-        datagram.id |= static_cast<std::uint64_t>(buffer[i]) << (i * 8);
+        datagram.id |= static_cast<std::uint64_t>(buffer[i]) << (j * 8);
         ++i;
     }
     std::uint8_t sender_login_size = buffer[i++];

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef DATAGRAM_H
+#define DATAGRAM_H
 
 #include <string>
 #include <vector>
@@ -13,3 +14,5 @@ struct Datagram {
     std::string recipient_login;
     Message message;
 };
+
+#endif

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef MESSAGE_H
+#define MESSAGE_H
 
 #include <string>
 
@@ -7,3 +8,5 @@ struct Message {
     int64_t time;
     std::string text;
 };
+
+#endif

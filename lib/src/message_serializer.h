@@ -1,4 +1,5 @@
-#pragma once
+#ifndef MESSAGE_SERIALIZER_H
+#define MESSAGE_SERIALIZER_H
 
 #include <string>
 
@@ -12,3 +13,5 @@ class MessageSerializer {
 public:
     static json::object MessageToJson(const Message& message);
 };
+
+#endif

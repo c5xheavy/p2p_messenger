@@ -1,4 +1,5 @@
-#pragma once
+#ifndef MESSAGE_DESERIALIZER_H
+#define MESSAGE_DESERIALIZER_H
 
 #include <string>
 
@@ -12,3 +13,5 @@ class MessageDeserializer {
 public:
     static Message MessageFromJson(const json::object& jsonMessage);
 };
+
+#endif

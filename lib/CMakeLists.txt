@@ -23,8 +23,8 @@ add_executable(messenger
     src/message_deserializer.cpp
 )
 
-add_executable(sender
-    src/sender.cpp
+add_executable(source
+    src/source.cpp
     src/boost_json.cpp
     src/payload.h
     src/payload_serializer.h
@@ -38,8 +38,8 @@ add_executable(sender
     src/message_deserializer.cpp
 )
 
-add_executable(recipient
-    src/recipient.cpp
+add_executable(destination
+    src/destination.cpp
     src/boost_json.cpp
     src/payload.h
     src/payload_serializer.h

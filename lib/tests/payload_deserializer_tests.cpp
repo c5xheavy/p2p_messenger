@@ -26,7 +26,7 @@ TEST_CASE("Payload Deserialization") {
     }
     */
 
-    SECTION("empty strings in senderIp and text fields") {
+    SECTION("empty string in text field") {
         json::object jsonPayload {
             { "time", 0 },
             { "text", ""}
@@ -72,7 +72,6 @@ TEST_CASE("Payload Deserialization") {
 
     SECTION("boolean text") {
         json::object jsonPayload {
-            { "senderIp", "127.0.0.1" },
             { "time", 1700000000 },
             { "text", false}
         };

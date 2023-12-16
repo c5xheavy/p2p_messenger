@@ -8,13 +8,13 @@ Message MessageDeserializer::MessageFromBuffer(const Buffer& buffer) {
         message.id |= static_cast<std::uint64_t>(buffer[i]) << (j * 8);
         ++i;
     }
-    std::uint8_t sender_login_size = buffer[i++];
-    for (std::uint8_t j = 0; j < sender_login_size; ++j) {
-        message.sender_login.push_back(buffer[i++]);
+    std::uint8_t source_login_size = buffer[i++];
+    for (std::uint8_t j = 0; j < source_login_size; ++j) {
+        message.source_login.push_back(buffer[i++]);
     }
-    std::uint8_t recipient_login_size = buffer[i++];
-    for (std::uint8_t j = 0; j < recipient_login_size; ++j) {
-        message.recipient_login.push_back(buffer[i++]);
+    std::uint8_t destination_login_size = buffer[i++];
+    for (std::uint8_t j = 0; j < destination_login_size; ++j) {
+        message.destination_login.push_back(buffer[i++]);
     }
     std::uint16_t payload_size = 0;
     for (std::size_t j = 0; j < 2; ++j) {

@@ -28,7 +28,7 @@ TEST_CASE("Payload Serialization") {
     }
     */
 
-    SECTION("empty strings in senderIp and text fields") {
+    SECTION("empty string in text field") {
         Payload payload {
             0,
             ""

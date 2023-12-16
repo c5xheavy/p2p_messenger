@@ -27,7 +27,7 @@ int main(int argc, const char** argv) {
 
             udp::endpoint remote_endpoint;
             std::size_t size = socket.receive_from(net::buffer(buffer), remote_endpoint);
-            socket.send_to(net::buffer("Hello from recipient"), remote_endpoint);
+            socket.send_to(net::buffer("Hello from destination"), remote_endpoint);
 
             buffer.resize(size);
             buffer.shrink_to_fit();
@@ -35,8 +35,8 @@ int main(int argc, const char** argv) {
             Message message = MessageDeserializer::MessageFromBuffer(buffer);
 
             std::cout << message.id << '\n';
-            std::cout << message.sender_login << '\n';
-            std::cout << message.recipient_login << '\n';
+            std::cout << message.source_login << '\n';
+            std::cout << message.destination_login << '\n';
             std::cout << message.payload.time << '\n';
             std::cout << message.payload.text << '\n';
         }

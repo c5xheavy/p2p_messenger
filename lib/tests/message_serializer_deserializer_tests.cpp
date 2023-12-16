@@ -14,8 +14,8 @@ TEST_CASE("Message Serialization & Deserialization") {
     SECTION("simple") {
         Message message {
             1,
-            "user1",
             "user2",
+            "user1",
             payload
         };
         Buffer buffer{MessageSerializer::MessageToBuffer(message)};
@@ -26,8 +26,8 @@ TEST_CASE("Message Serialization & Deserialization") {
     SECTION("64 byte sized logins") {
         Message message {
             1,
-            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
             "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
             payload
         };
         Buffer buffer{MessageSerializer::MessageToBuffer(message)};
@@ -38,8 +38,8 @@ TEST_CASE("Message Serialization & Deserialization") {
     SECTION("big id") {
         Message message {
             999999999999999,
-            "user1",
             "user2",
+            "user1",
             payload
         };
         Buffer buffer{MessageSerializer::MessageToBuffer(message)};
@@ -54,8 +54,8 @@ TEST_CASE("Message Serialization & Deserialization") {
         };
         Message message {
             123123123123123,
-            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
             "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
             long_payload
         };
         Buffer buffer{MessageSerializer::MessageToBuffer(message)};
@@ -66,8 +66,8 @@ TEST_CASE("Message Serialization & Deserialization") {
     SECTION("special symbols logins") {
         Message message {
             1,
-            "qweasdzxcrtyfghvbnuiojklm,.p[];'/1234567689   53742y52734805",
             "раводлыофврадцукенщцшгукрповмтоывмтьлждьфылоывшщ15468768   ",
+            "qweasdzxcrtyfghvbnuiojklm,.p[];'/1234567689   53742y52734805",
             payload
         };
         Buffer buffer{MessageSerializer::MessageToBuffer(message)};

@@ -4,7 +4,7 @@
 
 #include <boost/asio.hpp>
 
-#include "datagram_deserializer.h"
+#include "message_deserializer.h"
 
 namespace net = boost::asio;
 using net::ip::udp;
@@ -32,14 +32,14 @@ int main(int argc, const char** argv) {
             buffer.resize(size);
             buffer.shrink_to_fit();
 
-            Datagram datagram = DatagramDeserializer::DatagramFromBuffer(buffer);
+            Message message = MessageDeserializer::MessageFromBuffer(buffer);
 
-            std::cout << datagram.id << '\n';
-            std::cout << datagram.sender_login << '\n';
-            std::cout << datagram.recipient_login << '\n';
-            std::cout << datagram.payload.sender_ip << '\n';
-            std::cout << datagram.payload.time << '\n';
-            std::cout << datagram.payload.text << '\n';
+            std::cout << message.id << '\n';
+            std::cout << message.sender_login << '\n';
+            std::cout << message.recipient_login << '\n';
+            std::cout << message.payload.sender_ip << '\n';
+            std::cout << message.payload.time << '\n';
+            std::cout << message.payload.text << '\n';
         }
     } catch (std::exception& e) {
         std::cerr << e.what() << std::endl;

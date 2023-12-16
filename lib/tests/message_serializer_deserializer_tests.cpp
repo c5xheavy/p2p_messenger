@@ -1,10 +1,10 @@
 #include <catch2/catch.hpp>
 
-#include "../src/datagram_serializer.h"
-#include "../src/datagram_deserializer.h"
-#include "datagram_utils.h"
+#include "../src/message_serializer.h"
+#include "../src/message_deserializer.h"
+#include "message_utils.h"
 
-TEST_CASE("Datagram Serialization & Deserialization") {
+TEST_CASE("Message Serialization & Deserialization") {
 
     Payload payload {
         "127.0.0.1",
@@ -13,39 +13,39 @@ TEST_CASE("Datagram Serialization & Deserialization") {
     };
 
     SECTION("simple") {
-        Datagram datagram {
+        Message message {
             1,
             "user1",
             "user2",
             payload
         };
-        Buffer buffer{DatagramSerializer::DatagramToBuffer(datagram)};
-        Datagram post_datagram{DatagramDeserializer::DatagramFromBuffer(buffer)};
-        REQUIRE(datagram == post_datagram);
+        Buffer buffer{MessageSerializer::MessageToBuffer(message)};
+        Message post_message{MessageDeserializer::MessageFromBuffer(buffer)};
+        REQUIRE(message == post_message);
     }
 
     SECTION("64 byte sized logins") {
-        Datagram datagram {
+        Message message {
             1,
             "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
             "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
             payload
         };
-        Buffer buffer{DatagramSerializer::DatagramToBuffer(datagram)};
-        Datagram post_datagram{DatagramDeserializer::DatagramFromBuffer(buffer)};
-        REQUIRE(datagram == post_datagram);
+        Buffer buffer{MessageSerializer::MessageToBuffer(message)};
+        Message post_message{MessageDeserializer::MessageFromBuffer(buffer)};
+        REQUIRE(message == post_message);
     }
 
     SECTION("big id") {
-        Datagram datagram {
+        Message message {
             999999999999999,
             "user1",
             "user2",
             payload
         };
-        Buffer buffer{DatagramSerializer::DatagramToBuffer(datagram)};
-        Datagram post_datagram{DatagramDeserializer::DatagramFromBuffer(buffer)};
-        REQUIRE(datagram == post_datagram);
+        Buffer buffer{MessageSerializer::MessageToBuffer(message)};
+        Message post_message{MessageDeserializer::MessageFromBuffer(buffer)};
+        REQUIRE(message == post_message);
     }
 
     SECTION("big everything") {
@@ -54,26 +54,26 @@ TEST_CASE("Datagram Serialization & Deserialization") {
             1700000000,
             "hellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohello"
         };
-        Datagram datagram {
+        Message message {
             123123123123123,
             "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
             "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
             long_payload
         };
-        Buffer buffer{DatagramSerializer::DatagramToBuffer(datagram)};
-        Datagram post_datagram{DatagramDeserializer::DatagramFromBuffer(buffer)};
-        REQUIRE(datagram == post_datagram);
+        Buffer buffer{MessageSerializer::MessageToBuffer(message)};
+        Message post_message{MessageDeserializer::MessageFromBuffer(buffer)};
+        REQUIRE(message == post_message);
     }
 
     SECTION("special symbols logins") {
-        Datagram datagram {
+        Message message {
             1,
             "qweasdzxcrtyfghvbnuiojklm,.p[];'/1234567689   53742y52734805",
             "раводлыофврадцукенщцшгукрповмтоывмтьлждьфылоывшщ15468768   ",
             payload
         };
-        Buffer buffer{DatagramSerializer::DatagramToBuffer(datagram)};
-        Datagram post_datagram{DatagramDeserializer::DatagramFromBuffer(buffer)};
-        REQUIRE(datagram == post_datagram);
+        Buffer buffer{MessageSerializer::MessageToBuffer(message)};
+        Message post_message{MessageDeserializer::MessageFromBuffer(buffer)};
+        REQUIRE(message == post_message);
     }
 }

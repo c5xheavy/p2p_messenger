@@ -4,11 +4,11 @@
 #include <string>
 #include <vector>
 
-#include "datagram.h"
+#include "message.h"
 
-class DatagramSerializer {
+class MessageSerializer {
 public:
-    static Buffer DatagramToBuffer(const Datagram& datagram);
+    static Buffer MessageToBuffer(const Message& message);
 };
 
 #endif

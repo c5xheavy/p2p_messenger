@@ -5,7 +5,7 @@
 
 #include <boost/asio.hpp>
 
-#include "datagram_serializer.h"
+#include "message_serializer.h"
 
 namespace net = boost::asio;
 using net::ip::udp;
@@ -20,7 +20,7 @@ int main(int argc, const char** argv) {
     std::uint16_t port = std::stoi(argv[2]);
 
     try {
-        Datagram datagram {
+        Message message {
             1,
             "sender",
             "recipient",
@@ -30,7 +30,7 @@ int main(int argc, const char** argv) {
                 "hello"
             }
         };
-        std::vector<std::uint8_t> buffer{DatagramSerializer::DatagramToBuffer(datagram)};
+        std::vector<std::uint8_t> buffer{MessageSerializer::MessageToBuffer(message)};
 
         net::io_context io_context;
         udp::socket socket{io_context, udp::v4()};

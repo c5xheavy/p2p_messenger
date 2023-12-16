@@ -16,11 +16,11 @@ add_executable(messenger
     src/payload_serializer.cpp
     src/payload_deserializer.h
     src/payload_deserializer.cpp
-    src/datagram.h
-    src/datagram_serializer.h
-    src/datagram_serializer.cpp
-    src/datagram_deserializer.h
-    src/datagram_deserializer.cpp
+    src/message.h
+    src/message_serializer.h
+    src/message_serializer.cpp
+    src/message_deserializer.h
+    src/message_deserializer.cpp
 )
 
 add_executable(sender
@@ -31,11 +31,11 @@ add_executable(sender
     src/payload_serializer.cpp
     src/payload_deserializer.h
     src/payload_deserializer.cpp
-    src/datagram.h
-    src/datagram_serializer.h
-    src/datagram_serializer.cpp
-    src/datagram_deserializer.h
-    src/datagram_deserializer.cpp
+    src/message.h
+    src/message_serializer.h
+    src/message_serializer.cpp
+    src/message_deserializer.h
+    src/message_deserializer.cpp
 )
 
 add_executable(recipient
@@ -46,11 +46,11 @@ add_executable(recipient
     src/payload_serializer.cpp
     src/payload_deserializer.h
     src/payload_deserializer.cpp
-    src/datagram.h
-    src/datagram_serializer.h
-    src/datagram_serializer.cpp
-    src/datagram_deserializer.h
-    src/datagram_deserializer.cpp
+    src/message.h
+    src/message_serializer.h
+    src/message_serializer.cpp
+    src/message_deserializer.h
+    src/message_deserializer.cpp
 )
 
 add_executable(messenger_tests
@@ -64,14 +64,14 @@ add_executable(messenger_tests
     tests/payload_utils.cpp
     tests/payload_serializer_tests.cpp
     tests/payload_deserializer_tests.cpp
-    src/datagram.h
-    src/datagram_serializer.h
-    src/datagram_serializer.cpp
-    src/datagram_deserializer.h
-    src/datagram_deserializer.cpp
-    tests/datagram_utils.h
-    tests/datagram_utils.cpp
-    tests/datagram_serializer_deserializer_tests.cpp
+    src/message.h
+    src/message_serializer.h
+    src/message_serializer.cpp
+    src/message_deserializer.h
+    src/message_deserializer.cpp
+    tests/message_utils.h
+    tests/message_utils.cpp
+    tests/message_serializer_deserializer_tests.cpp
 )
 
 #target_link_libraries(messenger ${Boost_LIBRARIES})

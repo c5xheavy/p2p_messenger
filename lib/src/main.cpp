@@ -3,9 +3,9 @@
 #include "payload.h"
 #include "payload_serializer.h"
 #include "payload_deserializer.h"
-#include "datagram.h"
-#include "datagram_serializer.h"
-#include "datagram_deserializer.h"
+#include "message.h"
+#include "message_serializer.h"
+#include "message_deserializer.h"
 
 int main() {
     std::cout << "===============================================================================\n";
@@ -21,45 +21,45 @@ int main() {
     std::cout << post_payload.time << '\n';
     std::cout << post_payload.text << '\n';
     std::cout << "===============================================================================\n";
-    Datagram datagram {
+    Message message {
         1000000000000000000,
         "Amir",
         "Matvey",
         pre_payload
     };
-    Buffer buffer = DatagramSerializer::DatagramToBuffer(datagram);
+    Buffer buffer = MessageSerializer::MessageToBuffer(message);
     std::cout << buffer.size() << '\n';
     for (std::size_t i = 0; i < buffer.size(); ++i) {
         std::cout << static_cast<std::uint8_t>(buffer[i]);
     }
     std::cout << '\n';
-    Datagram post_datagram = DatagramDeserializer::DatagramFromBuffer(buffer);
-    std::cout << post_datagram.id << '\n';
-    std::cout << post_datagram.sender_login << '\n';
-    std::cout << post_datagram.recipient_login << '\n';
-    std::cout << post_datagram.payload.sender_ip << '\n';
-    std::cout << post_datagram.payload.time << '\n';
-    std::cout << post_datagram.payload.text << '\n';
+    Message post_message = MessageDeserializer::MessageFromBuffer(buffer);
+    std::cout << post_message.id << '\n';
+    std::cout << post_message.sender_login << '\n';
+    std::cout << post_message.recipient_login << '\n';
+    std::cout << post_message.payload.sender_ip << '\n';
+    std::cout << post_message.payload.time << '\n';
+    std::cout << post_message.payload.text << '\n';
     std::cout << "===============================================================================\n";
-    datagram = {
+    message = {
         1000000000000000000,
         "asdfasdfasdf",
         "hfjshlljhlaasasdasd",
         pre_payload
     };
-    buffer = DatagramSerializer::DatagramToBuffer(datagram);
+    buffer = MessageSerializer::MessageToBuffer(message);
     std::cout << buffer.size() << '\n';
     for (std::size_t i = 0; i < buffer.size(); ++i) {
         std::cout << static_cast<std::uint8_t>(buffer[i]);
     }
     std::cout << '\n';
-    post_datagram = DatagramDeserializer::DatagramFromBuffer(buffer);
-    std::cout << post_datagram.id << '\n';
-    std::cout << post_datagram.sender_login << '\n';
-    std::cout << post_datagram.recipient_login << '\n';
-    std::cout << post_datagram.payload.sender_ip << '\n';
-    std::cout << post_datagram.payload.time << '\n';
-    std::cout << post_datagram.payload.text << '\n';
+    post_message = MessageDeserializer::MessageFromBuffer(buffer);
+    std::cout << post_message.id << '\n';
+    std::cout << post_message.sender_login << '\n';
+    std::cout << post_message.recipient_login << '\n';
+    std::cout << post_message.payload.sender_ip << '\n';
+    std::cout << post_message.payload.time << '\n';
+    std::cout << post_message.payload.text << '\n';
     std::cout << "===============================================================================\n";
     return 0;
 }

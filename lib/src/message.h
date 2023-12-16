@@ -8,7 +8,7 @@
 
 using Buffer = std::vector<std::uint8_t>;
 
-struct Datagram {
+struct Message {
     std::uint64_t id;
     std::string sender_login;
     std::string recipient_login;

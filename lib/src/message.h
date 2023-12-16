@@ -10,8 +10,8 @@ using Buffer = std::vector<std::uint8_t>;
 
 struct Message {
     std::uint64_t id;
-    std::string recipient_login;
     std::string sender_login;
+    std::string recipient_login;
     Payload payload;
 };
 

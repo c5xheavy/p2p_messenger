@@ -33,8 +33,8 @@ int main() {
     std::cout << '\n';
     Message post_message = MessageDeserializer::MessageFromBuffer(buffer);
     std::cout << post_message.id << '\n';
-    std::cout << post_message.recipient_login << '\n';
     std::cout << post_message.sender_login << '\n';
+    std::cout << post_message.recipient_login << '\n';
     std::cout << post_message.payload.time << '\n';
     std::cout << post_message.payload.text << '\n';
     std::cout << "===============================================================================\n";
@@ -52,8 +52,8 @@ int main() {
     std::cout << '\n';
     post_message = MessageDeserializer::MessageFromBuffer(buffer);
     std::cout << post_message.id << '\n';
-    std::cout << post_message.recipient_login << '\n';
     std::cout << post_message.sender_login << '\n';
+    std::cout << post_message.recipient_login << '\n';
     std::cout << post_message.payload.time << '\n';
     std::cout << post_message.payload.text << '\n';
     std::cout << "===============================================================================\n";

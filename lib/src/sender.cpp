@@ -22,8 +22,8 @@ int main(int argc, const char** argv) {
     try {
         Message message {
             1,
-            "recipient",
             "sender",
+            "recipient",
             {
                 1700000000,
                 "hello"

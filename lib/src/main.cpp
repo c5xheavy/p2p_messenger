@@ -10,14 +10,12 @@
 int main() {
     std::cout << "===============================================================================\n";
     Payload pre_payload {
-        "127.0.0.1",
         1700000001,
         "hello"
     };
     json::object jsonPayload{PayloadSerializer::PayloadToJson(pre_payload)};
     Payload post_payload{PayloadDeserializer::PayloadFromJson(jsonPayload)};
     std::cout << jsonPayload << '\n';
-    std::cout << post_payload.sender_ip << '\n';
     std::cout << post_payload.time << '\n';
     std::cout << post_payload.text << '\n';
     std::cout << "===============================================================================\n";
@@ -37,7 +35,6 @@ int main() {
     std::cout << post_message.id << '\n';
     std::cout << post_message.sender_login << '\n';
     std::cout << post_message.recipient_login << '\n';
-    std::cout << post_message.payload.sender_ip << '\n';
     std::cout << post_message.payload.time << '\n';
     std::cout << post_message.payload.text << '\n';
     std::cout << "===============================================================================\n";
@@ -57,7 +54,6 @@ int main() {
     std::cout << post_message.id << '\n';
     std::cout << post_message.sender_login << '\n';
     std::cout << post_message.recipient_login << '\n';
-    std::cout << post_message.payload.sender_ip << '\n';
     std::cout << post_message.payload.time << '\n';
     std::cout << post_message.payload.text << '\n';
     std::cout << "===============================================================================\n";

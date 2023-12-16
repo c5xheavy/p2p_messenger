@@ -7,7 +7,6 @@
 TEST_CASE("Message Serialization & Deserialization") {
 
     Payload payload {
-        "127.0.0.1",
         1700000000,
         "hello"
     };
@@ -50,7 +49,6 @@ TEST_CASE("Message Serialization & Deserialization") {
 
     SECTION("big everything") {
         Payload long_payload {
-            "127.0.0.1",
             1700000000,
             "hellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohello"
         };

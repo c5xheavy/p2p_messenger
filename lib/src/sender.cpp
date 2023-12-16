@@ -25,7 +25,6 @@ int main(int argc, const char** argv) {
             "sender",
             "recipient",
             {
-                "127.0.0.1",
                 1700000000,
                 "hello"
             }

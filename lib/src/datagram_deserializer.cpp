@@ -1,5 +1,5 @@
 #include "datagram_deserializer.h"
-#include "message_deserializer.h"
+#include "payload_deserializer.h"
 
 Datagram DatagramDeserializer::DatagramFromBuffer(const Buffer& buffer) {
     Datagram datagram{};
@@ -16,15 +16,15 @@ Datagram DatagramDeserializer::DatagramFromBuffer(const Buffer& buffer) {
     for (std::uint8_t j = 0; j < recipient_login_size; ++j) {
         datagram.recipient_login.push_back(buffer[i++]);
     }
-    std::uint16_t message_size = 0;
+    std::uint16_t payload_size = 0;
     for (std::size_t j = 0; j < 2; ++j) {
-        message_size |= static_cast<std::uint16_t>(buffer[i]) << (j * 8);
+        payload_size |= static_cast<std::uint16_t>(buffer[i]) << (j * 8);
         ++i;
     }
-    std::string strMessage;
-    for (std::uint16_t j = 0; j < message_size; ++j) {
-        strMessage.push_back(buffer[i++]);
+    std::string strPayload;
+    for (std::uint16_t j = 0; j < payload_size; ++j) {
+        strPayload.push_back(buffer[i++]);
     }
-    datagram.message = MessageDeserializer::MessageFromJson(json::parse(strMessage).as_object());
+    datagram.payload = PayloadDeserializer::PayloadFromJson(json::parse(strPayload).as_object());
     return datagram;
 }

@@ -1,9 +1,9 @@
-#ifndef MESSAGE_H
-#define MESSAGE_H
+#ifndef PAYLOAD_H
+#define PAYLOAD_H
 
 #include <string>
 
-struct Message {
+struct Payload {
     std::string sender_ip;
     int64_t time;
     std::string text;

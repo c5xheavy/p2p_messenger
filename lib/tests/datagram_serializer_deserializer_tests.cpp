@@ -6,7 +6,7 @@
 
 TEST_CASE("Datagram Serialization & Deserialization") {
 
-    Message message {
+    Payload payload {
         "127.0.0.1",
         1700000000,
         "hello"
@@ -17,7 +17,7 @@ TEST_CASE("Datagram Serialization & Deserialization") {
             1,
             "user1",
             "user2",
-            message
+            payload
         };
         Buffer buffer{DatagramSerializer::DatagramToBuffer(datagram)};
         Datagram post_datagram{DatagramDeserializer::DatagramFromBuffer(buffer)};
@@ -29,7 +29,7 @@ TEST_CASE("Datagram Serialization & Deserialization") {
             1,
             "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
             "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-            message
+            payload
         };
         Buffer buffer{DatagramSerializer::DatagramToBuffer(datagram)};
         Datagram post_datagram{DatagramDeserializer::DatagramFromBuffer(buffer)};
@@ -41,7 +41,7 @@ TEST_CASE("Datagram Serialization & Deserialization") {
             999999999999999,
             "user1",
             "user2",
-            message
+            payload
         };
         Buffer buffer{DatagramSerializer::DatagramToBuffer(datagram)};
         Datagram post_datagram{DatagramDeserializer::DatagramFromBuffer(buffer)};
@@ -49,7 +49,7 @@ TEST_CASE("Datagram Serialization & Deserialization") {
     }
 
     SECTION("big everything") {
-        Message long_message {
+        Payload long_payload {
             "127.0.0.1",
             1700000000,
             "hellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohello"
@@ -58,7 +58,7 @@ TEST_CASE("Datagram Serialization & Deserialization") {
             123123123123123,
             "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
             "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-            long_message
+            long_payload
         };
         Buffer buffer{DatagramSerializer::DatagramToBuffer(datagram)};
         Datagram post_datagram{DatagramDeserializer::DatagramFromBuffer(buffer)};
@@ -70,7 +70,7 @@ TEST_CASE("Datagram Serialization & Deserialization") {
             1,
             "qweasdzxcrtyfghvbnuiojklm,.p[];'/1234567689   53742y52734805",
             "раводлыофврадцукенщцшгукрповмтоывмтьлждьфылоывшщ15468768   ",
-            message
+            payload
         };
         Buffer buffer{DatagramSerializer::DatagramToBuffer(datagram)};
         Datagram post_datagram{DatagramDeserializer::DatagramFromBuffer(buffer)};

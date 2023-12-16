@@ -37,9 +37,9 @@ int main(int argc, const char** argv) {
             std::cout << datagram.id << '\n';
             std::cout << datagram.sender_login << '\n';
             std::cout << datagram.recipient_login << '\n';
-            std::cout << datagram.message.sender_ip << '\n';
-            std::cout << datagram.message.time << '\n';
-            std::cout << datagram.message.text << '\n';
+            std::cout << datagram.payload.sender_ip << '\n';
+            std::cout << datagram.payload.time << '\n';
+            std::cout << datagram.payload.text << '\n';
         }
     } catch (std::exception& e) {
         std::cerr << e.what() << std::endl;

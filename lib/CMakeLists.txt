@@ -11,11 +11,11 @@ find_package(Catch2 REQUIRED)
 add_executable(messenger
     src/main.cpp
     src/boost_json.cpp
-    src/message.h
-    src/message_serializer.h
-    src/message_serializer.cpp
-    src/message_deserializer.h
-    src/message_deserializer.cpp
+    src/payload.h
+    src/payload_serializer.h
+    src/payload_serializer.cpp
+    src/payload_deserializer.h
+    src/payload_deserializer.cpp
     src/datagram.h
     src/datagram_serializer.h
     src/datagram_serializer.cpp
@@ -26,11 +26,11 @@ add_executable(messenger
 add_executable(sender
     src/sender.cpp
     src/boost_json.cpp
-    src/message.h
-    src/message_serializer.h
-    src/message_serializer.cpp
-    src/message_deserializer.h
-    src/message_deserializer.cpp
+    src/payload.h
+    src/payload_serializer.h
+    src/payload_serializer.cpp
+    src/payload_deserializer.h
+    src/payload_deserializer.cpp
     src/datagram.h
     src/datagram_serializer.h
     src/datagram_serializer.cpp
@@ -41,11 +41,11 @@ add_executable(sender
 add_executable(recipient
     src/recipient.cpp
     src/boost_json.cpp
-    src/message.h
-    src/message_serializer.h
-    src/message_serializer.cpp
-    src/message_deserializer.h
-    src/message_deserializer.cpp
+    src/payload.h
+    src/payload_serializer.h
+    src/payload_serializer.cpp
+    src/payload_deserializer.h
+    src/payload_deserializer.cpp
     src/datagram.h
     src/datagram_serializer.h
     src/datagram_serializer.cpp
@@ -55,15 +55,15 @@ add_executable(recipient
 
 add_executable(messenger_tests
     src/boost_json.cpp
-    src/message.h
-    src/message_serializer.h
-    src/message_serializer.cpp
-    src/message_deserializer.h
-    src/message_deserializer.cpp
-    tests/message_utils.h
-    tests/message_utils.cpp
-    tests/message_serializer_tests.cpp
-    tests/message_deserializer_tests.cpp
+    src/payload.h
+    src/payload_serializer.h
+    src/payload_serializer.cpp
+    src/payload_deserializer.h
+    src/payload_deserializer.cpp
+    tests/payload_utils.h
+    tests/payload_utils.cpp
+    tests/payload_serializer_tests.cpp
+    tests/payload_deserializer_tests.cpp
     src/datagram.h
     src/datagram_serializer.h
     src/datagram_serializer.cpp

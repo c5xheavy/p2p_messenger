@@ -8,7 +8,7 @@
 
 class MessageDeserializer {
 public:
-    static Message MessageFromBuffer(const Buffer& buffer);
+    static Message MessageFromBuffer(char* buffer, std::size_t buffer_size);
 };
 
 #endif

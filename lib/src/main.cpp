@@ -25,13 +25,8 @@ int main() {
         "Matvey",
         pre_payload
     };
-    Buffer buffer = MessageSerializer::MessageToBuffer(message);
-    std::cout << buffer.size() << '\n';
-    for (std::size_t i = 0; i < buffer.size(); ++i) {
-        std::cout << static_cast<std::uint8_t>(buffer[i]);
-    }
-    std::cout << '\n';
-    Message post_message = MessageDeserializer::MessageFromBuffer(buffer);
+    auto [buffer, buffer_size] = MessageSerializer::MessageToBuffer(message);
+    Message post_message = MessageDeserializer::MessageFromBuffer(buffer.get(), buffer_size);
     std::cout << post_message.id << '\n';
     std::cout << post_message.source_login << '\n';
     std::cout << post_message.destination_login << '\n';
@@ -44,13 +39,8 @@ int main() {
         "hfjshlljhlaasasdasd",
         pre_payload
     };
-    buffer = MessageSerializer::MessageToBuffer(message);
-    std::cout << buffer.size() << '\n';
-    for (std::size_t i = 0; i < buffer.size(); ++i) {
-        std::cout << static_cast<std::uint8_t>(buffer[i]);
-    }
-    std::cout << '\n';
-    post_message = MessageDeserializer::MessageFromBuffer(buffer);
+    std::tie(buffer, buffer_size) = MessageSerializer::MessageToBuffer(message);
+    post_message = MessageDeserializer::MessageFromBuffer(buffer.get(), buffer_size);
     std::cout << post_message.id << '\n';
     std::cout << post_message.source_login << '\n';
     std::cout << post_message.destination_login << '\n';

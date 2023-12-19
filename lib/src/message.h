@@ -6,8 +6,6 @@
 
 #include "payload.h"
 
-using Buffer = std::vector<std::uint8_t>;
-
 struct Message {
     std::uint64_t id;
     std::string source_login;

@@ -16,23 +16,20 @@ int main(int argc, const char** argv) {
     }
 
     std::uint16_t port = std::stoi(argv[1]);
-    std::size_t max_buffer_size = 1024;
+    std::size_t max_buffer_size = 65000;
 
     try {
         net::io_context io_context;
         udp::socket socket{io_context, udp::endpoint{udp::v4(), port}};
 
         while (true) {
-            std::vector<std::uint8_t> buffer(max_buffer_size);  
+            std::shared_ptr<char[]> buffer{new char[max_buffer_size]};
 
             udp::endpoint remote_endpoint;
-            std::size_t size = socket.receive_from(net::buffer(buffer), remote_endpoint);
-            socket.send_to(net::buffer("Hello from destination"), remote_endpoint);
+            std::size_t buffer_size = socket.receive_from(net::buffer(buffer.get(), max_buffer_size), remote_endpoint);
+            socket.send_to(net::buffer("OK"), remote_endpoint);
 
-            buffer.resize(size);
-            buffer.shrink_to_fit();
-
-            Message message = MessageDeserializer::MessageFromBuffer(buffer);
+            Message message = MessageDeserializer::MessageFromBuffer(buffer.get(), buffer_size);
 
             std::cout << message.id << '\n';
             std::cout << message.source_login << '\n';

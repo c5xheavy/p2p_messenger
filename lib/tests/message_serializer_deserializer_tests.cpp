@@ -18,8 +18,8 @@ TEST_CASE("Message Serialization & Deserialization") {
             "user2",
             payload
         };
-        Buffer buffer{MessageSerializer::MessageToBuffer(message)};
-        Message post_message{MessageDeserializer::MessageFromBuffer(buffer)};
+        auto [buffer, size] = MessageSerializer::MessageToBuffer(message);
+        Message post_message{MessageDeserializer::MessageFromBuffer(buffer.get(), size)};
         REQUIRE(message == post_message);
     }
 
@@ -30,8 +30,8 @@ TEST_CASE("Message Serialization & Deserialization") {
             "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
             payload
         };
-        Buffer buffer{MessageSerializer::MessageToBuffer(message)};
-        Message post_message{MessageDeserializer::MessageFromBuffer(buffer)};
+        auto [buffer, size] = MessageSerializer::MessageToBuffer(message);
+        Message post_message{MessageDeserializer::MessageFromBuffer(buffer.get(), size)};
         REQUIRE(message == post_message);
     }
 
@@ -42,8 +42,8 @@ TEST_CASE("Message Serialization & Deserialization") {
             "user2",
             payload
         };
-        Buffer buffer{MessageSerializer::MessageToBuffer(message)};
-        Message post_message{MessageDeserializer::MessageFromBuffer(buffer)};
+        auto [buffer, size] = MessageSerializer::MessageToBuffer(message);
+        Message post_message{MessageDeserializer::MessageFromBuffer(buffer.get(), size)};
         REQUIRE(message == post_message);
     }
 
@@ -58,8 +58,8 @@ TEST_CASE("Message Serialization & Deserialization") {
             "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
             long_payload
         };
-        Buffer buffer{MessageSerializer::MessageToBuffer(message)};
-        Message post_message{MessageDeserializer::MessageFromBuffer(buffer)};
+        auto [buffer, size] = MessageSerializer::MessageToBuffer(message);
+        Message post_message{MessageDeserializer::MessageFromBuffer(buffer.get(), size)};
         REQUIRE(message == post_message);
     }
 
@@ -70,8 +70,8 @@ TEST_CASE("Message Serialization & Deserialization") {
             "раводлыофврадцукенщцшгукрповмтоывмтьлждьфылоывшщ15468768   ",
             payload
         };
-        Buffer buffer{MessageSerializer::MessageToBuffer(message)};
-        Message post_message{MessageDeserializer::MessageFromBuffer(buffer)};
+        auto [buffer, size] = MessageSerializer::MessageToBuffer(message);
+        Message post_message{MessageDeserializer::MessageFromBuffer(buffer.get(), size)};
         REQUIRE(message == post_message);
     }
 }

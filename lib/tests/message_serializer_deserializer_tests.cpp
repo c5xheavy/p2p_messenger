@@ -75,4 +75,15 @@ TEST_CASE("Message Serialization & Deserialization") {
         Message post_message{MessageDeserializer::MessageFromBuffer(buffer.get(), size)};
         REQUIRE(message == post_message);
     }
+
+    SECTION("small buffer size") {
+        Message message {
+            1,
+            LoginHasher::hash("user1"),
+            LoginHasher::hash("user2"),
+            payload
+        };
+        auto [buffer, size] = MessageSerializer::MessageToBuffer(message);
+        REQUIRE_THROWS(MessageDeserializer::MessageFromBuffer(buffer.get(), size - 1));
+    }
 }

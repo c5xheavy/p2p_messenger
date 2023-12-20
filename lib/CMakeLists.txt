@@ -21,6 +21,8 @@ add_executable(messenger
     src/message_serializer.cpp
     src/message_deserializer.h
     src/message_deserializer.cpp
+    src/login_hasher.h
+    src/login_hasher.cpp
 )
 
 add_executable(source
@@ -36,6 +38,8 @@ add_executable(source
     src/message_serializer.cpp
     src/message_deserializer.h
     src/message_deserializer.cpp
+    src/login_hasher.h
+    src/login_hasher.cpp
 )
 
 add_executable(destination
@@ -51,6 +55,8 @@ add_executable(destination
     src/message_serializer.cpp
     src/message_deserializer.h
     src/message_deserializer.cpp
+    src/login_hasher.h
+    src/login_hasher.cpp
 )
 
 add_executable(messenger_tests
@@ -69,6 +75,8 @@ add_executable(messenger_tests
     src/message_serializer.cpp
     src/message_deserializer.h
     src/message_deserializer.cpp
+    src/login_hasher.h
+    src/login_hasher.cpp
     tests/message_utils.h
     tests/message_utils.cpp
     tests/message_serializer_deserializer_tests.cpp

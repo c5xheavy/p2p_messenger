@@ -8,8 +8,8 @@
 
 struct Message {
     std::uint64_t id;
-    std::string source_login;
-    std::string destination_login;
+    std::string source_login_hash;
+    std::string destination_login_hash;
     Payload payload;
 };
 

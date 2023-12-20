@@ -32,8 +32,8 @@ int main(int argc, const char** argv) {
             Message message = MessageDeserializer::MessageFromBuffer(buffer.get(), buffer_size);
 
             std::cout << message.id << '\n';
-            std::cout << message.source_login << '\n';
-            std::cout << message.destination_login << '\n';
+            std::cout << message.source_login_hash << '\n';
+            std::cout << message.destination_login_hash << '\n';
             std::cout << message.payload.time << '\n';
             std::cout << message.payload.text << '\n';
         }

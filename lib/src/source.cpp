@@ -6,6 +6,7 @@
 #include <boost/asio.hpp>
 
 #include "message_serializer.h"
+#include "login_hasher.h"
 
 namespace net = boost::asio;
 using net::ip::udp;
@@ -22,8 +23,8 @@ int main(int argc, const char** argv) {
     try {
         Message message {
             1,
-            "source",
-            "destination",
+            LoginHasher::hash("source"),
+            LoginHasher::hash("destination"),
             {
                 1700000000,
                 "hello"

@@ -16,18 +16,24 @@ int main(int argc, const char** argv) {
     }
 
     std::uint16_t port = std::stoi(argv[1]);
-    std::size_t max_buffer_size = 65535;
 
     try {
         net::io_context io_context;
         udp::socket socket{io_context, udp::endpoint{udp::v4(), port}};
 
         while (true) {
-            std::shared_ptr<char[]> buffer{new char[max_buffer_size]};
+            socket.wait(net::ip::udp::socket::wait_read);
+
+            std::size_t bytes_available = socket.available();
+            std::shared_ptr<char[]> buffer{new char[bytes_available]};
 
             udp::endpoint remote_endpoint;
-            std::size_t buffer_size = socket.receive_from(net::buffer(buffer.get(), max_buffer_size), remote_endpoint);
+            std::size_t buffer_size = socket.receive_from(net::buffer(buffer.get(), bytes_available), remote_endpoint);
             socket.send_to(net::buffer("OK"), remote_endpoint);
+
+            if (bytes_available != buffer_size) {
+                throw std::logic_error("Bytes available is not equal bytes read");
+            }
 
             Message message = MessageDeserializer::MessageFromBuffer(buffer.get(), buffer_size);
 

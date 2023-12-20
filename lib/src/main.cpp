@@ -7,6 +7,7 @@
 #include "message_serializer.h"
 #include "message_deserializer.h"
 #include "login_hasher.h"
+#include "static_file_ip_resolver.h"
 
 int main() {
     std::cout << "===============================================================================\n";
@@ -22,8 +23,8 @@ int main() {
     std::cout << "===============================================================================\n";
     Message message {
         1000000000000000000,
-        LoginHasher::hash("Amir"),
-        LoginHasher::hash("Matvey"),
+        LoginHasher::Hash("Amir"),
+        LoginHasher::Hash("Matvey"),
         pre_payload
     };
     auto [buffer, buffer_size] = MessageSerializer::MessageToBuffer(message);
@@ -36,8 +37,8 @@ int main() {
     std::cout << "===============================================================================\n";
     message = {
         1000000000000000000,
-        LoginHasher::hash("asdfasdfasdf"),
-        LoginHasher::hash("hfjshlljhlaasasdasd"),
+        LoginHasher::Hash("asdfasdfasdf"),
+        LoginHasher::Hash("hfjshlljhlaasasdasd"),
         pre_payload
     };
     std::tie(buffer, buffer_size) = MessageSerializer::MessageToBuffer(message);
@@ -48,7 +49,11 @@ int main() {
     std::cout << post_message.payload.time << '\n';
     std::cout << post_message.payload.text << '\n';
     std::cout << "===============================================================================\n";
-    std::cout << LoginHasher::hash("amir") << '\n';
+    std::cout << LoginHasher::Hash("amir") << '\n';
+    std::cout << "===============================================================================\n";
+    StaticFileIpResolver static_file_ip_resolver("../static/login_to_ip.txt");
+    std::cout << static_file_ip_resolver.Resolve(LoginHasher::Hash("amir")).value_or("not found") << '\n';
+    std::cout << static_file_ip_resolver.Resolve(LoginHasher::Hash("not a login")).value_or("not found") << '\n';
     std::cout << "===============================================================================\n";
     return 0;
 }

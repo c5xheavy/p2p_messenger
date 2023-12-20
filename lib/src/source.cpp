@@ -23,8 +23,8 @@ int main(int argc, const char** argv) {
     try {
         Message message {
             1,
-            LoginHasher::hash("source"),
-            LoginHasher::hash("destination"),
+            LoginHasher::Hash("source"),
+            LoginHasher::Hash("destination"),
             {
                 1700000000,
                 "hello"

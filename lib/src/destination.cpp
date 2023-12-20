@@ -16,7 +16,7 @@ int main(int argc, const char** argv) {
     }
 
     std::uint16_t port = std::stoi(argv[1]);
-    std::size_t max_buffer_size = 65000;
+    std::size_t max_buffer_size = 65535;
 
     try {
         net::io_context io_context;

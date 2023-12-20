@@ -5,9 +5,9 @@
 
 class LoginHasher {
 public:
-    static std::string hash(const std::string& login);
+    static std::string Hash(const std::string& login);
 
-    static constexpr std::size_t hash_size = 512;
+    static constexpr std::size_t hash_size = 64;
 };
 
 #endif

@@ -11,7 +11,7 @@
 #include "login_hasher.h"
 
 StaticFileIpResolver::StaticFileIpResolver(const std::filesystem::path& static_file_path) {
-    std::ifstream ifs(static_file_path.string());
+    std::ifstream ifs{static_file_path.string()};
     if (!ifs.good()) {
         throw std::runtime_error("Config file doesn't exists");
     }

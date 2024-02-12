@@ -2,7 +2,6 @@
 #define MESSAGE_DESERIALIZER_H
 
 #include <string>
-#include <vector>
 
 #include "message.h"
 

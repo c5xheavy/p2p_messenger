@@ -5,7 +5,7 @@
 
 TEST_CASE("Static File Ip Resolving") {
 
-    StaticFileIpResolver static_file_ip_resolver("../tests/static/login_to_ip.txt");
+    StaticFileIpResolver static_file_ip_resolver{"../tests/static/login_to_ip.txt"};
 
     SECTION("successful resolve") {
         REQUIRE(static_file_ip_resolver.Resolve(LoginHasher::Hash("amir")).value_or("not found") == "127.0.0.1");

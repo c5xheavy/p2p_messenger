@@ -80,10 +80,6 @@ add_executable(messenger_tests
     src/payload_serializer.cpp
     src/payload_deserializer.h
     src/payload_deserializer.cpp
-    tests/payload_utils.h
-    tests/payload_utils.cpp
-    tests/payload_serializer_tests.cpp
-    tests/payload_deserializer_tests.cpp
     src/message.h
     src/message_serializer.h
     src/message_serializer.cpp
@@ -96,6 +92,10 @@ add_executable(messenger_tests
     src/dht_ip_resolver.cpp
     src/static_file_ip_resolver.h
     src/static_file_ip_resolver.cpp
+    tests/payload_utils.h
+    tests/payload_utils.cpp
+    tests/payload_serializer_tests.cpp
+    tests/payload_deserializer_tests.cpp
     tests/message_utils.h
     tests/message_utils.cpp
     tests/message_serializer_deserializer_tests.cpp

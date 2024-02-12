@@ -10,4 +10,4 @@ public:
     virtual ~IpResolver() = default;
 };
 
-#endif
+#endif // IP_RESOLVER_H

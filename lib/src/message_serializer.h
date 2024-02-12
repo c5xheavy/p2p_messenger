@@ -1,5 +1,5 @@
-#ifndef DATAGRAM_SERIALIZER_H
-#define DATAGRAM_SERIALIZER_H
+#ifndef MESSAGE_SERIALIZER_H
+#define MESSAGE_SERIALIZER_H
 
 #include <memory>
 #include <string>
@@ -12,4 +12,4 @@ public:
     static std::pair<std::shared_ptr<char[]>, std::size_t> MessageToBuffer(const Message& message);
 };
 
-#endif
+#endif // MESSAGE_SERIALIZER_H

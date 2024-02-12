@@ -10,4 +10,4 @@ public:
     static constexpr std::size_t hash_size = 64;
 };
 
-#endif
+#endif // LOGIN_HASHER_H

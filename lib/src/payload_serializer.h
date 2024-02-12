@@ -14,4 +14,4 @@ public:
     static json::object PayloadToJson(const Payload& payload);
 };
 
-#endif
+#endif // PAYLOAD_SERIALIZER_H

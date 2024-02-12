@@ -1,5 +1,5 @@
-#ifndef DATAGRAM_DESERIALIZER_H
-#define DATAGRAM_DESERIALIZER_H
+#ifndef MESSAGE_DESERIALIZER_H
+#define MESSAGE_DESERIALIZER_H
 
 #include <string>
 #include <vector>
@@ -11,4 +11,4 @@ public:
     static Message MessageFromBuffer(char* buffer, std::size_t buffer_size);
 };
 
-#endif
+#endif // MESSAGE_DESERIALIZER_H

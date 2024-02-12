@@ -17,4 +17,4 @@ private:
     std::map<std::string, std::string> login_hash_to_ip_;
 };
 
-#endif
+#endif // STATIC_FILE_IP_RESOLVER_H

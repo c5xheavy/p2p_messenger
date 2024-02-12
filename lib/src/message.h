@@ -1,5 +1,5 @@
-#ifndef DATAGRAM_H
-#define DATAGRAM_H
+#ifndef MESSAGE_H
+#define MESSAGE_H
 
 #include <string>
 #include <vector>
@@ -13,4 +13,4 @@ struct Message {
     Payload payload;
 };
 
-#endif
+#endif // MESSAGE_H

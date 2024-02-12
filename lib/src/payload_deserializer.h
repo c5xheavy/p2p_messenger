@@ -14,4 +14,4 @@ public:
     static Payload PayloadFromJson(const json::object& jsonPayload);
 };
 
-#endif
+#endif // PAYLOAD_DESERIALIZER_H

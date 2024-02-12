@@ -8,4 +8,4 @@ struct Payload {
     std::string text;
 };
 
-#endif
+#endif // PAYLOAD_H

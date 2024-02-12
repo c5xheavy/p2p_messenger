@@ -7,4 +7,4 @@ std::ostream& operator<<(std::ostream& out, const Payload& payload);
 
 bool operator==(const Payload& a, const Payload& b);
 
-#endif
+#endif // PAYLOAD_UTILS_H

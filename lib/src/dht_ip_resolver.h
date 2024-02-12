@@ -11,4 +11,4 @@ public:
     std::optional<std::string> Resolve(const std::string& login_hash) override;
 };
 
-#endif
+#endif // DHT_IP_RESOLVER_H

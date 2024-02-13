@@ -73,6 +73,28 @@ add_executable(destination
     src/static_file_ip_resolver.cpp
 )
 
+add_executable(client
+    src/client.cpp
+    src/boost_json.cpp
+    src/payload.h
+    src/payload_serializer.h
+    src/payload_serializer.cpp
+    src/payload_deserializer.h
+    src/payload_deserializer.cpp
+    src/message.h
+    src/message_serializer.h
+    src/message_serializer.cpp
+    src/message_deserializer.h
+    src/message_deserializer.cpp
+    src/login_hasher.h
+    src/login_hasher.cpp
+    src/ip_resolver.h
+    src/dht_ip_resolver.h
+    src/dht_ip_resolver.cpp
+    src/static_file_ip_resolver.h
+    src/static_file_ip_resolver.cpp
+)
+
 add_executable(messenger_tests
     src/boost_json.cpp
     src/payload.h

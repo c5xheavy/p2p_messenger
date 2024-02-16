@@ -1,0 +1,18 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$id": "https://example.com/message.schema.json",
+    "title": "Message",
+    "description": "Message sent from sender to recipient",
+    "type": "object",
+    "properties": {
+        "time": {
+            "description": "Unix time of sending the message",
+            "type": "number"
+        },
+        "text": {
+            "description": "Text of message",
+            "type": "string"
+        }
+    },
+    "required": [ "time", "text" ]
+}

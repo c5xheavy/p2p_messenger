@@ -49,6 +49,7 @@ void receive_messages(net::io_context& io_context, std::uint16_t port) {
 
 void send_messages(net::io_context& io_context, const std::string& ip, std::uint16_t port) {
     try {
+        udp::socket socket{io_context, udp::v4()};
         while (true) {
             std::string text;
             std::getline(std::cin, text);
@@ -63,7 +64,6 @@ void send_messages(net::io_context& io_context, const std::string& ip, std::uint
             };
             auto [buffer, buffer_size]{MessageSerializer::MessageToBuffer(message)};
 
-            udp::socket socket{io_context, udp::v4()};
             udp::endpoint endpoint{net::ip::make_address(ip), port};
             socket.send_to(net::buffer(buffer.get(), buffer_size), endpoint);
 

@@ -18,7 +18,7 @@ StaticFileIpResolver::StaticFileIpResolver(const std::filesystem::path& static_f
     while (!ifs.eof()) {
         std::string login, ip;
         ifs >> login >> ip;
-        login_hash_to_ip_[LoginHasher::Hash(login)] = ip;
+        login_hash_to_ip_.emplace(LoginHasher::Hash(login), ip);
     }
 }
 

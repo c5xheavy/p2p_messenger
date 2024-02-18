@@ -3,6 +3,10 @@ cmake_minimum_required(VERSION 3.10)
 project(messenger CXX)
 set(CMAKE_CXX_STANDARD 20)
 
+set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
+set(THREADS_PREFER_PTHREAD_FLAG TRUE)
+find_package(Threads REQUIRED)
+
 find_package(Boost 1.82.0 REQUIRED)
 if(Boost_FOUND)
   include_directories(${Boost_INCLUDE_DIRS})
@@ -30,6 +34,8 @@ add_library(messenger_lib STATIC
     src/static_file_ip_resolver.h
     src/static_file_ip_resolver.cpp
 )
+
+target_link_libraries(messenger_lib PRIVATE Threads::Threads)
 
 add_executable(messenger
     src/main.cpp

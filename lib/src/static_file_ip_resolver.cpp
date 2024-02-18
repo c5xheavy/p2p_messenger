@@ -23,7 +23,7 @@ StaticFileIpResolver::StaticFileIpResolver(const std::filesystem::path& static_f
 }
 
 std::optional<std::string> StaticFileIpResolver::Resolve(const std::string& login_hash) {
-    auto it = login_hash_to_ip_.find(login_hash);
+    auto it{login_hash_to_ip_.find(login_hash)};
     if (it == login_hash_to_ip_.end()) {
         return std::nullopt;
     }

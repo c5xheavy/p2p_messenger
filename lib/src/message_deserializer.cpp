@@ -5,9 +5,9 @@
 Message MessageDeserializer::MessageFromBuffer(char* buffer, std::size_t buffer_size) {
     Message message{};
 
-    std::size_t size = sizeof(message.id)
+    std::size_t size{sizeof(message.id)
                      + 2 * LoginHasher::hash_size
-                     + sizeof(std::uint16_t);
+                     + sizeof(std::uint16_t)};
 
     if (buffer_size < size) {
         throw std::length_error("Not enough buffer size");

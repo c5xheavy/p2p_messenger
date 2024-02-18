@@ -15,7 +15,7 @@ int main(int argc, const char** argv) {
         return 1;
     }
 
-    std::uint16_t port = std::stoi(argv[1]);
+    std::uint16_t port{static_cast<std::uint16_t>(std::stoi(argv[1]))};
 
     try {
         net::io_context io_context;
@@ -24,18 +24,18 @@ int main(int argc, const char** argv) {
         while (true) {
             socket.wait(net::ip::udp::socket::wait_read);
 
-            std::size_t bytes_available = socket.available();
+            std::size_t bytes_available{socket.available()};
             std::shared_ptr<char[]> buffer{new char[bytes_available]};
 
             udp::endpoint remote_endpoint;
-            std::size_t buffer_size = socket.receive_from(net::buffer(buffer.get(), bytes_available), remote_endpoint);
+            std::size_t buffer_size{socket.receive_from(net::buffer(buffer.get(), bytes_available), remote_endpoint)};
             socket.send_to(net::buffer("OK"), remote_endpoint);
 
             if (bytes_available != buffer_size) {
                 throw std::logic_error("Bytes available is not equal bytes read");
             }
 
-            Message message = MessageDeserializer::MessageFromBuffer(buffer.get(), buffer_size);
+            Message message{MessageDeserializer::MessageFromBuffer(buffer.get(), buffer_size)};
 
             std::cout << message.id << '\n';
             std::cout << message.source_login_hash << '\n';

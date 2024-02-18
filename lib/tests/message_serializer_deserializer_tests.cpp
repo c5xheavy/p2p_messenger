@@ -19,7 +19,7 @@ TEST_CASE("Message Serialization & Deserialization") {
             LoginHasher::Hash("user2"),
             payload
         };
-        auto [buffer, size] = MessageSerializer::MessageToBuffer(message);
+        auto [buffer, size]{MessageSerializer::MessageToBuffer(message)};
         Message post_message{MessageDeserializer::MessageFromBuffer(buffer.get(), size)};
         REQUIRE(message == post_message);
     }
@@ -31,7 +31,7 @@ TEST_CASE("Message Serialization & Deserialization") {
             LoginHasher::Hash("bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"),
             payload
         };
-        auto [buffer, size] = MessageSerializer::MessageToBuffer(message);
+        auto [buffer, size]{MessageSerializer::MessageToBuffer(message)};
         Message post_message{MessageDeserializer::MessageFromBuffer(buffer.get(), size)};
         REQUIRE(message == post_message);
     }
@@ -43,7 +43,7 @@ TEST_CASE("Message Serialization & Deserialization") {
             LoginHasher::Hash("user2"),
             payload
         };
-        auto [buffer, size] = MessageSerializer::MessageToBuffer(message);
+        auto [buffer, size]{MessageSerializer::MessageToBuffer(message)};
         Message post_message{MessageDeserializer::MessageFromBuffer(buffer.get(), size)};
         REQUIRE(message == post_message);
     }
@@ -59,7 +59,7 @@ TEST_CASE("Message Serialization & Deserialization") {
             LoginHasher::Hash("bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"),
             long_payload
         };
-        auto [buffer, size] = MessageSerializer::MessageToBuffer(message);
+        auto [buffer, size]{MessageSerializer::MessageToBuffer(message)};
         Message post_message{MessageDeserializer::MessageFromBuffer(buffer.get(), size)};
         REQUIRE(message == post_message);
     }
@@ -71,7 +71,7 @@ TEST_CASE("Message Serialization & Deserialization") {
             LoginHasher::Hash("раводлыофврадцукенщцшгукрповмтоывмтьлждьфылоывшщ15468768   "),
             payload
         };
-        auto [buffer, size] = MessageSerializer::MessageToBuffer(message);
+        auto [buffer, size]{MessageSerializer::MessageToBuffer(message)};
         Message post_message{MessageDeserializer::MessageFromBuffer(buffer.get(), size)};
         REQUIRE(message == post_message);
     }
@@ -83,7 +83,7 @@ TEST_CASE("Message Serialization & Deserialization") {
             LoginHasher::Hash("user2"),
             payload
         };
-        auto [buffer, size] = MessageSerializer::MessageToBuffer(message);
+        auto [buffer, size]{MessageSerializer::MessageToBuffer(message)};
         REQUIRE_THROWS(MessageDeserializer::MessageFromBuffer(buffer.get(), size - 1));
     }
 }

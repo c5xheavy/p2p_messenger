@@ -9,7 +9,7 @@ TEST_CASE("Payload Serialization") {
             "hello"
         };
         json::object jsonPayload{PayloadSerializer::PayloadToJson(payload)};
-        REQUIRE(jsonPayload.at("time").as_int64() == 1700000000);
+        REQUIRE(jsonPayload.at("time").to_number<std::uint64_t>() == 1700000000);
         REQUIRE(jsonPayload.at("text") == "hello");
     }
 
@@ -23,7 +23,7 @@ TEST_CASE("Payload Serialization") {
             "hello"
         };
         json::object jsonPayload{PayloadSerializer::PayloadToJson(payload)};
-        REQUIRE_THAT(jsonPayload.at("time").as_int64() == 1700000000);
+        REQUIRE_THAT(jsonPayload.at("time").to_number<std::uint64_t>() == 1700000000);
         REQUIRE(jsonPayload.at("text") == "hello");
     }
     */
@@ -34,7 +34,7 @@ TEST_CASE("Payload Serialization") {
             ""
         };
         json::object jsonPayload{PayloadSerializer::PayloadToJson(payload)};
-        REQUIRE(jsonPayload.at("time").as_int64() == 0);
+        REQUIRE(jsonPayload.at("time").to_number<std::uint64_t>() == 0);
         REQUIRE(jsonPayload.at("text") == "");
     }
 
@@ -43,14 +43,14 @@ TEST_CASE("Payload Serialization") {
             1700000000
         };
         json::object jsonPayload{PayloadSerializer::PayloadToJson(payload)};
-        REQUIRE(jsonPayload.at("time").as_int64() == 1700000000);
+        REQUIRE(jsonPayload.at("time").to_number<std::uint64_t>() == 1700000000);
         REQUIRE(jsonPayload.at("text") == "");
     }
 
     SECTION("no fields") {
         Payload payload{};
         json::object jsonPayload{PayloadSerializer::PayloadToJson(payload)};
-        REQUIRE(jsonPayload.at("time").as_int64() == 0);
+        REQUIRE(jsonPayload.at("time").to_number<std::uint64_t>() == 0);
         REQUIRE(jsonPayload.at("text") == "");
     }
 }

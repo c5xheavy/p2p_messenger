@@ -4,7 +4,7 @@
 #include <string>
 
 struct Payload {
-    int64_t time;
+    std::uint64_t time;
     std::string text;
 };
 

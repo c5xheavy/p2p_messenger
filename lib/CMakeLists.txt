@@ -4,6 +4,9 @@ project(messenger CXX)
 set(CMAKE_CXX_STANDARD 20)
 
 find_package(Boost 1.82.0 REQUIRED)
+if(Boost_FOUND)
+  include_directories(${Boost_INCLUDE_DIRS})
+endif()
 
 find_package(Catch2 REQUIRED)
 

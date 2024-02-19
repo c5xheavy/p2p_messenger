@@ -1,13 +1,17 @@
 #include <iostream>
 
-#include "payload.h"
-#include "payload_serializer.h"
-#include "payload_deserializer.h"
+#include <boost/json.hpp>
+
+#include "login_hasher.h"
 #include "message.h"
 #include "message_serializer.h"
 #include "message_deserializer.h"
-#include "login_hasher.h"
+#include "payload.h"
+#include "payload_serializer.h"
+#include "payload_deserializer.h"
 #include "static_file_ip_resolver.h"
+
+namespace json = boost::json;
 
 int main() {
     {

@@ -1,8 +1,9 @@
 #ifndef MESSAGE_SERIALIZER_H
 #define MESSAGE_SERIALIZER_H
 
+#include <cstddef>
 #include <memory>
-#include <string>
+#include <utility>
 
 #include "message.h"
 

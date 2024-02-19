@@ -1,9 +1,13 @@
+#include <cstddef>
+#include <cstdint>
 #include <iostream>
+#include <memory>
+#include <stdexcept>
 #include <string>
-#include <vector>
 
 #include <boost/asio.hpp>
 
+#include "message.h"
 #include "message_deserializer.h"
 
 namespace net = boost::asio;

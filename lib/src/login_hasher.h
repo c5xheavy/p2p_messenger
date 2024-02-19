@@ -1,6 +1,7 @@
 #ifndef LOGIN_HASHER_H
 #define LOGIN_HASHER_H
 
+#include <cstddef>
 #include <string>
 
 class LoginHasher {

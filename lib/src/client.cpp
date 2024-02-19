@@ -1,3 +1,4 @@
+#include <array>
 #include <cstddef>
 #include <cstdint>
 #include <iostream>
@@ -12,7 +13,6 @@
 #include "message.h"
 #include "message_serializer.h"
 #include "message_deserializer.h"
-#include "payload.h"
 
 namespace net = boost::asio;
 using net::ip::udp;

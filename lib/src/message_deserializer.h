@@ -1,7 +1,7 @@
 #ifndef MESSAGE_DESERIALIZER_H
 #define MESSAGE_DESERIALIZER_H
 
-#include <string>
+#include <cstddef>
 
 #include "message.h"
 

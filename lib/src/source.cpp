@@ -1,12 +1,16 @@
 #include <array>
+#include <cstddef>
+#include <cstdint>
 #include <iostream>
+#include <memory>
+#include <stdexcept>
 #include <string>
-#include <vector>
 
 #include <boost/asio.hpp>
 
-#include "message_serializer.h"
 #include "login_hasher.h"
+#include "message.h"
+#include "message_serializer.h"
 
 namespace net = boost::asio;
 using net::ip::udp;

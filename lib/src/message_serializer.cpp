@@ -1,6 +1,19 @@
 #include "message_serializer.h"
-#include "payload_serializer.h"
+
+#include <cstddef>
+#include <cstdint>
+#include <cstring>
+#include <memory>
+#include <string>
+#include <utility>
+
+#include <boost/json.hpp>
+
 #include "login_hasher.h"
+#include "message.h"
+#include "payload_serializer.h"
+
+namespace json = boost::json;
 
 std::pair<std::shared_ptr<char[]>, std::size_t> MessageSerializer::MessageToBuffer(const Message& message) {
     std::string str_payload{json::serialize(PayloadSerializer::PayloadToJson(message.payload))};

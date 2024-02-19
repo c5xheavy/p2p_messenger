@@ -1,8 +1,6 @@
 #ifndef PAYLOAD_SERIALIZER_H
 #define PAYLOAD_SERIALIZER_H
 
-#include <string>
-
 #include <boost/json.hpp>
 
 #include "payload.h"

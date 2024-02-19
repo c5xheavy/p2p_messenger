@@ -31,7 +31,7 @@ void receive_messages(net::io_context& io_context, std::uint16_t port) {
             socket.send_to(net::buffer("OK"), remote_endpoint);
 
             if (bytes_available != buffer_size) {
-                throw std::logic_error("Bytes available is not equal bytes read");
+                throw std::logic_error{"Bytes available is not equal bytes read"};
             }
 
             Message message{MessageDeserializer::MessageFromBuffer(buffer.get(), buffer_size)};
@@ -88,8 +88,8 @@ int main(int argc, const char** argv) {
 
     net::io_context io_context;
 
-    std::thread receive_thread([&]() { receive_messages(io_context, receive_port); });
-    std::thread send_thread([&]() { send_messages(io_context, ip, send_port); });
+    std::thread receive_thread{[&]() { receive_messages(io_context, receive_port); }};
+    std::thread send_thread{[&]() { send_messages(io_context, ip, send_port); }};
 
     receive_thread.join();
     send_thread.join();

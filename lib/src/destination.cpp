@@ -36,7 +36,7 @@ int main(int argc, const char** argv) {
             socket.send_to(net::buffer("OK"), remote_endpoint);
 
             if (bytes_available != buffer_size) {
-                throw std::logic_error("Bytes available is not equal bytes read");
+                throw std::logic_error{"Bytes available is not equal bytes read"};
             }
 
             Message message{MessageDeserializer::MessageFromBuffer(buffer.get(), buffer_size)};

@@ -71,7 +71,7 @@ int main() {
         std::cout << "===============================================================================\n";
     }
     {
-        StaticFileIpResolver static_file_ip_resolver("../static/login_to_ip.txt");
+        StaticFileIpResolver static_file_ip_resolver{"../static/login_to_ip.txt"};
         std::cout << static_file_ip_resolver.Resolve(LoginHasher::Hash("amir")).value_or("not found") << '\n';
         std::cout << static_file_ip_resolver.Resolve(LoginHasher::Hash("not a login")).value_or("not found") << '\n';
         std::cout << "===============================================================================\n";

@@ -14,6 +14,8 @@ endif()
 
 find_package(Catch2 REQUIRED)
 
+find_library(OPENDHT_LIB opendht)
+
 add_library(messenger_lib STATIC
     src/boost_json.cpp
     src/payload.h
@@ -59,7 +61,7 @@ add_executable(client
     src/client.cpp
 )
 
-target_link_libraries(client PRIVATE messenger_lib)
+target_link_libraries(client PRIVATE messenger_lib PRIVATE "${OPENDHT_LIB}")
 
 add_executable(messenger_tests
     tests/payload_utils.h

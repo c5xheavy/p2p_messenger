@@ -6,8 +6,11 @@
 #include <stdexcept>
 #include <string>
 #include <thread>
+#include <vector>
 
+#include <boost/algorithm/string/split.hpp>
 #include <boost/asio.hpp>
+#include <opendht.h>
 
 #include "login_hasher.h"
 #include "message.h"
@@ -77,22 +80,57 @@ void send_messages(net::io_context& io_context, const std::string& ip, std::uint
 }
 
 int main(int argc, const char** argv) {
-    if (argc != 4) {
-        std::cout << "Usage: " << argv[0] << " <receive port> <IP>  <send port>" << std::endl;
+    if (argc != 6) {
+        std::cout << "Usage: " << argv[0] << " <DHT port> <IP>  <port> <your address dht key> <destination's address dht key>" << std::endl;
         return 1;
     }
 
-    std::uint16_t receive_port{static_cast<std::uint16_t>(std::stoi(argv[1]))};
-    std::string ip{argv[2]};
-    std::uint16_t send_port{static_cast<std::uint16_t>(std::stoi(argv[3]))};
+    std::uint16_t dht_port{static_cast<std::uint16_t>(std::stoi(argv[1]))};
+    std::string my_ip{argv[2]};
+    std::uint16_t my_port{static_cast<std::uint16_t>(std::stoi(argv[3]))};
+    std::string my_dht_key{argv[4]};
+    std::string other_dht_key{argv[5]};
 
     net::io_context io_context;
 
-    std::thread receive_thread{[&]() { receive_messages(io_context, receive_port); }};
-    std::thread send_thread{[&]() { send_messages(io_context, ip, send_port); }};
+    dht::DhtRunner node;
+    
+    // Launch a dht node on a new thread, using a
+    // generated RSA key pair, and listen on port.
+    node.run(dht_port, dht::crypto::generateIdentity(), true);
+
+    // Join the network through any running node,
+    // here using a known bootstrap node.
+    node.bootstrap("bootstrap.jami.net", "4222");
+
+    // put data on the dht
+    std::string my_address{my_ip + ":" + std::to_string(my_port)};
+    node.put(my_dht_key, {(const std::uint8_t*)my_address.data(), my_address.size()});
+
+    // get data from the dht
+    node.get(other_dht_key, [&io_context](const std::vector<std::shared_ptr<dht::Value>>& values) {
+        // Callback called when values are found
+        for (const auto& value : values) {
+            std::cout << "Found value: " << *value << std::endl;
+            std::string other_address;
+            for (const auto& x : value->data) {
+                other_address += x;
+            }
+            std::cout << other_address << std::endl;
+            std::vector<std::string> strs;
+            boost::split(strs, other_address, [](char c) { return c == ':'; });
+            std::cout << strs[0] << ' ' << strs[1] << std::endl;
+            std::string other_ip{strs[0]};
+            std::uint16_t other_port{static_cast<std::uint16_t>(std::stoi(strs[1]))};
+            send_messages(io_context, other_ip, other_port);
+        }
+        return true; // return false to stop the search
+    });
+
+    std::thread receive_thread{[&]() { receive_messages(io_context, my_port); }};
 
     receive_thread.join();
-    send_thread.join();
+    node.join();
 
     return 0;
 }

@@ -81,15 +81,15 @@ void send_messages(net::io_context& io_context, const std::string& ip, std::uint
 
 int main(int argc, const char** argv) {
     if (argc != 6) {
-        std::cout << "Usage: " << argv[0] << " <DHT port> <IP>  <port> <your address dht key> <destination's address dht key>" << std::endl;
+        std::cout << "Usage: " << argv[0] << " <DHT port> <IP> <port> <your login> <destination login>" << std::endl;
         return 1;
     }
 
     std::uint16_t dht_port{static_cast<std::uint16_t>(std::stoi(argv[1]))};
     std::string my_ip{argv[2]};
     std::uint16_t my_port{static_cast<std::uint16_t>(std::stoi(argv[3]))};
-    std::string my_dht_key{argv[4]};
-    std::string other_dht_key{argv[5]};
+    std::string my_login{argv[4]};
+    std::string destination_login{argv[5]};
 
     net::io_context io_context;
 
@@ -105,10 +105,10 @@ int main(int argc, const char** argv) {
 
     // put data on the dht
     std::string my_address{my_ip + ":" + std::to_string(my_port)};
-    node.put(my_dht_key, {(const std::uint8_t*)my_address.data(), my_address.size()});
+    node.put(my_login, {(const std::uint8_t*)my_address.data(), my_address.size()});
 
     // get data from the dht
-    node.get(other_dht_key, [&io_context](const std::vector<std::shared_ptr<dht::Value>>& values) {
+    node.get(destination_login, [&io_context](const std::vector<std::shared_ptr<dht::Value>>& values) {
         // Callback called when values are found
         for (const auto& value : values) {
             std::cout << "Found value: " << *value << std::endl;

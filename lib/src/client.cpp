@@ -105,31 +105,34 @@ int main(int argc, const char** argv) {
 
     // put data on the dht
     std::string my_address{my_ip + ":" + std::to_string(my_port)};
-    node.put(my_login, {(const std::uint8_t*)my_address.data(), my_address.size()});
+    node.put(dht::InfoHash::get(my_login), {(const std::uint8_t*)my_address.data(), my_address.size()});
 
-    // get data from the dht
-    node.get(destination_login, [&io_context](const std::vector<std::shared_ptr<dht::Value>>& values) {
-        // Callback called when values are found
-        for (const auto& value : values) {
-            std::cout << "Found value: " << *value << std::endl;
-            std::string other_address;
-            for (const auto& x : value->data) {
-                other_address += x;
+    auto key = dht::InfoHash::get(destination_login);
+    auto token = node.listen(key,
+        [&io_context](const std::vector<std::shared_ptr<dht::Value>>& values, bool expired) {
+            std::cout << "cb called" << std::endl;
+            for (const auto& value : values) {
+                std::cout << "Found value: " << *value << ", " << (expired ? "expired" : "added") << std::endl;
+                std::string other_address;
+                for (const auto& x : value->data) {
+                    other_address += x;
+                }
+                std::cout << other_address << std::endl;
+                std::vector<std::string> strs;
+                boost::split(strs, other_address, [](char c) { return c == ':'; });
+                std::cout << strs[0] << ' ' << strs[1] << std::endl;
+                std::string other_ip{strs[0]};
+                std::uint16_t other_port{static_cast<std::uint16_t>(std::stoi(strs[1]))};
+                send_messages(io_context, other_ip, other_port);
             }
-            std::cout << other_address << std::endl;
-            std::vector<std::string> strs;
-            boost::split(strs, other_address, [](char c) { return c == ':'; });
-            std::cout << strs[0] << ' ' << strs[1] << std::endl;
-            std::string other_ip{strs[0]};
-            std::uint16_t other_port{static_cast<std::uint16_t>(std::stoi(strs[1]))};
-            send_messages(io_context, other_ip, other_port);
+            return true; // keep listening
         }
-        return true; // return false to stop the search
-    });
+    );
 
     std::thread receive_thread{[&]() { receive_messages(io_context, my_port); }};
 
     receive_thread.join();
+    node.cancelListen(key, std::move(token));
     node.join();
 
     return 0;

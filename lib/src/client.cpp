@@ -123,7 +123,6 @@ int main(int argc, const char** argv) {
                 std::cout << strs[0] << ' ' << strs[1] << std::endl;
                 std::string other_ip{strs[0]};
                 std::uint16_t other_port{static_cast<std::uint16_t>(std::stoi(strs[1]))};
-                send_messages(io_context, other_ip, other_port);
             }
             return true; // keep listening
         }

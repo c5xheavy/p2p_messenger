@@ -1,4 +1,5 @@
 #include <array>
+#include <atomic>
 #include <cstddef>
 #include <cstdint>
 #include <iostream>
@@ -12,19 +13,27 @@
 #include <boost/asio.hpp>
 #include <opendht.h>
 
+#include "address.h"
 #include "login_hasher.h"
 #include "message.h"
 #include "message_serializer.h"
 #include "message_deserializer.h"
+#include "thread_safe_queue.h"
 
 namespace net = boost::asio;
 using net::ip::udp;
 
+ThreadSafeQueue<std::string> messages;
+Address destination_address;
+
+std::atomic<bool> should_stop{false};
+
+
 void receive_messages(net::io_context& io_context, std::uint16_t port) {
     try {
         udp::socket socket{io_context, udp::endpoint{udp::v4(), port}};
-        while (true) {
-            socket.wait(net::ip::udp::socket::wait_read);
+        while (!should_stop) { // does not stop right now
+            socket.wait(net::ip::udp::socket::wait_read); // because of this
 
             std::size_t bytes_available{socket.available()};
             std::shared_ptr<char[]> buffer{new char[bytes_available]};
@@ -39,23 +48,24 @@ void receive_messages(net::io_context& io_context, std::uint16_t port) {
 
             Message message{MessageDeserializer::MessageFromBuffer(buffer.get(), buffer_size)};
 
+            std::cout << "Received message:\n";
             std::cout << message.id << '\n';
             std::cout << message.source_login_hash << '\n';
             std::cout << message.destination_login_hash << '\n';
             std::cout << message.payload.time << '\n';
             std::cout << message.payload.text << '\n';
+            std::cout << "End of message.\n";
         }
     } catch (const std::exception& e) {
         std::cerr << "Exception in receive_messages: " << e.what() << std::endl;
     }
 }
 
-void send_messages(net::io_context& io_context, const std::string& ip, std::uint16_t port) {
+void send_messages(net::io_context& io_context) {
     try {
         udp::socket socket{io_context, udp::v4()};
-        while (true) {
-            std::string text;
-            std::getline(std::cin, text);
+        while (!should_stop || !messages.empty()) { // also does not stop right now
+            std::string text = messages.waitPop();
             Message message {
                 1,
                 LoginHasher::Hash("source"),
@@ -67,7 +77,11 @@ void send_messages(net::io_context& io_context, const std::string& ip, std::uint
             };
             auto [buffer, buffer_size]{MessageSerializer::MessageToBuffer(message)};
 
-            udp::endpoint endpoint{net::ip::make_address(ip), port};
+            std::string destination_ip;
+            std::uint16_t destination_port;
+            std::tie(destination_ip, destination_port) = destination_address.getWait(); // because of this
+            udp::endpoint endpoint{net::ip::make_address(destination_ip), destination_port};
+            std::cout << "Send message to " << destination_ip << ':' << destination_port << std::endl;
             socket.send_to(net::buffer(buffer.get(), buffer_size), endpoint);
 
             std::array<char, 128> recv_buf;
@@ -109,30 +123,47 @@ int main(int argc, const char** argv) {
 
     auto key = dht::InfoHash::get(destination_login);
     auto token = node.listen(key,
-        [&io_context](const std::vector<std::shared_ptr<dht::Value>>& values, bool expired) {
-            std::cout << "cb called" << std::endl;
+        [](const std::vector<std::shared_ptr<dht::Value>>& values, bool expired) {
+            std::cout << "listen callback called" << std::endl;
             for (const auto& value : values) {
                 std::cout << "Found value: " << *value << ", " << (expired ? "expired" : "added") << std::endl;
-                std::string other_address;
-                for (const auto& x : value->data) {
-                    other_address += x;
+                std::string address;
+                for (const char& x : value->data) {
+                    address += x;
                 }
-                std::cout << other_address << std::endl;
-                std::vector<std::string> strs;
-                boost::split(strs, other_address, [](char c) { return c == ':'; });
-                std::cout << strs[0] << ' ' << strs[1] << std::endl;
-                std::string other_ip{strs[0]};
-                std::uint16_t other_port{static_cast<std::uint16_t>(std::stoi(strs[1]))};
+                std::cout << "Found address: " << address << std::endl;
+                if (!expired) {
+                    destination_address.set(address);
+                    std::cout << "Update destination address to " << address << std::endl;
+                }
             }
             return true; // keep listening
         }
     );
 
     std::thread receive_thread{[&]() { receive_messages(io_context, my_port); }};
+    std::thread send_thread{[&]() { send_messages(io_context); }};
 
+    std::string message;
+    while (true) {
+        std::getline(std::cin, message);
+        if (message == "exit") {
+            break;
+        }
+        messages.push(message);
+    }
+
+    should_stop = true;
+
+    std::cout << "Joining threads..." << std::endl;
+    send_thread.join();
+    std::cout << "Send thread joined" << std::endl;
     receive_thread.join();
+    std::cout << "Receive thread joined" << std::endl;
     node.cancelListen(key, std::move(token));
+    std::cout << "Cancel listen" << std::endl;
     node.join();
+    std::cout << "Node joined" << std::endl;
 
     return 0;
 }

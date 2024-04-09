@@ -35,6 +35,8 @@ add_library(messenger_lib STATIC
     src/dht_ip_resolver.cpp
     src/static_file_ip_resolver.h
     src/static_file_ip_resolver.cpp
+    src/thread_safe_queue.h
+    src/address.h
 )
 
 target_link_libraries(messenger_lib PRIVATE Threads::Threads)

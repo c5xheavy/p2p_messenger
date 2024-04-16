@@ -39,24 +39,6 @@ add_library(messenger_lib STATIC
 
 target_link_libraries(messenger_lib PRIVATE Threads::Threads)
 
-add_executable(messenger
-    src/main.cpp
-)
-
-target_link_libraries(messenger PRIVATE messenger_lib)
-
-add_executable(source
-    src/source.cpp
-)
-
-target_link_libraries(source PRIVATE messenger_lib)
-
-add_executable(destination
-    src/destination.cpp
-)
-
-target_link_libraries(destination PRIVATE messenger_lib)
-
 add_executable(client
     src/client.cpp
 )

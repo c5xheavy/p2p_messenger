@@ -17,7 +17,7 @@ using net::ip::udp;
 
 int main(int argc, const char** argv) {
     if (argc != 3) {
-        std::cout << "Usage: " << argv[0] << " <IP>  <port>" << std::endl;
+        std::cout << "Usage: " << argv[0] << " <IP> <port>" << std::endl;
         return 1;
     }
 

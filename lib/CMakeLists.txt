@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 
-project(messenger CXX)
+project(p2p_messenger CXX)
 set(CMAKE_CXX_STANDARD 20)
 
 set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
@@ -16,7 +16,7 @@ find_package(Catch2 REQUIRED)
 
 find_library(OPENDHT_LIB opendht)
 
-add_library(messenger_lib STATIC
+add_library(p2p_messenger_lib STATIC
     src/boost_json.cpp
     src/payload.h
     src/payload_serializer.h
@@ -37,15 +37,15 @@ add_library(messenger_lib STATIC
     src/static_file_ip_resolver.cpp
 )
 
-target_link_libraries(messenger_lib PRIVATE Threads::Threads)
+target_link_libraries(p2p_messenger_lib PRIVATE Threads::Threads)
 
-add_executable(client
-    src/client.cpp
+add_executable(cli_client
+    src/cli_client.cpp
 )
 
-target_link_libraries(client PRIVATE messenger_lib PRIVATE "${OPENDHT_LIB}")
+target_link_libraries(cli_client PRIVATE p2p_messenger_lib PRIVATE "${OPENDHT_LIB}")
 
-add_executable(messenger_tests
+add_executable(p2p_messenger_tests
     tests/payload_utils.h
     tests/payload_utils.cpp
     tests/payload_serializer_tests.cpp
@@ -56,4 +56,4 @@ add_executable(messenger_tests
     tests/static_file_ip_resolver_tests.cpp
 )
 
-target_link_libraries(messenger_tests PRIVATE messenger_lib PRIVATE Catch2::Catch2WithMain)
+target_link_libraries(p2p_messenger_tests PRIVATE p2p_messenger_lib PRIVATE Catch2::Catch2WithMain)

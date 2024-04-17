@@ -43,7 +43,7 @@ add_executable(cli_client
     src/cli_client.cpp
 )
 
-target_link_libraries(cli_client PRIVATE p2p_messenger_lib PRIVATE "${OPENDHT_LIB}")
+target_link_libraries(cli_client PRIVATE p2p_messenger_lib PRIVATE "${OPENDHT_LIB}" PRIVATE Threads::Threads)
 
 add_executable(p2p_messenger_tests
     tests/payload_utils.h

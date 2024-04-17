@@ -14,59 +14,55 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QHBoxLayout" name="horizontalLayout_2">
+   <layout class="QHBoxLayout" name="horizontalLayout">
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout">
+     <widget class="QListWidget" name="contactsView">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <layout class="QVBoxLayout" name="chatView">
       <item>
-       <widget class="QListWidget" name="contactsView">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <layout class="QVBoxLayout" name="chatView">
+       <layout class="QHBoxLayout" name="destinationInfoLayout">
         <item>
-         <layout class="QHBoxLayout" name="destinationInfoLayout">
-          <item>
-           <widget class="QLabel" name="destinationLogin">
-            <property name="text">
-             <string>Destination Login</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="destinanionAddress">
-            <property name="text">
-             <string>Destination Address</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <widget class="QTextEdit" name="chatHistoryView">
-          <property name="readOnly">
-           <bool>true</bool>
+         <widget class="QLabel" name="destinationLogin">
+          <property name="text">
+           <string>Destination Login</string>
           </property>
          </widget>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="messageSendLayout">
-          <item>
-           <widget class="QLineEdit" name="messageEdit"/>
-          </item>
-          <item>
-           <widget class="QPushButton" name="sendButton">
-            <property name="text">
-             <string>Send</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
+         <widget class="QLabel" name="destinanionAddress">
+          <property name="text">
+           <string>Destination Address</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QTextEdit" name="chatHistoryView">
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="messageSendLayout">
+        <item>
+         <widget class="QLineEdit" name="messageEdit"/>
+        </item>
+        <item>
+         <widget class="QPushButton" name="sendButton">
+          <property name="text">
+           <string>Send</string>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>

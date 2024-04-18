@@ -84,6 +84,37 @@ private:
     udp::socket receive_socket;
 
     udp::socket send_socket;
+
+    std::function<void(const sys::error_code&)> async_wait_handler = [this](const sys::error_code& ec) {
+        std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Got message" << std::endl;
+        if (!ec) {
+            std::size_t bytes_available{receive_socket.available()};
+            std::shared_ptr<char[]> buffer{new char[bytes_available]};
+
+            udp::endpoint remote_endpoint;
+            std::size_t buffer_size{receive_socket.receive_from(net::buffer(buffer.get(), bytes_available), remote_endpoint)};
+
+            if (bytes_available != buffer_size) {
+                throw std::logic_error{"Bytes available is not equal bytes read"};
+            }
+
+            Message message{MessageDeserializer::MessageFromBuffer(buffer.get(), buffer_size)};
+
+            std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Received message:" << std::endl;
+            std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << message.id << std::endl;
+            std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << message.source_login_hash << std::endl;
+            std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << message.destination_login_hash << std::endl;
+            std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << message.payload.time << std::endl;
+            std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << message.payload.text << std::endl;
+            std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "End of message" << std::endl;
+        } else {
+            std::osyncstream(std::cerr) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Wait message error: " << ec.what() << std::endl;
+        }
+
+
+        std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Waiting for next message" << std::endl;
+        receive_socket.async_wait(udp::socket::wait_read, async_wait_handler);
+    };
 };
 
 #endif // P2P_MESSENGER_H

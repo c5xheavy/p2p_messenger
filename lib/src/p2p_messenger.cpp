@@ -15,7 +15,6 @@
 P2PMessenger::P2PMessenger(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::P2PMessenger)
-    , node{}
     , num_threads{4}
     , io_context{num_threads}
     , work_guard{net::make_work_guard(io_context)}
@@ -24,59 +23,12 @@ P2PMessenger::P2PMessenger(QWidget *parent)
 {
     ui->setupUi(this);
 
-    // Launch a dht node on a new thread, using a
-    // generated RSA key pair, and listen on port.
-    node.run(dht_port, dht::crypto::generateIdentity(), true);
-
-    // Join the network through any running node,
-    // here using a known bootstrap node.
-    node.bootstrap("bootstrap.jami.net", "4222");
-
     // put data on the dht
-    std::string my_address{my_ip + ":" + std::to_string(my_port)};
-    node.put(dht::InfoHash::get(my_login), {(const std::uint8_t*)my_address.data(), my_address.size()});
+    dht_ip_resolver.put(my_login, my_ip, my_port);
 
-    // Заполняем список логинов
-    {
-        std::lock_guard<std::mutex> lock{logins_mutex};
-        logins.push_back(destination_login);
-    }
-
-    {
-        std::lock_guard<std::mutex> lock{logins_mutex};
-        for (const auto& login : logins) {
-            auto key = dht::InfoHash::get(login);
-            std::future<size_t> token = node.listen(key,
-                [this, login](const std::vector<std::shared_ptr<dht::Value>>& values, bool expired) {
-                    std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "listen callback called for login " << login << std::endl;
-                    for (const auto& value : values) {
-                        std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Found value: " << *value << ", " << (expired ? "expired" : "added") << std::endl;
-                        std::string address;
-                        for (const char& x : value->data) {
-                            address += x;
-                        }
-                        std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Found address: " << address << std::endl;
-                        if (!expired) {
-                            std::size_t pos = address.find(':');
-                            if (pos == std::string::npos) {
-                                throw std::invalid_argument{"Invalid address"};
-                            }
-                            {
-                                std::lock_guard<std::mutex> lock{login_to_address_mutex};
-                                login_to_address[login] = address;
-                            }
-                            std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Update destination address to " << address << std::endl;
-                        }
-                    }
-                    return true; // keep listening
-                }
-            );
-            {
-                std::lock_guard<std::mutex> lock{login_to_token_mutex};
-                login_to_token[login] = std::move(token);
-            }
-        }
-    }
+    // listen for data on the dht
+    dht_ip_resolver.listen(destination_login);
+    dht_ip_resolver.listen(my_login);
 
     // const unsigned num_threads = std::thread::hardware_concurrency();
 
@@ -122,18 +74,6 @@ P2PMessenger::~P2PMessenger()
         threads[i].join();
     }
     std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Joined threads" << std::endl;
-    std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Cancelling listen" << std::endl;
-    {
-        std::lock_guard<std::mutex> lock{login_to_token_mutex};
-        for (auto& [login, token] : login_to_token) {
-            auto key = dht::InfoHash::get(login);
-            node.cancelListen(key, std::move(token));
-        }
-    }
-    std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Cancelled listen" << std::endl;
-    std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Joining node" << std::endl;
-    node.join();
-    std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Joined node" << std::endl;
     std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Deleting ui" << std::endl;
     delete ui;
     std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Deleted ui" << std::endl;
@@ -163,15 +103,11 @@ void P2PMessenger::send_message(udp::socket& socket, const std::string& destinat
         };
         auto [buffer, buffer_size]{MessageSerializer::MessageToBuffer(message)};
 
-        std::string address;
-        {
-            std::lock_guard<std::mutex> lock{login_to_address_mutex};
-            if (!login_to_address.contains(destination_login)) {
-                throw std::logic_error{"Destination address is not set"};
-            }
-            address = login_to_address[destination_login];
+        std::optional<std::string> destination_address = dht_ip_resolver.Resolve(destination_login);
+        if (!destination_address) {
+            throw std::logic_error{"Destination address is not set"};
         }
-        auto [destination_ip, destination_port]{get_ip_and_port_from_address(address)};
+        auto [destination_ip, destination_port]{get_ip_and_port_from_address(*destination_address)};
 
         udp::endpoint endpoint{net::ip::make_address(destination_ip), destination_port};
         std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Send message to " << destination_ip << ':' << destination_port << std::endl;
@@ -191,8 +127,8 @@ void P2PMessenger::on_send_message() {
     ui->messageEdit->clear();
     std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Sending message: " << message << std::endl;
     net::post(io_context, [this, message]() {{
-            std::lock_guard<std::mutex> lock{login_to_address_mutex};
-            if (login_to_address.contains(destination_login)) {
+            std::optional<std::string> destination_address = dht_ip_resolver.Resolve(destination_login);
+            if (destination_address) {
                 std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Destination address is set" << std::endl;
                 std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Sending message to " << destination_login << '\n';
                 std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Calling send_message" << '\n';

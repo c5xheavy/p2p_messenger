@@ -18,6 +18,7 @@
 #include <boost/asio.hpp>
 #include <opendht.h>
 
+#include "dht_ip_resolver.h"
 #include "message.h"
 #include "message_serializer.h"
 #include "message_deserializer.h"
@@ -61,16 +62,7 @@ private:
     std::string my_login = "a1";
     std::string destination_login = "b1";
 
-    std::vector<std::string> logins;
-    std::mutex logins_mutex;
-
-    std::map<std::string, std::string> login_to_address;
-    std::mutex login_to_address_mutex;
-
-    std::map<std::string, std::future<size_t>> login_to_token;
-    std::mutex login_to_token_mutex;
-
-    dht::DhtRunner node;
+    DhtIpResolver dht_ip_resolver{dht_port};
 
     const unsigned num_threads;
 

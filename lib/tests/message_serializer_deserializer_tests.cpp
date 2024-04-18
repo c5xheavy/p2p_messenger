@@ -2,7 +2,6 @@
 
 #include "../src/message_serializer.h"
 #include "../src/message_deserializer.h"
-#include "../src/login_hasher.h"
 #include "message_utils.h"
 
 TEST_CASE("Message Serialization & Deserialization") {
@@ -15,8 +14,8 @@ TEST_CASE("Message Serialization & Deserialization") {
     SECTION("simple") {
         Message message {
             1,
-            LoginHasher::Hash("user1"),
-            LoginHasher::Hash("user2"),
+            "user1",
+            "user2",
             payload
         };
         auto [buffer, size]{MessageSerializer::MessageToBuffer(message)};
@@ -27,8 +26,8 @@ TEST_CASE("Message Serialization & Deserialization") {
     SECTION("64 byte sized logins") {
         Message message {
             1,
-            LoginHasher::Hash("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"),
-            LoginHasher::Hash("bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"),
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
             payload
         };
         auto [buffer, size]{MessageSerializer::MessageToBuffer(message)};
@@ -39,8 +38,8 @@ TEST_CASE("Message Serialization & Deserialization") {
     SECTION("big id") {
         Message message {
             999999999999999,
-            LoginHasher::Hash("user1"),
-            LoginHasher::Hash("user2"),
+            "user1",
+            "user2",
             payload
         };
         auto [buffer, size]{MessageSerializer::MessageToBuffer(message)};
@@ -55,8 +54,8 @@ TEST_CASE("Message Serialization & Deserialization") {
         };
         Message message {
             123123123123123,
-            LoginHasher::Hash("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"),
-            LoginHasher::Hash("bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"),
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
             long_payload
         };
         auto [buffer, size]{MessageSerializer::MessageToBuffer(message)};
@@ -67,8 +66,8 @@ TEST_CASE("Message Serialization & Deserialization") {
     SECTION("special symbols logins") {
         Message message {
             1,
-            LoginHasher::Hash("qweasdzxcrtyfghvbnuiojklm,.p[];'/1234567689   53742y52734805"),
-            LoginHasher::Hash("раводлыофврадцукенщцшгукрповмтоывмтьлждьфылоывшщ15468768   "),
+            "qweasdzxcrtyfghvbnuiojklm,.p[];'/1234567689   53742y52734805",
+            "раводлыофврадцукенщцшгукрповмтоывмтьлждьфылоывшщ15468768   ",
             payload
         };
         auto [buffer, size]{MessageSerializer::MessageToBuffer(message)};
@@ -79,8 +78,8 @@ TEST_CASE("Message Serialization & Deserialization") {
     SECTION("small buffer size") {
         Message message {
             1,
-            LoginHasher::Hash("user1"),
-            LoginHasher::Hash("user2"),
+            "user1",
+            "user2",
             payload
         };
         auto [buffer, size]{MessageSerializer::MessageToBuffer(message)};

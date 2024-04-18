@@ -15,7 +15,6 @@
 #include <boost/asio.hpp>
 #include <opendht.h>
 
-#include "login_hasher.h"
 #include "message.h"
 #include "message_serializer.h"
 #include "message_deserializer.h"
@@ -47,8 +46,8 @@ void send_message(udp::socket& socket, const std::string& destination_login, con
     try {
         Message message {
             1,
-            LoginHasher::Hash("source"),
-            LoginHasher::Hash("destination"),
+            "source",
+            "destination",
             {
                 1700000000,
                 text
@@ -179,8 +178,8 @@ int main(int argc, const char** argv) {
 
             std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Received message:" << std::endl;
             std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << message.id << std::endl;
-            std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << message.source_login_hash << std::endl;
-            std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << message.destination_login_hash << std::endl;
+            std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << message.source_login << std::endl;
+            std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << message.destination_login << std::endl;
             std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << message.payload.time << std::endl;
             std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << message.payload.text << std::endl;
             std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "End of message" << std::endl;

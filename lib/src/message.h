@@ -8,9 +8,10 @@
 
 struct Message {
     std::uint64_t id;
-    std::string source_login_hash;
-    std::string destination_login_hash;
+    std::string source_login;
+    std::string destination_login;
     Payload payload;
+    static const std::size_t login_size{64}; // temporary solution
 };
 
 #endif // MESSAGE_H

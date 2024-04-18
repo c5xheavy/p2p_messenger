@@ -7,8 +7,6 @@
 #include <stdexcept>
 #include <string>
 
-#include "login_hasher.h"
-
 StaticFileIpResolver::StaticFileIpResolver(const std::filesystem::path& static_file_path) {
     std::ifstream ifs{static_file_path.string()};
     if (!ifs.good()) {
@@ -17,13 +15,13 @@ StaticFileIpResolver::StaticFileIpResolver(const std::filesystem::path& static_f
     while (!ifs.eof()) {
         std::string login, ip;
         ifs >> login >> ip;
-        login_hash_to_ip_.emplace(LoginHasher::Hash(login), ip);
+        login_to_ip_.emplace(login, ip);
     }
 }
 
-std::optional<std::string> StaticFileIpResolver::Resolve(const std::string& login_hash) {
-    auto it{login_hash_to_ip_.find(login_hash)};
-    if (it == login_hash_to_ip_.end()) {
+std::optional<std::string> StaticFileIpResolver::Resolve(const std::string& login) {
+    auto it{login_to_ip_.find(login)};
+    if (it == login_to_ip_.end()) {
         return std::nullopt;
     }
     return it->second;

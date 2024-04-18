@@ -154,8 +154,8 @@ void P2PMessenger::send_message(udp::socket& socket, const std::string& destinat
     try {
         Message message {
             1,
-            LoginHasher::Hash("source"),
-            LoginHasher::Hash("destination"),
+            "source",
+            "destination",
             {
                 1700000000,
                 text

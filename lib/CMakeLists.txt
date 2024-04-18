@@ -30,9 +30,6 @@ add_library(p2p_messenger_lib STATIC
     src/message_serializer.cpp
     src/message_deserializer.h
     src/message_deserializer.cpp
-    src/login_hasher.h
-    src/login_hasher.cpp
-    src/ip_resolver.h
     src/dht_ip_resolver.h
     src/dht_ip_resolver.cpp
     src/static_file_ip_resolver.h

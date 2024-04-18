@@ -11,7 +11,6 @@ struct Message {
     std::string source_login;
     std::string destination_login;
     Payload payload;
-    static const std::size_t login_size{64}; // temporary solution
 };
 
 #endif // MESSAGE_H

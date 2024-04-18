@@ -17,7 +17,8 @@ Message MessageDeserializer::MessageFromBuffer(char* buffer, std::size_t buffer_
     Message message{};
 
     std::size_t size{sizeof(message.id)
-                     + 2 * Message::login_size
+                     + sizeof(std::uint8_t)
+                     + sizeof(std::uint8_t)
                      + sizeof(std::uint16_t)};
 
     if (buffer_size < size) {
@@ -27,24 +28,36 @@ Message MessageDeserializer::MessageFromBuffer(char* buffer, std::size_t buffer_
     std::memcpy(&message.id, buffer, sizeof(message.id));
     buffer += sizeof(message.id);
 
-    message.source_login = {buffer, Message::login_size};
-    buffer += Message::login_size;
+    std::uint8_t source_login_size;
+    std::memcpy(&source_login_size, buffer, sizeof(source_login_size));
+    buffer += sizeof(source_login_size);
 
-    message.destination_login = {buffer, Message::login_size};
-    buffer += Message::login_size;
+    size += source_login_size;
 
-    std::uint16_t payload_size;
-    std::memcpy(&payload_size, buffer, sizeof(payload_size));
-    buffer += sizeof(payload_size);
+    message.source_login = {buffer, source_login_size};
+    buffer += source_login_size;
 
-    size += payload_size;
+    std::uint8_t destination_login_size;
+    std::memcpy(&destination_login_size, buffer, sizeof(destination_login_size));
+    buffer += sizeof(destination_login_size);
+
+    size += destination_login_size;
+
+    message.destination_login = {buffer, destination_login_size};
+    buffer += destination_login_size;
+
+    std::uint16_t str_payload_size;
+    std::memcpy(&str_payload_size, buffer, sizeof(str_payload_size));
+    buffer += sizeof(str_payload_size);
+
+    size += str_payload_size;
 
     if (buffer_size < size) {
         throw std::length_error{"Not enough buffer size"};
     }
 
-    std::string str_payload{buffer, payload_size};
-    buffer += payload_size;
+    std::string str_payload{buffer, str_payload_size};
+    buffer += str_payload_size;
 
     message.payload = PayloadDeserializer::PayloadFromJson(json::parse(str_payload).as_object());
     return message;

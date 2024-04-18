@@ -1,5 +1,5 @@
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#ifndef P2P_MESSENGER_H
+#define P2P_MESSENGER_H
 
 #include <array>
 #include <atomic>
@@ -30,16 +30,16 @@ using net::ip::udp;
 namespace sys = boost::system;
 
 QT_BEGIN_NAMESPACE
-namespace Ui { class MainWindow; }
+namespace Ui { class P2PMessenger; }
 QT_END_NAMESPACE
 
-class MainWindow : public QMainWindow
+class P2PMessenger : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    MainWindow(QWidget *parent = nullptr);
-    ~MainWindow();
+    P2PMessenger(QWidget *parent = nullptr);
+    ~P2PMessenger();
 
     std::pair<std::string, std::uint16_t> get_ip_and_port_from_address(const std::string& address);
 
@@ -54,7 +54,7 @@ private slots:
     void on_messageEdit_returnPressed();
 
 private:
-    Ui::MainWindow *ui;
+    Ui::P2PMessenger *ui;
 
     std::uint16_t dht_port = 3001;
     std::string my_ip = "127.0.0.1";
@@ -85,4 +85,5 @@ private:
 
     udp::socket send_socket;
 };
-#endif // MAINWINDOW_H
+
+#endif // P2P_MESSENGER_H

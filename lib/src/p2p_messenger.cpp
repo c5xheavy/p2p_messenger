@@ -1,5 +1,5 @@
-#include "mainwindow.h"
-#include "./ui_mainwindow.h"
+#include "p2p_messenger.h"
+#include "./ui_p2p_messenger.h"
 
 #include <iostream>
 #include <string>
@@ -12,9 +12,9 @@
 #define emit
 #endif
 
-MainWindow::MainWindow(QWidget *parent)
+P2PMessenger::P2PMessenger(QWidget *parent)
     : QMainWindow(parent)
-    , ui(new Ui::MainWindow)
+    , ui(new Ui::P2PMessenger)
     , node{}
     , num_threads{4}
     , io_context{num_threads}
@@ -23,7 +23,7 @@ MainWindow::MainWindow(QWidget *parent)
     , send_socket{io_context, udp::v4()}
 {
     ui->setupUi(this);
-    
+
     // Launch a dht node on a new thread, using a
     // generated RSA key pair, and listen on port.
     node.run(dht_port, dht::crypto::generateIdentity(), true);
@@ -130,9 +130,9 @@ MainWindow::MainWindow(QWidget *parent)
     //udp::socket send_socket{io_context, udp::v4()};
 }
 
-MainWindow::~MainWindow()
+P2PMessenger::~P2PMessenger()
 {
-    std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "MainWindow destructor called" << std::endl;
+    std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "P2PMessenger destructor called" << std::endl;
     std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Shutting down gracefully..." << std::endl;
     std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Stopping work_guard" << std::endl;
     work_guard.reset();
@@ -166,10 +166,10 @@ MainWindow::~MainWindow()
     std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Deleting ui" << std::endl;
     delete ui;
     std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Deleted ui" << std::endl;
-    std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "MainWindow destructor finished" << std::endl;
+    std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "P2PMessenger destructor finished" << std::endl;
 }
 
-std::pair<std::string, std::uint16_t> MainWindow::get_ip_and_port_from_address(const std::string& address) {
+std::pair<std::string, std::uint16_t> P2PMessenger::get_ip_and_port_from_address(const std::string& address) {
     std::size_t pos = address.find(':');
     if (pos == std::string::npos) {
         throw std::invalid_argument{"Invalid address"};
@@ -179,7 +179,7 @@ std::pair<std::string, std::uint16_t> MainWindow::get_ip_and_port_from_address(c
     return {ip, port};
 }
 
-void MainWindow::send_message(udp::socket& socket, const std::string& destination_login, const std::string& text) {
+void P2PMessenger::send_message(udp::socket& socket, const std::string& destination_login, const std::string& text) {
     try {
         Message message {
             1,
@@ -210,7 +210,7 @@ void MainWindow::send_message(udp::socket& socket, const std::string& destinatio
     }
 }
 
-void MainWindow::on_send_message() {
+void P2PMessenger::on_send_message() {
     std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "on_send_message called" << std::endl;
     std::string message = ui->messageEdit->text().toStdString();
     if (message.empty()) {
@@ -235,13 +235,13 @@ void MainWindow::on_send_message() {
         }});
 }
 
-void MainWindow::on_sendButton_clicked()
+void P2PMessenger::on_sendButton_clicked()
 {
     std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Send button is clicked" << std::endl;
     on_send_message();
 }
 
-void MainWindow::on_messageEdit_returnPressed()
+void P2PMessenger::on_messageEdit_returnPressed()
 {
     std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Return key is pressed" << std::endl;
     on_send_message();

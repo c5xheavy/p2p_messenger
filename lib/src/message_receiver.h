@@ -19,7 +19,6 @@ public:
     ~MessageReceiver();
 
 private:
-    void start_async_receive();
     void async_wait();
     void async_wait_handler(const sys::error_code& ec);
 

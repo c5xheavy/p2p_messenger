@@ -19,7 +19,7 @@ MessageReceiver::MessageReceiver(net::io_context& io_context, std::uint16_t port
     : io_context_{io_context}
     , socket_{io_context, udp::endpoint(udp::v4(), port)}
     , handler_{handler} {
-    start_async_receive();
+    async_wait();
 }
 
 MessageReceiver::~MessageReceiver() {    
@@ -28,10 +28,6 @@ MessageReceiver::~MessageReceiver() {
     socket_.close();
     std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Closed MessageReceiver::socket_" << std::endl;
     std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "MessageReceiver destructor finished" << std::endl;
-}
-
-void MessageReceiver::start_async_receive() {
-    async_wait();
 }
 
 void MessageReceiver::async_wait() {

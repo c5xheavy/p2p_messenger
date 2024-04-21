@@ -13,9 +13,21 @@
 #include <thread>
 #include <vector>
 
+#include <boost/asio.hpp>
+#include <boost/system.hpp>
 #include <opendht.h>
 
-DhtIpResolver::DhtIpResolver(std::uint16_t port) {
+namespace net = boost::asio;
+namespace sys = boost::system;
+
+DhtIpResolver::DhtIpResolver(net::io_context& io_context, std::uint16_t port)
+    : io_context_{io_context}
+    , timer_{io_context}
+    , node{}
+    , login_to_address{}
+    , login_to_address_mutex{}
+    , login_to_token{}
+    , login_to_token_mutex{} {
     // Launch a dht node on a new thread, using a
     // generated RSA key pair, and listen on port.
     node.run(port, dht::crypto::generateIdentity(), true);
@@ -42,9 +54,16 @@ DhtIpResolver::~DhtIpResolver() {
     std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "DhtIpResolver destructor finished" << std::endl;
 }
 
-void DhtIpResolver::put(const std::string& login, const std::string& ip, std::uint16_t port) {
+void DhtIpResolver::put(const std::string& login, const std::string& ip, std::uint16_t port, net::system_timer::duration interval) {
     std::string address{ip + ":" + std::to_string(port)};
     node.put(dht::InfoHash::get(login), {(const std::uint8_t*)address.data(), address.size()});
+    timer_.expires_after(interval);
+    timer_.async_wait([this, login, ip, port, interval](const sys::error_code& error) {
+        if (error) {
+            throw std::runtime_error{"Timer error"};
+        }
+        put(login, ip, port, interval);
+    });
 }
 
 void DhtIpResolver::listen(const std::string& login) {

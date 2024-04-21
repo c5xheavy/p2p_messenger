@@ -21,10 +21,10 @@ P2PMessenger::P2PMessenger(QWidget *parent)
     , my_port{3101}
     , my_login{"a1"}
     , destination_login{"b1"}
-    , dht_ip_resolver{dht_port}
     , num_threads{4}
     , io_context{static_cast<int>(num_threads)}
     , work_guard{net::make_work_guard(io_context)}
+    , dht_ip_resolver{io_context, dht_port}
     , threads{}
     , message_receiver{io_context, my_port, [this](const std::string& source_login, const std::string& message) {
         std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Received message from " << source_login << ": " << message << std::endl;

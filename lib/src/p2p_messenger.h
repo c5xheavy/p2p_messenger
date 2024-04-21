@@ -61,13 +61,13 @@ private:
     std::string my_login;
     std::string destination_login;
 
-    DhtIpResolver dht_ip_resolver;
-
     const std::size_t num_threads;
 
     net::io_context io_context;
 
     net::executor_work_guard<net::io_context::executor_type> work_guard;
+
+    DhtIpResolver dht_ip_resolver;
 
     std::vector<std::jthread> threads;
 

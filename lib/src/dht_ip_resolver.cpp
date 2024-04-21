@@ -26,7 +26,7 @@ DhtIpResolver::DhtIpResolver(std::uint16_t port) {
 }
 
 DhtIpResolver::~DhtIpResolver() {
-    std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "P2PMessenger destructor called" << std::endl;
+    std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "DhtIpResolver destructor called" << std::endl;
     {
         std::lock_guard<std::mutex> lock{login_to_token_mutex};
         for (auto& [login, token] : login_to_token) {
@@ -39,7 +39,7 @@ DhtIpResolver::~DhtIpResolver() {
     std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Joining node" << std::endl;
     node.join();
     std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Joined node" << std::endl;
-    std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "P2PMessenger destructor finished" << std::endl;
+    std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "DhtIpResolver destructor finished" << std::endl;
 }
 
 void DhtIpResolver::put(const std::string& login, const std::string& ip, std::uint16_t port) {

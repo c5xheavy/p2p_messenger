@@ -56,13 +56,17 @@ DhtIpResolver::~DhtIpResolver() {
 
 void DhtIpResolver::put(const std::string& login, const std::string& ip, std::uint16_t port, net::system_timer::duration interval) {
     std::string address{ip + ":" + std::to_string(port)};
-    node.put(dht::InfoHash::get(login), {(const std::uint8_t*)address.data(), address.size()});
+    put(std::make_shared<std::string>(login), std::make_shared<std::string>(address), interval);
+}
+
+void DhtIpResolver::put(std::shared_ptr<std::string> login, std::shared_ptr<std::string> address, net::system_timer::duration interval) {
+    node.put(dht::InfoHash::get(*login), {(const std::uint8_t*)address->data(), address->size()});
     timer_.expires_after(interval);
-    timer_.async_wait([this, login, ip, port, interval](const sys::error_code& error) {
-        if (error) {
-            throw std::runtime_error{"Timer error"};
+    timer_.async_wait([this, login, address, interval](const sys::error_code& ec) {
+        if (ec) {
+            std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Timer error: " << ec.message() << std::endl;
         }
-        put(login, ip, port, interval);
+        put(login, address, interval);
     });
 }
 

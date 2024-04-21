@@ -47,7 +47,10 @@ P2PMessenger::P2PMessenger(QWidget *parent)
         });
     }
 
-    message_receiver.start();
+    message_receiver.start_async_receive([this](const std::string& source_login, const std::string& message) {
+        std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Received message from " << source_login << ": " << message << std::endl;
+        ui->chatHistoryView->append(QString::fromStdString(source_login + ": " + message));
+    });
 }
 
 P2PMessenger::~P2PMessenger()

@@ -46,7 +46,7 @@ void send_message(udp::socket& socket, const std::string& destination_login, con
     try {
         Message message {
             1,
-            "source",
+            "cli_client",
             "destination",
             {
                 1700000000,

@@ -28,40 +28,44 @@ MessageReceiver::~MessageReceiver() {
     std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "MessageReceiver destructor finished" << std::endl;
 }
 
-void MessageReceiver::start() {
-    async_wait();
+void MessageReceiver::start_async_receive(ReceiveMessageHandler&& handler) {
+    async_wait(std::move(handler));
 }
 
-void MessageReceiver::async_wait() {
+void MessageReceiver::async_wait(ReceiveMessageHandler&& handler) {
     std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Waiting for incoming message" << std::endl;
-    socket_.async_wait(udp::socket::wait_read, std::bind(&MessageReceiver::async_wait_handler, this, std::placeholders::_1));
+    socket_.async_wait(udp::socket::wait_read, [this, handler = std::move(handler)] (const sys::error_code& ec) mutable {
+        if (!ec) {
+            async_wait_handler(std::move(handler), ec);
+        } else {
+            std::osyncstream(std::cerr) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Wait message error: " << ec.what() << std::endl;
+        }
+    });
 }
 
-void MessageReceiver::async_wait_handler(const sys::error_code& ec) {
+void MessageReceiver::async_wait_handler(ReceiveMessageHandler&& handler, const sys::error_code& ec) {
     std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Got message" << std::endl;
-    if (!ec) {
-        std::size_t bytes_available{socket_.available()};
-        std::shared_ptr<char[]> buffer{new char[bytes_available]};
+    std::size_t bytes_available{socket_.available()};
+    std::shared_ptr<char[]> buffer{new char[bytes_available]};
 
-        udp::endpoint remote_endpoint;
-        std::size_t buffer_size{socket_.receive_from(net::buffer(buffer.get(), bytes_available), remote_endpoint)};
+    udp::endpoint remote_endpoint;
+    std::size_t buffer_size{socket_.receive_from(net::buffer(buffer.get(), bytes_available), remote_endpoint)};
 
-        if (bytes_available != buffer_size) {
-            throw std::logic_error{"Bytes available is not equal bytes read"};
-        }
-
-        Message message{MessageDeserializer::MessageFromBuffer(buffer.get(), buffer_size)};
-
-        std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Received message:" << std::endl;
-        std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << message.id << std::endl;
-        std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << message.source_login << std::endl;
-        std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << message.destination_login << std::endl;
-        std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << message.payload.time << std::endl;
-        std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << message.payload.text << std::endl;
-        std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "End of message" << std::endl;
-    } else {
-        std::osyncstream(std::cerr) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Wait message error: " << ec.what() << std::endl;
+    if (bytes_available != buffer_size) {
+        throw std::logic_error{"Bytes available is not equal bytes read"};
     }
 
-    async_wait();
+    Message message{MessageDeserializer::MessageFromBuffer(buffer.get(), buffer_size)};
+
+    std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Received message:" << std::endl;
+    std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << message.id << std::endl;
+    std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << message.source_login << std::endl;
+    std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << message.destination_login << std::endl;
+    std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << message.payload.time << std::endl;
+    std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << message.payload.text << std::endl;
+    std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "End of message" << std::endl;
+
+    handler(message.source_login, message.payload.text);
+
+    async_wait(std::move(handler));
 }

@@ -69,7 +69,7 @@ private:
 
     net::executor_work_guard<net::io_context::executor_type> work_guard;
 
-    std::vector<std::thread> threads;
+    std::vector<std::jthread> threads;
 
     MessageReceiver message_receiver;
 

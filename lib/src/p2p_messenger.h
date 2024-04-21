@@ -63,7 +63,7 @@ private:
 
     DhtIpResolver dht_ip_resolver;
 
-    const int num_threads;
+    const std::size_t num_threads;
 
     net::io_context io_context;
 

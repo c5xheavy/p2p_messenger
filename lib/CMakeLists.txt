@@ -42,11 +42,23 @@ add_library(p2p_messenger_lib STATIC
 
 target_link_libraries(p2p_messenger_lib PRIVATE Threads::Threads)
 
+if(MSVC)
+  target_compile_options(p2p_messenger_lib PRIVATE /W4 /WX)
+else()
+  target_compile_options(p2p_messenger_lib PRIVATE -Wall -Wextra -Wpedantic -Werror)
+endif()
+
 add_executable(cli_client
     src/cli_client.cpp
 )
 
 target_link_libraries(cli_client PRIVATE p2p_messenger_lib PRIVATE "${OPENDHT_LIB}" PRIVATE Threads::Threads)
+
+if(MSVC)
+  target_compile_options(cli_client PRIVATE /W4 /WX)
+else()
+  target_compile_options(cli_client PRIVATE -Wall -Wextra -Wpedantic -Werror)
+endif()
 
 add_executable(p2p_messenger_tests
     tests/payload_utils.h
@@ -60,6 +72,12 @@ add_executable(p2p_messenger_tests
 )
 
 target_link_libraries(p2p_messenger_tests PRIVATE p2p_messenger_lib PRIVATE Catch2::Catch2WithMain)
+
+if(MSVC)
+  target_compile_options(p2p_messenger_tests PRIVATE /W4 /WX)
+else()
+  target_compile_options(p2p_messenger_tests PRIVATE -Wall -Wextra -Wpedantic -Werror)
+endif()
 
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
@@ -99,6 +117,12 @@ else()
 endif()
 
 target_link_libraries(p2p_messenger PRIVATE Qt${QT_VERSION_MAJOR}::Widgets PRIVATE p2p_messenger_lib PRIVATE "${OPENDHT_LIB}" PRIVATE Threads::Threads)
+
+if(MSVC)
+  target_compile_options(p2p_messenger PRIVATE /W4 /WX)
+else()
+  target_compile_options(p2p_messenger PRIVATE -Wall -Wextra -Wpedantic -Werror)
+endif()
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an

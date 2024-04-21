@@ -40,7 +40,8 @@ TEST_CASE("Payload Serialization") {
 
     SECTION("no required text field") {
         Payload payload {
-            1700000000
+            1700000000,
+            {}
         };
         json::object jsonPayload{PayloadSerializer::PayloadToJson(payload)};
         REQUIRE(jsonPayload.at("time").to_number<std::uint64_t>() == 1700000000);

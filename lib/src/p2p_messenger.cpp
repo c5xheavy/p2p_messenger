@@ -18,7 +18,7 @@ P2PMessenger::P2PMessenger(QWidget *parent)
     , ui(new Ui::P2PMessenger)
     , dht_ip_resolver{dht_port}
     , num_threads{4}
-    , io_context{num_threads}
+    , io_context{static_cast<int>(num_threads)}
     , work_guard{net::make_work_guard(io_context)}
     , message_receiver{io_context, my_port}
     , message_sender{io_context, dht_ip_resolver, my_login}

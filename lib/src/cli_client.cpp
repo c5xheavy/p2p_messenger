@@ -114,10 +114,7 @@ int main(int argc, const char** argv) {
                     std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "listen callback called for login " << login << std::endl;
                     for (const auto& value : values) {
                         std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Found value: " << *value << ", " << (expired ? "expired" : "added") << std::endl;
-                        std::string address;
-                        for (const char& x : value->data) {
-                            address += x;
-                        }
+                        std::string address{value->data.begin(), value->data.end()};
                         std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Found address: " << address << std::endl;
                         if (!expired) {
                             std::size_t pos = address.find(':');

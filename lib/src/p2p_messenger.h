@@ -55,11 +55,11 @@ private slots:
 private:
     Ui::P2PMessenger *ui;
 
-    std::uint16_t dht_port = 3001;
-    std::string my_ip = "127.0.0.1";
-    std::uint16_t my_port = 3101;
-    std::string my_login = "a1";
-    std::string destination_login = "b1";
+    std::uint16_t dht_port; 
+    std::string my_ip;
+    std::uint16_t my_port; 
+    std::string my_login;
+    std::string destination_login;
 
     DhtIpResolver dht_ip_resolver;
 

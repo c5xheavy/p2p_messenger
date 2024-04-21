@@ -16,10 +16,16 @@
 P2PMessenger::P2PMessenger(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::P2PMessenger)
+    , dht_port{3001}
+    , my_ip{"127.0.0.1"}
+    , my_port{3101}
+    , my_login{"a1"}
+    , destination_login{"b1"}
     , dht_ip_resolver{dht_port}
     , num_threads{4}
     , io_context{static_cast<int>(num_threads)}
     , work_guard{net::make_work_guard(io_context)}
+    , threads{}
     , message_receiver{io_context, my_port}
     , message_sender{io_context, dht_ip_resolver, my_login}
 {
@@ -32,13 +38,6 @@ P2PMessenger::P2PMessenger(QWidget *parent)
     dht_ip_resolver.listen(destination_login);
     dht_ip_resolver.listen(my_login);
 
-    // const unsigned num_threads = std::thread::hardware_concurrency();
-
-    //net::io_context io_context;
-
-    // net::executor_work_guard<net::io_context::executor_type> work_guard = net::make_work_guard(io_context);
-
-    // std::vector<std::thread> threads;
     threads.reserve(num_threads);
     for (std::size_t i = 0; i < num_threads; ++i) {
         threads.emplace_back([this] {
@@ -48,11 +47,7 @@ P2PMessenger::P2PMessenger(QWidget *parent)
         });
     }
 
-    //udp::socket receive_socket{io_context, udp::endpoint{udp::v4(), my_port}};
-
     message_receiver.start();
-
-    //udp::socket send_socket{io_context, udp::v4()};
 }
 
 P2PMessenger::~P2PMessenger()

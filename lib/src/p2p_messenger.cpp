@@ -30,8 +30,10 @@ P2PMessenger::P2PMessenger(QWidget *parent)
         std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Received message from " << source_login << ": " << message << std::endl;
         ui->chatHistoryView->append(QString::fromStdString(source_login + ": " + message));
     }}
-    , message_sender{io_context, dht_ip_resolver, my_login}
-{
+    , message_sender{io_context, dht_ip_resolver, my_login, [this](const std::string& source_login, const std::string& message) {
+        std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Received message from " << source_login << ": " << message << std::endl;
+        ui->chatHistoryView->append(QString::fromStdString(source_login + ": " + message));
+    }} {
     ui->setupUi(this);
 
     // put data on the dht

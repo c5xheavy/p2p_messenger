@@ -12,11 +12,15 @@
 #include "message.h"
 #include "message_serializer.h"
 
-MessageSender::MessageSender(net::io_context& io_context, DhtIpResolver& dht_ip_resolver, const std::string& source_login)
+namespace net = boost::asio;
+using net::ip::udp;
+
+MessageSender::MessageSender(net::io_context& io_context, DhtIpResolver& dht_ip_resolver, const std::string& source_login, SendMessageHandler handler)
     : io_context_{io_context}
     , dht_ip_resolver_{dht_ip_resolver}
     , source_login_{source_login}
-    , socket_{io_context, udp::v4()} {
+    , socket_{io_context, udp::v4()} 
+    , handler_{handler} {
 }
 
 MessageSender::~MessageSender() {
@@ -49,6 +53,7 @@ void MessageSender::send_message(const std::string& destination_login, const std
         udp::endpoint endpoint{net::ip::make_address(destination_ip), destination_port};
         std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Send message to " << destination_ip << ':' << destination_port << std::endl;
         socket_.send_to(net::buffer(buffer.get(), buffer_size), endpoint);
+        handler_(source_login_, text);
     } catch (std::exception& e) {
         std::cerr << "Exception in send_message: " << e.what() << std::endl;
     }

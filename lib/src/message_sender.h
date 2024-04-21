@@ -13,8 +13,9 @@ namespace net = boost::asio;
 using net::ip::udp;
 
 class MessageSender {
+    using SendMessageHandler = std::function<void(const std::string&, const std::string&)>;
 public:
-    MessageSender(net::io_context& io_context, DhtIpResolver& dht_ip_resolver, const std::string& source_login);
+    MessageSender(net::io_context& io_context, DhtIpResolver& dht_ip_resolver, const std::string& source_login, SendMessageHandler handler);
     ~MessageSender();
 
     void send_message(const std::string& destination_login, const std::string& text);
@@ -27,6 +28,7 @@ private:
     DhtIpResolver& dht_ip_resolver_;
     std::string source_login_;
     udp::socket socket_;
+    SendMessageHandler handler_;
 };
 
 #endif // MESSAGE_SENDER_H

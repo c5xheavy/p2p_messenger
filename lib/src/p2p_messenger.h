@@ -13,6 +13,7 @@
 #include <string>
 #include <syncstream>
 #include <thread>
+#include <utility>
 #include <vector>
 
 #include <boost/asio.hpp>
@@ -20,6 +21,7 @@
 
 #include "dht_ip_resolver.h"
 #include "message.h"
+#include "message_sender.h"
 #include "message_serializer.h"
 #include "message_deserializer.h"
 
@@ -41,10 +43,6 @@ public:
     P2PMessenger(QWidget *parent = nullptr);
     ~P2PMessenger();
 
-    std::pair<std::string, std::uint16_t> get_ip_and_port_from_address(const std::string& address);
-
-    void send_message(udp::socket& socket, const std::string& destination_login, const std::string& text);
-
 private:
     void on_send_message();
 
@@ -62,7 +60,7 @@ private:
     std::string my_login = "a1";
     std::string destination_login = "b1";
 
-    DhtIpResolver dht_ip_resolver{dht_port};
+    DhtIpResolver dht_ip_resolver;
 
     const unsigned num_threads;
 
@@ -74,7 +72,7 @@ private:
 
     udp::socket receive_socket;
 
-    udp::socket send_socket;
+    MessageSender message_sender;
 
     std::function<void(const sys::error_code&)> async_wait_handler = [this](const sys::error_code& ec) {
         std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Got message" << std::endl;

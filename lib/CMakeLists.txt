@@ -26,6 +26,8 @@ add_library(p2p_messenger_lib STATIC
     src/payload_deserializer.h
     src/payload_deserializer.cpp
     src/message.h
+    src/message_sender.h
+    src/message_sender.cpp
     src/message_serializer.h
     src/message_serializer.cpp
     src/message_deserializer.h

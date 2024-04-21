@@ -15,10 +15,11 @@ namespace net = boost::asio;
 using net::ip::udp;
 namespace sys = boost::system;
 
-MessageReceiver::MessageReceiver(net::io_context& io_context, std::uint16_t port, ReceiveMessageHandler&& handler)
+MessageReceiver::MessageReceiver(net::io_context& io_context, std::uint16_t port, ReceiveMessageHandler handler)
     : io_context_{io_context}
-    , socket_{io_context, udp::endpoint(udp::v4(), port)} {
-    start_async_receive(std::move(handler));
+    , socket_{io_context, udp::endpoint(udp::v4(), port)}
+    , handler_{handler} {
+    start_async_receive();
 }
 
 MessageReceiver::~MessageReceiver() {    
@@ -29,16 +30,16 @@ MessageReceiver::~MessageReceiver() {
     std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "MessageReceiver destructor finished" << std::endl;
 }
 
-void MessageReceiver::start_async_receive(ReceiveMessageHandler&& handler) {
-    async_wait(std::move(handler));
+void MessageReceiver::start_async_receive() {
+    async_wait();
 }
 
-void MessageReceiver::async_wait(ReceiveMessageHandler&& handler) {
+void MessageReceiver::async_wait() {
     std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Waiting for incoming message" << std::endl;
-    socket_.async_wait(udp::socket::wait_read, [this, handler = std::move(handler)] (const sys::error_code& ec) mutable { async_wait_handler(std::move(handler), ec); });
+    socket_.async_wait(udp::socket::wait_read, std::bind(&MessageReceiver::async_wait_handler, this, std::placeholders::_1));
 }
 
-void MessageReceiver::async_wait_handler(ReceiveMessageHandler&& handler, const sys::error_code& ec) {
+void MessageReceiver::async_wait_handler(const sys::error_code& ec) {
     std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Got message" << std::endl;
     if (!ec) {
         std::size_t bytes_available{socket_.available()};
@@ -61,10 +62,10 @@ void MessageReceiver::async_wait_handler(ReceiveMessageHandler&& handler, const 
         std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << message.payload.text << std::endl;
         std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "End of message" << std::endl;
 
-        handler(message.source_login, message.payload.text);
+        handler_(message.source_login, message.payload.text);
     } else {
         std::osyncstream(std::cerr) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Wait message error: " << ec.what() << std::endl;
     }
 
-    async_wait(std::move(handler));
+    async_wait();
 }

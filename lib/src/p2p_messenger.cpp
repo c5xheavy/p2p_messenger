@@ -26,7 +26,10 @@ P2PMessenger::P2PMessenger(QWidget *parent)
     , io_context{static_cast<int>(num_threads)}
     , work_guard{net::make_work_guard(io_context)}
     , threads{}
-    , message_receiver{io_context, my_port}
+    , message_receiver{io_context, my_port, [this](const std::string& source_login, const std::string& message) {
+        std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Received message from " << source_login << ": " << message << std::endl;
+        ui->chatHistoryView->append(QString::fromStdString(source_login + ": " + message));
+    }}
     , message_sender{io_context, dht_ip_resolver, my_login}
 {
     ui->setupUi(this);
@@ -46,11 +49,6 @@ P2PMessenger::P2PMessenger(QWidget *parent)
             std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Stopping io_context thread" << std::endl;
         });
     }
-
-    message_receiver.start_async_receive([this](const std::string& source_login, const std::string& message) {
-        std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Received message from " << source_login << ": " << message << std::endl;
-        ui->chatHistoryView->append(QString::fromStdString(source_login + ": " + message));
-    });
 }
 
 P2PMessenger::~P2PMessenger()

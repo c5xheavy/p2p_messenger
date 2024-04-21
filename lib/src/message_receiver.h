@@ -15,12 +15,11 @@ namespace sys = boost::system;
 class MessageReceiver {
     using ReceiveMessageHandler = std::function<void(const std::string&, const std::string&)>;
 public:
-    MessageReceiver(net::io_context& io_context, std::uint16_t port);
+    MessageReceiver(net::io_context& io_context, std::uint16_t port, ReceiveMessageHandler&& handler);
     ~MessageReceiver();
 
-    void start_async_receive(ReceiveMessageHandler&& handler);
-
 private:
+    void start_async_receive(ReceiveMessageHandler&& handler);
     void async_wait(ReceiveMessageHandler&& handler);
     void async_wait_handler(ReceiveMessageHandler&& handler, const sys::error_code& ec);
 

@@ -105,3 +105,13 @@ void P2PMessenger::on_messageEdit_returnPressed()
     std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Return key is pressed" << std::endl;
     on_send_message();
 }
+
+void P2PMessenger::on_loginButton_clicked()
+{
+    ui_->stackedWidget->setCurrentIndex(1);
+}
+
+void P2PMessenger::on_logoutButton_clicked()
+{
+    ui_->stackedWidget->setCurrentIndex(0);
+}

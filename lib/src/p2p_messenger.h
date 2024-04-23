@@ -44,13 +44,17 @@ public:
     P2PMessenger(QWidget *parent = nullptr);
     ~P2PMessenger();
 
-private:
-    void on_send_message();
-
 private slots:
+    void on_loginButton_clicked();
+
+    void on_logoutButton_clicked();
+
     void on_sendButton_clicked();
 
     void on_messageEdit_returnPressed();
+
+private:
+    void on_send_message();
 
 private:
     Ui::P2PMessenger *ui_;

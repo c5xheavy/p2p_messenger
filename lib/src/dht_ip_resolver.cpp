@@ -23,33 +23,33 @@ namespace sys = boost::system;
 DhtIpResolver::DhtIpResolver(net::io_context& io_context, std::uint16_t port)
     : io_context_{io_context}
     , timer_{io_context}
-    , node{}
-    , login_to_address{}
-    , login_to_address_mutex{}
-    , login_to_token{}
-    , login_to_token_mutex{} {
+    , node_{}
+    , login_to_address_{}
+    , login_to_address_mutex_{}
+    , login_to_token_{}
+    , login_to_token_mutex_{} {
     // Launch a dht node on a new thread, using a
     // generated RSA key pair, and listen on port.
-    node.run(port, dht::crypto::generateIdentity(), true);
+    node_.run(port, dht::crypto::generateIdentity(), true);
 
     // Join the network through any running node,
     // here using a known bootstrap node.
-    node.bootstrap("bootstrap.jami.net", "4222");
+    node_.bootstrap("bootstrap.jami.net", "4222");
 }
 
 DhtIpResolver::~DhtIpResolver() {
     std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "DhtIpResolver destructor called" << std::endl;
     {
-        std::lock_guard<std::mutex> lock{login_to_token_mutex};
-        for (auto& [login, token] : login_to_token) {
+        std::lock_guard<std::mutex> lock{login_to_token_mutex_};
+        for (auto& [login, token] : login_to_token_) {
             std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Cancelling listen for " << login << std::endl;
             auto key = dht::InfoHash::get(login);
-            node.cancelListen(key, std::move(token));
+            node_.cancelListen(key, std::move(token));
             std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Cancelled listen" << std::endl;
         }
     }
     std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Joining node" << std::endl;
-    node.join();
+    node_.join();
     std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Joined node" << std::endl;
     std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "DhtIpResolver destructor finished" << std::endl;
 }
@@ -60,7 +60,7 @@ void DhtIpResolver::put(const std::string& login, const std::string& ip, std::ui
 }
 
 void DhtIpResolver::put(std::shared_ptr<std::string> login, std::shared_ptr<std::string> address, net::system_timer::duration interval) {
-    node.put(dht::InfoHash::get(*login), {(const std::uint8_t*)address->data(), address->size()});
+    node_.put(dht::InfoHash::get(*login), {(const std::uint8_t*)address->data(), address->size()});
     timer_.expires_after(interval);
     timer_.async_wait([this, login, address, interval](const sys::error_code& ec) {
         if (ec) {
@@ -72,7 +72,7 @@ void DhtIpResolver::put(std::shared_ptr<std::string> login, std::shared_ptr<std:
 
 void DhtIpResolver::listen(const std::string& login) {
     auto key = dht::InfoHash::get(login);
-    std::future<size_t> token = node.listen(key,
+    std::future<size_t> token = node_.listen(key,
         [this, login](const std::vector<std::shared_ptr<dht::Value>>& values, bool expired) {
             std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "listen callback called for login " << login << std::endl;
             for (const auto& value : values) {
@@ -86,8 +86,8 @@ void DhtIpResolver::listen(const std::string& login) {
                     }
                     std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Update destination address to " << address << std::endl;
                     {
-                        std::lock_guard<std::mutex> lock{login_to_address_mutex};
-                        login_to_address[login] = address;
+                        std::lock_guard<std::mutex> lock{login_to_address_mutex_};
+                        login_to_address_[login] = address;
                     }
                 }
             }
@@ -95,15 +95,15 @@ void DhtIpResolver::listen(const std::string& login) {
         }
     );
     {
-        std::lock_guard<std::mutex> lock{login_to_token_mutex};
-        login_to_token[login] = std::move(token);
+        std::lock_guard<std::mutex> lock{login_to_token_mutex_};
+        login_to_token_[login] = std::move(token);
     }
 }
 
 std::optional<std::string> DhtIpResolver::Resolve(const std::string& login) {
-    std::lock_guard<std::mutex> lock{login_to_address_mutex};
-    auto it = login_to_address.find(login);
-    if (it == login_to_address.end()) {
+    std::lock_guard<std::mutex> lock{login_to_address_mutex_};
+    auto it = login_to_address_.find(login);
+    if (it == login_to_address_.end()) {
         std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Destination address is not set" << std::endl;
         return std::nullopt;
     }

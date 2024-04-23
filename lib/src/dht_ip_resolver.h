@@ -36,13 +36,13 @@ private:
     net::io_context& io_context_;
     net::system_timer timer_;
 
-    dht::DhtRunner node;
+    dht::DhtRunner node_;
 
-    std::map<std::string, std::string> login_to_address;
-    std::mutex login_to_address_mutex;
+    std::map<std::string, std::string> login_to_address_;
+    std::mutex login_to_address_mutex_;
 
-    std::map<std::string, std::future<std::size_t>> login_to_token;
-    std::mutex login_to_token_mutex;
+    std::map<std::string, std::future<std::size_t>> login_to_token_;
+    std::mutex login_to_token_mutex_;
 };
 
 #endif // DHT_IP_RESOLVER_H

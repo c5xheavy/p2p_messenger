@@ -53,27 +53,27 @@ private slots:
     void on_messageEdit_returnPressed();
 
 private:
-    Ui::P2PMessenger *ui;
+    Ui::P2PMessenger *ui_;
 
-    std::uint16_t dht_port; 
-    std::string my_ip;
-    std::uint16_t my_port; 
-    std::string my_login;
-    std::string destination_login;
+    std::uint16_t dht_port_; 
+    std::string my_ip_;
+    std::uint16_t my_port_; 
+    std::string my_login_;
+    std::string destination_login_;
 
-    const std::size_t num_threads;
+    const std::size_t num_threads_;
 
-    net::io_context io_context;
+    net::io_context io_context_;
 
-    net::executor_work_guard<net::io_context::executor_type> work_guard;
+    net::executor_work_guard<net::io_context::executor_type> work_guard_;
 
-    DhtIpResolver dht_ip_resolver;
+    DhtIpResolver dht_ip_resolver_;
 
-    std::vector<std::jthread> threads;
+    std::vector<std::jthread> threads_;
 
-    MessageReceiver message_receiver;
+    MessageReceiver message_receiver_;
 
-    MessageSender message_sender;
+    MessageSender message_sender_;
 };
 
 #endif // P2P_MESSENGER_H

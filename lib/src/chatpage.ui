@@ -19,10 +19,23 @@
      <item>
       <layout class="QHBoxLayout" name="searchLoginHorizontalLayout">
        <item>
-        <widget class="QLineEdit" name="searchLoginLineEdit"/>
+        <widget class="QLineEdit" name="searchLoginLineEdit">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
        </item>
        <item>
         <widget class="QPushButton" name="searchLoginPushButton">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="text">
           <string>Search</string>
          </property>
@@ -31,7 +44,14 @@
       </layout>
      </item>
      <item>
-      <widget class="QListView" name="contactsListView"/>
+      <widget class="QListView" name="contactsListView">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>

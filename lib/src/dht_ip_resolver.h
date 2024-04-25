@@ -19,7 +19,9 @@ namespace net = boost::asio;
 
 class DhtIpResolver{
 public:
-    DhtIpResolver(net::io_context& io_context, std::uint16_t port);
+    using ListenLoginHandler = std::function<void(const std::string&, const std::string&)>;
+public:
+    DhtIpResolver(net::io_context& io_context, std::uint16_t port, ListenLoginHandler handler);
 
     ~DhtIpResolver();
 
@@ -43,6 +45,8 @@ private:
 
     std::map<std::string, std::future<std::size_t>> login_to_token_;
     std::mutex login_to_token_mutex_;
+
+    ListenLoginHandler handler_;
 };
 
 #endif // DHT_IP_RESOLVER_H

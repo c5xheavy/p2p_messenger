@@ -35,11 +35,12 @@ public:
     P2PMessengerImpl(const std::string& my_login, std::uint16_t dht_port,
                      const std::string& my_ip, std::uint16_t my_port,
                      MessageSender::SendMessageHandler send_message_handler,
-                     MessageReceiver::ReceiveMessageHandler receive_message_handler);
+                     MessageReceiver::ReceiveMessageHandler receive_message_handler,
+                     DhtIpResolver::ListenLoginHandler listen_login_handler);
     ~P2PMessengerImpl();
 
 public:
-    void on_send_message(const std::string& message);
+    void on_send_message(const std::string& login, const std::string& message);
 
     std::optional<std::string> on_search_login(const std::string& login);
 
@@ -50,7 +51,6 @@ private:
     std::string my_ip_;
     std::uint16_t my_port_; 
     std::string my_login_;
-    std::string destination_login_;
 
     const std::size_t num_threads_;
 

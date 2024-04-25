@@ -9,16 +9,16 @@
 P2PMessengerImpl::P2PMessengerImpl(const std::string& my_login, std::uint16_t dht_port,
                                    const std::string& my_ip, std::uint16_t my_port,
                                    MessageSender::SendMessageHandler send_message_handler,
-                                   MessageReceiver::ReceiveMessageHandler receive_message_handler)
+                                   MessageReceiver::ReceiveMessageHandler receive_message_handler,
+                                   DhtIpResolver::ListenLoginHandler listen_login_handler)
     : dht_port_{dht_port}
     , my_ip_{my_ip}
     , my_port_{my_port}
     , my_login_{my_login}
-    , destination_login_{"b1"}
     , num_threads_{4}
     , io_context_{static_cast<int>(num_threads_)}
     , work_guard_{net::make_work_guard(io_context_)}
-    , dht_ip_resolver_{io_context_, dht_port_}
+    , dht_ip_resolver_{io_context_, dht_port_, listen_login_handler}
     , threads_{}
     , message_receiver_{io_context_, my_port_, send_message_handler}
     , message_sender_{io_context_, dht_ip_resolver_, my_login_, receive_message_handler} {
@@ -26,7 +26,6 @@ P2PMessengerImpl::P2PMessengerImpl(const std::string& my_login, std::uint16_t dh
     dht_ip_resolver_.put(my_login_, my_ip_, my_port_);
 
     // listen for data on the dht
-    dht_ip_resolver_.listen(destination_login_);
     dht_ip_resolver_.listen(my_login_);
 
     threads_.reserve(num_threads_);
@@ -54,21 +53,26 @@ P2PMessengerImpl::~P2PMessengerImpl()
     std::cout << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "P2PMessengerImpl destructor finished" << std::endl;
 }
 
-void P2PMessengerImpl::on_send_message(const std::string& message) {
+void P2PMessengerImpl::on_send_message(const std::string& login, const std::string& message) {
     std::cout << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "on_send_message called" << std::endl;
+    if (login.empty()) {
+        std::cout << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Login is empty" << std::endl;
+        return;
+    }
     if (message.empty()) {
         std::cout << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Message is empty" << std::endl;
         return;
     }
+    std::cout << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Sending message to " << login << std::endl;
     std::cout << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Sending message: " << message << std::endl;
-    net::post(io_context_, [this, message]() {{
-            std::optional<std::string> destination_address = dht_ip_resolver_.Resolve(destination_login_);
+    net::post(io_context_, [this, login, message]() {{
+            std::optional<std::string> destination_address = dht_ip_resolver_.Resolve(login);
             if (destination_address) {
                 std::cout << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Destination address is set" << std::endl;
-                std::cout << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Sending message to " << destination_login_ << '\n';
+                std::cout << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Sending message to " << login << '\n';
                 std::cout << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Calling send_message" << '\n';
-                net::post(io_context_, [this, message]() {
-                    message_sender_.send_message(destination_login_, message);
+                net::post(io_context_, [this, login, message]() {
+                    message_sender_.send_message(login, message);
                 });
                 std::cout << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Called send_message" << '\n';
             } else {
@@ -99,5 +103,5 @@ void P2PMessengerImpl::on_listen(const std::string& login) {
         std::cout << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Login is empty" << std::endl;
         return;
     }
-    dht_ip_resolver_.listen(destination_login_);
+    dht_ip_resolver_.listen(login);
 }

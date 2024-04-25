@@ -39,6 +39,14 @@ void ChatPage::on_SuccessfulLogin_ChatPage(const std::string& login, std::uint16
         [this](const std::string& source_login, const std::string& message) {
             std::cout << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Send message: " << message << std::endl;
             ui->chatTextEdit->append(QString::fromStdString(source_login + ": " + message));
+        },
+        [this](const std::string& login, const std::string& address) {
+            std::cout << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Received address for login " << login << ": " << address << std::endl;
+            std::string prev_login = ui->destinationLoginLabel->text().toStdString();
+            if (prev_login.empty() || prev_login == login) {
+                std::osyncstream(std::cout) << "Updating destination address" << std::endl;
+                ui->destinationAddressLabel->setText(QString::fromStdString(address));
+            }
         }
     );
     std::osyncstream(std::cout) << "P2P Messenger created!" << std::endl;
@@ -55,26 +63,36 @@ void ChatPage::on_logoutPushButton_clicked()
 void ChatPage::on_sendPushButton_clicked()
 {
     std::osyncstream(std::cout) << "Send button clicked!" << std::endl;
+    std::string login = ui->destinationLoginLabel->text().toStdString();
+    if (login.empty()) {
+        std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Destination login is empty" << std::endl;
+        return;
+    }
     std::string message = ui->messageLineEdit->text().toStdString();
     if (message.empty()) {
-        std::cout << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Message is empty" << std::endl;
+        std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Message is empty" << std::endl;
         return;
     }
     ui->messageLineEdit->clear();
-    p2p_messenger_impl_->on_send_message(message);
+    p2p_messenger_impl_->on_send_message(login, message);
 }
 
 
 void ChatPage::on_messageLineEdit_returnPressed()
 {
     std::osyncstream(std::cout) << "Return pressed!" << std::endl;
+    std::string login = ui->destinationLoginLabel->text().toStdString();
+    if (login.empty()) {
+        std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Destination login is empty" << std::endl;
+        return;
+    }
     std::string message = ui->messageLineEdit->text().toStdString();
     if (message.empty()) {
-        std::cout << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Message is empty" << std::endl;
+        std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Message is empty" << std::endl;
         return;
     }
     ui->messageLineEdit->clear();
-    p2p_messenger_impl_->on_send_message(message);
+    p2p_messenger_impl_->on_send_message(login, message);
 }
 
 void ChatPage::on_searchLoginPushButton_clicked()
@@ -87,6 +105,7 @@ void ChatPage::on_searchLoginPushButton_clicked()
     }
     ui->searchLoginLineEdit->clear();
     ui->destinationLoginLabel->setText(QString::fromStdString(login));
+    p2p_messenger_impl_->on_listen(login);
     std::optional<std::string> address = p2p_messenger_impl_->on_search_login(login);
     if (address) {
         ui->destinationAddressLabel->setText(QString::fromStdString(*address));

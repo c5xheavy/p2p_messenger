@@ -20,14 +20,15 @@
 namespace net = boost::asio;
 namespace sys = boost::system;
 
-DhtIpResolver::DhtIpResolver(net::io_context& io_context, std::uint16_t port)
+DhtIpResolver::DhtIpResolver(net::io_context& io_context, std::uint16_t port, ListenLoginHandler handler)
     : io_context_{io_context}
     , timer_{io_context}
     , node_{}
     , login_to_address_{}
     , login_to_address_mutex_{}
     , login_to_token_{}
-    , login_to_token_mutex_{} {
+    , login_to_token_mutex_{}
+    , handler_{handler} {
     // Launch a dht node on a new thread, using a
     // generated RSA key pair, and listen on port.
     node_.run(port, dht::crypto::generateIdentity(), true);
@@ -95,6 +96,7 @@ void DhtIpResolver::listen(const std::string& login) {
                         std::lock_guard<std::mutex> lock{login_to_address_mutex_};
                         login_to_address_[login] = address;
                     }
+                    handler_(login, address);
                 }
             }
             return true; // keep listening

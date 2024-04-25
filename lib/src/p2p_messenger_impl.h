@@ -43,6 +43,8 @@ public:
 
     std::optional<std::string> on_search_login(const std::string& login);
 
+    void on_listen(const std::string& login);
+
 private:
     std::uint16_t dht_port_; 
     std::string my_ip_;

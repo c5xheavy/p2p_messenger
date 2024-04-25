@@ -92,3 +92,12 @@ std::optional<std::string> P2PMessengerImpl::on_search_login(const std::string& 
     }
     return address;
 }
+
+void P2PMessengerImpl::on_listen(const std::string& login) {
+    std::cout << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "on_listen called" << std::endl;
+    if (login.empty()) {
+        std::cout << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Login is empty" << std::endl;
+        return;
+    }
+    dht_ip_resolver_.listen(destination_login_);
+}

@@ -41,6 +41,8 @@ public:
 public:
     void on_send_message(const std::string& message);
 
+    std::optional<std::string> on_search_login(const std::string& login);
+
 private:
     std::uint16_t dht_port_; 
     std::string my_ip_;

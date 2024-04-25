@@ -33,6 +33,8 @@ private slots:
 
     void on_messageLineEdit_returnPressed();
 
+    void on_searchLoginPushButton_clicked();
+
 private:
     Ui::ChatPage *ui;
 

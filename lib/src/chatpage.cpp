@@ -77,3 +77,21 @@ void ChatPage::on_messageLineEdit_returnPressed()
     p2p_messenger_impl_->on_send_message(message);
 }
 
+void ChatPage::on_searchLoginPushButton_clicked()
+{
+    std::osyncstream(std::cout) << "Search button clicked!" << std::endl;
+    std::string login = ui->searchLoginLineEdit->text().toStdString();
+    if (login.empty()) {
+        std::cout << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Login is empty" << std::endl;
+        return;
+    }
+    ui->searchLoginLineEdit->clear();
+    ui->destinationLoginLabel->setText(QString::fromStdString(login));
+    std::optional<std::string> address = p2p_messenger_impl_->on_search_login(login);
+    if (address) {
+        ui->destinationAddressLabel->setText(QString::fromStdString(*address));
+    } else {
+        ui->destinationAddressLabel->setText("Not found");
+    }
+}
+

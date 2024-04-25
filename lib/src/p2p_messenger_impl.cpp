@@ -76,3 +76,19 @@ void P2PMessengerImpl::on_send_message(const std::string& message) {
             }
         }});
 }
+
+std::optional<std::string> P2PMessengerImpl::on_search_login(const std::string& login) {
+    std::cout << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "on_search_login called" << std::endl;
+    if (login.empty()) {
+        std::cout << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Login is empty" << std::endl;
+        return std::nullopt;
+    }
+    std::cout << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Searching for login: " << login << std::endl;
+    std::optional<std::string> address = dht_ip_resolver_.Resolve(login);
+    if (address) {
+        std::cout << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Found address: " << *address << std::endl;
+    } else {
+        std::cout << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Address not found" << std::endl;
+    }
+    return address;
+}

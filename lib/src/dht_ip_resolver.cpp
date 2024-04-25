@@ -71,6 +71,12 @@ void DhtIpResolver::put(std::shared_ptr<std::string> login, std::shared_ptr<std:
 }
 
 void DhtIpResolver::listen(const std::string& login) {
+    {
+        std::lock_guard<std::mutex> lock{login_to_address_mutex_};
+        if (login_to_address_.find(login) != login_to_address_.end()) {
+            return;
+        }
+    }
     auto key = dht::InfoHash::get(login);
     std::future<size_t> token = node_.listen(key,
         [this, login](const std::vector<std::shared_ptr<dht::Value>>& values, bool expired) {

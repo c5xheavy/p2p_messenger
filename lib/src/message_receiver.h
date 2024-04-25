@@ -13,6 +13,7 @@ using net::ip::udp;
 namespace sys = boost::system;
 
 class MessageReceiver {
+public:
     using ReceiveMessageHandler = std::function<void(const std::string&, const std::string&)>;
 public:
     MessageReceiver(net::io_context& io_context, std::uint16_t port, ReceiveMessageHandler handler);

@@ -1,4 +1,4 @@
-#include "p2p_messenger.h"
+#include "p2pmessenger.h"
 
 #include <QApplication>
 

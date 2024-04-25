@@ -86,11 +86,21 @@ set(CMAKE_AUTORCC ON)
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
+
 set(PROJECT_SOURCES
         src/main.cpp
-        src/p2p_messenger.cpp
-        src/p2p_messenger.h
-        src/p2p_messenger.ui
+        src/p2pmessenger.cpp
+        src/p2pmessenger.h
+        src/p2pmessenger.ui
+        src/chatpage.cpp
+        src/chatpage.h
+        src/chatpage.ui
+        src/loginpage.cpp
+        src/loginpage.h
+        src/loginpage.ui
+        src/p2p_messenger_impl.h
+        src/p2p_messenger_impl.cpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

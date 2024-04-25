@@ -1,5 +1,5 @@
-#ifndef P2P_MESSENGER_H
-#define P2P_MESSENGER_H
+#ifndef P2P_MESSENGER_IMPL_H
+#define P2P_MESSENGER_IMPL_H
 
 #include <array>
 #include <atomic>
@@ -11,7 +11,6 @@
 #include <memory>
 #include <stdexcept>
 #include <string>
-#include <syncstream>
 #include <thread>
 #include <utility>
 #include <vector>
@@ -26,39 +25,23 @@
 #include "message_serializer.h"
 #include "message_deserializer.h"
 
-#include <QMainWindow>
-
 namespace net = boost::asio;
 using net::ip::udp;
 namespace sys = boost::system;
 
-QT_BEGIN_NAMESPACE
-namespace Ui { class P2PMessenger; }
-QT_END_NAMESPACE
-
-class P2PMessenger : public QMainWindow
+class P2PMessengerImpl
 {
-    Q_OBJECT
+public:
+    P2PMessengerImpl(const std::string& my_login, std::uint16_t dht_port,
+                     const std::string& my_ip, std::uint16_t my_port,
+                     MessageSender::SendMessageHandler send_message_handler,
+                     MessageReceiver::ReceiveMessageHandler receive_message_handler);
+    ~P2PMessengerImpl();
 
 public:
-    P2PMessenger(QWidget *parent = nullptr);
-    ~P2PMessenger();
-
-private slots:
-    void on_loginButton_clicked();
-
-    void on_logoutButton_clicked();
-
-    void on_sendButton_clicked();
-
-    void on_messageEdit_returnPressed();
+    void on_send_message(const std::string& message);
 
 private:
-    void on_send_message();
-
-private:
-    Ui::P2PMessenger *ui_;
-
     std::uint16_t dht_port_; 
     std::string my_ip_;
     std::uint16_t my_port_; 
@@ -80,4 +63,4 @@ private:
     MessageSender message_sender_;
 };
 
-#endif // P2P_MESSENGER_H
+#endif // P2P_MESSENGER_IMPL_H

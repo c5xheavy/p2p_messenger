@@ -15,7 +15,25 @@
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout_2">
    <item>
-    <widget class="QListView" name="contactsListView"/>
+    <layout class="QVBoxLayout" name="contactsVerticalLayout">
+     <item>
+      <layout class="QHBoxLayout" name="searchLoginHorizontalLayout">
+       <item>
+        <widget class="QLineEdit" name="searchLoginLineEdit"/>
+       </item>
+       <item>
+        <widget class="QPushButton" name="searchLoginPushButton">
+         <property name="text">
+          <string>Search</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <widget class="QListView" name="contactsListView"/>
+     </item>
+    </layout>
    </item>
    <item>
     <layout class="QVBoxLayout" name="chatVerticalLayout">

@@ -36,8 +36,6 @@ add_library(p2p_messenger_lib STATIC
     src/message_deserializer.cpp
     src/dht_ip_resolver.h
     src/dht_ip_resolver.cpp
-    src/static_file_ip_resolver.h
-    src/static_file_ip_resolver.cpp
 )
 
 target_link_libraries(p2p_messenger_lib PRIVATE Threads::Threads)
@@ -68,7 +66,6 @@ add_executable(p2p_messenger_tests
     tests/message_utils.h
     tests/message_utils.cpp
     tests/message_serializer_deserializer_tests.cpp
-    tests/static_file_ip_resolver_tests.cpp
 )
 
 target_link_libraries(p2p_messenger_tests PRIVATE p2p_messenger_lib PRIVATE Catch2::Catch2WithMain)

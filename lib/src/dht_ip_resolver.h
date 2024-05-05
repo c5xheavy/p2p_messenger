@@ -20,14 +20,14 @@ namespace net = boost::asio;
 class DhtIpResolver{
 public:
     using ListenLoginHandler = std::function<void(const std::string&, const std::string&)>;
-public:
+
     DhtIpResolver(net::io_context& io_context, std::uint16_t port, ListenLoginHandler handler);
 
     ~DhtIpResolver();
 
-    void put(const std::string& login, const std::string& ip, std::uint16_t port, net::system_timer::duration interval = std::chrono::seconds{60});
+    void Put(const std::string& login, const std::string& ip, std::uint16_t port, net::system_timer::duration interval = std::chrono::seconds{60});
 
-    void listen(const std::string& login);
+    void Listen(const std::string& login);
 
     std::optional<std::string> Resolve(const std::string& login);
 

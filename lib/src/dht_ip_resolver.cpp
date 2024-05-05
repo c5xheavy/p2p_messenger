@@ -55,7 +55,7 @@ DhtIpResolver::~DhtIpResolver() {
     std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "DhtIpResolver destructor finished" << std::endl;
 }
 
-void DhtIpResolver::put(const std::string& login, const std::string& ip, std::uint16_t port, net::system_timer::duration interval) {
+void DhtIpResolver::Put(const std::string& login, const std::string& ip, std::uint16_t port, net::system_timer::duration interval) {
     std::string address{ip + ":" + std::to_string(port)};
     put(std::make_shared<std::string>(login), std::make_shared<std::string>(address), interval);
 }
@@ -71,7 +71,7 @@ void DhtIpResolver::put(std::shared_ptr<std::string> login, std::shared_ptr<std:
     });
 }
 
-void DhtIpResolver::listen(const std::string& login) {
+void DhtIpResolver::Listen(const std::string& login) {
     {
         std::lock_guard<std::mutex> lock{login_to_address_mutex_};
         if (login_to_address_.find(login) != login_to_address_.end()) {

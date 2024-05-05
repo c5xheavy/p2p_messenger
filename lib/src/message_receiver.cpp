@@ -19,7 +19,7 @@ MessageReceiver::MessageReceiver(net::io_context& io_context, std::uint16_t port
     : io_context_{io_context}
     , socket_{io_context, udp::endpoint(udp::v4(), port)}
     , handler_{handler} {
-    async_wait();
+    AsyncWait();
 }
 
 MessageReceiver::~MessageReceiver() {    
@@ -30,12 +30,12 @@ MessageReceiver::~MessageReceiver() {
     std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "MessageReceiver destructor finished" << std::endl;
 }
 
-void MessageReceiver::async_wait() {
+void MessageReceiver::AsyncWait() {
     std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Waiting for incoming message" << std::endl;
-    socket_.async_wait(udp::socket::wait_read, std::bind(&MessageReceiver::async_wait_handler, this, std::placeholders::_1));
+    socket_.async_wait(udp::socket::wait_read, std::bind(&MessageReceiver::AsyncWaitHandler, this, std::placeholders::_1));
 }
 
-void MessageReceiver::async_wait_handler(const sys::error_code& ec) {
+void MessageReceiver::AsyncWaitHandler(const sys::error_code& ec) {
     std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Got message" << std::endl;
     if (!ec) {
         std::size_t bytes_available{socket_.available()};
@@ -63,5 +63,5 @@ void MessageReceiver::async_wait_handler(const sys::error_code& ec) {
         std::osyncstream(std::cerr) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Wait message error: " << ec.what() << std::endl;
     }
 
-    async_wait();
+    AsyncWait();
 }

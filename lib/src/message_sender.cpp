@@ -31,7 +31,7 @@ MessageSender::~MessageSender() {
     std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "MessageSender destructor finished" << std::endl;
 }
 
-void MessageSender::send_message(const std::string& destination_login, const std::string& text) {
+void MessageSender::SendMessage(const std::string& destination_login, const std::string& text) {
     try {
         Message message {
             1,
@@ -59,7 +59,7 @@ void MessageSender::send_message(const std::string& destination_login, const std
     }
 }
 
-std::pair<std::string, std::uint16_t> MessageSender::get_ip_and_port_from_address(const std::string& address) {
+std::pair<std::string, std::uint16_t> MessageSender::GetIpAndPortFromAddress(const std::string& address) {
     std::size_t pos = address.find(':');
     if (pos == std::string::npos) {
         throw std::invalid_argument{"Invalid address"};

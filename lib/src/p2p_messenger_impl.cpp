@@ -23,10 +23,10 @@ P2PMessengerImpl::P2PMessengerImpl(const std::string& my_login, std::uint16_t dh
     , message_receiver_{io_context_, my_port_, send_message_handler}
     , message_sender_{io_context_, dht_ip_resolver_, my_login_, receive_message_handler} {
     // put data on the dht
-    dht_ip_resolver_.put(my_login_, my_ip_, my_port_);
+    dht_ip_resolver_.Put(my_login_, my_ip_, my_port_);
 
     // listen for data on the dht
-    dht_ip_resolver_.listen(my_login_);
+    dht_ip_resolver_.Listen(my_login_);
 
     threads_.reserve(num_threads_);
     for (std::size_t i = 0; i < num_threads_; ++i) {
@@ -72,7 +72,7 @@ void P2PMessengerImpl::on_send_message(const std::string& login, const std::stri
                 std::cout << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Sending message to " << login << '\n';
                 std::cout << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Calling send_message" << '\n';
                 net::post(io_context_, [this, login, message]() {
-                    message_sender_.send_message(login, message);
+                    message_sender_.SendMessage(login, message);
                 });
                 std::cout << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Called send_message" << '\n';
             } else {
@@ -103,5 +103,5 @@ void P2PMessengerImpl::on_listen(const std::string& login) {
         std::cout << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Login is empty" << std::endl;
         return;
     }
-    dht_ip_resolver_.listen(login);
+    dht_ip_resolver_.Listen(login);
 }

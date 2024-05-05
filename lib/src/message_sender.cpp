@@ -48,7 +48,7 @@ void MessageSender::SendMessage(const std::string& destination_login, const std:
         if (!destination_address) {
             throw std::logic_error{"Destination address is not set"};
         }
-        auto [destination_ip, destination_port]{get_ip_and_port_from_address(*destination_address)};
+        auto [destination_ip, destination_port]{GetIpAndPortFromAddress(*destination_address)};
 
         udp::endpoint endpoint{net::ip::make_address(destination_ip), destination_port};
         std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Send message to " << destination_ip << ':' << destination_port << std::endl;

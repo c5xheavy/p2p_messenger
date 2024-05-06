@@ -11,31 +11,24 @@
 
 P2PMessenger::P2PMessenger(QWidget *parent)
     : QMainWindow(parent)
-    , ui(new Ui::P2PMessenger)
-{
+    , ui(new Ui::P2PMessenger) {
     ui->setupUi(this);
-    connect(ui->loginPage, &LoginPage::on_Login_LoginPage, this, [this](const std::string& login, std::uint16_t dht_port, const std::string& ip, std::uint16_t port) {
-        on_Login_P2PMessenger(login, dht_port, ip, port);
-    });
-    connect(this, &P2PMessenger::on_SuccessfulLogin_P2PMessenger, ui->chatPage, [this](const std::string& login, std::uint16_t dht_port, const std::string& ip, std::uint16_t port) {
-        ui->chatPage->on_SuccessfulLogin_ChatPage(login, dht_port, ip, port);
-    });
+    connect(ui->loginPage, &LoginPage::SendLoginParameters, this, &P2PMessenger::ReceivedLoginParameters);
+    connect(this, &P2PMessenger::SendLoginParameters, ui->chatPage, &ChatPage::ReceivedLoginParameters);
     connect(ui->chatPage, &ChatPage::on_AfterSuccessfulLogin_ChatPage, this, &P2PMessenger::on_AfterSuccessfulLogin_P2PMessenger);
     connect(ui->chatPage, &ChatPage::on_Logout_ChatPage, this, &P2PMessenger::on_Logout_P2PMessenger);
 }
 
-P2PMessenger::~P2PMessenger()
-{
+P2PMessenger::~P2PMessenger() {
     delete ui;
 }
 
-void P2PMessenger::on_Login_P2PMessenger(const std::string& login, std::uint16_t dht_port, const std::string& ip, std::uint16_t port)
-{
+void P2PMessenger::ReceivedLoginParameters(const std::string& login, std::uint16_t dht_port, const std::string& ip, std::uint16_t port) {
     std::osyncstream(std::cout) << "Login: " << login << std::endl;
     std::osyncstream(std::cout) << "DHT Port: " << dht_port << std::endl;
     std::osyncstream(std::cout) << "IP: " << ip << std::endl;
     std::osyncstream(std::cout) << "Port: " << port << std::endl;
-    emit on_SuccessfulLogin_P2PMessenger(login, dht_port, ip, port);
+    emit SendLoginParameters(login, dht_port, ip, port);
     std::osyncstream(std::cout) << "After emit" << std::endl;
 }
 

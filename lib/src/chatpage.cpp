@@ -14,18 +14,15 @@
 
 ChatPage::ChatPage(QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::ChatPage)
-{
+    ui(new Ui::ChatPage) {
     ui->setupUi(this);
 }
 
-ChatPage::~ChatPage()
-{
+ChatPage::~ChatPage() {
     delete ui;
 }
 
-void ChatPage::on_SuccessfulLogin_ChatPage(const std::string& login, std::uint16_t dht_port, const std::string& ip, std::uint16_t port)
-{
+void ChatPage::ReceivedLoginParameters(const std::string& login, std::uint16_t dht_port, const std::string& ip, std::uint16_t port) {
     std::osyncstream(std::cout) << "Successful login!" << std::endl;
     std::osyncstream(std::cout) << "Login: " << login << std::endl;
     std::osyncstream(std::cout) << "DHT Port: " << dht_port << std::endl;
@@ -53,15 +50,13 @@ void ChatPage::on_SuccessfulLogin_ChatPage(const std::string& login, std::uint16
     emit on_AfterSuccessfulLogin_ChatPage();
 }
 
-void ChatPage::on_logoutPushButton_clicked()
-{
+void ChatPage::on_logoutPushButton_clicked() {
     std::osyncstream(std::cout) << "Loging out!" << std::endl;
     p2p_messenger_impl_.reset();
     emit on_Logout_ChatPage();
 }
 
-void ChatPage::on_sendPushButton_clicked()
-{
+void ChatPage::on_sendPushButton_clicked() {
     std::osyncstream(std::cout) << "Send button clicked!" << std::endl;
     std::string login = ui->destinationLoginLabel->text().toStdString();
     if (login.empty()) {
@@ -78,8 +73,7 @@ void ChatPage::on_sendPushButton_clicked()
 }
 
 
-void ChatPage::on_messageLineEdit_returnPressed()
-{
+void ChatPage::on_messageLineEdit_returnPressed() {
     std::osyncstream(std::cout) << "Return pressed!" << std::endl;
     std::string login = ui->destinationLoginLabel->text().toStdString();
     if (login.empty()) {
@@ -95,8 +89,7 @@ void ChatPage::on_messageLineEdit_returnPressed()
     p2p_messenger_impl_->on_send_message(login, message);
 }
 
-void ChatPage::on_searchLoginPushButton_clicked()
-{
+void ChatPage::on_searchLoginPushButton_clicked() {
     std::osyncstream(std::cout) << "Search button clicked!" << std::endl;
     std::string login = ui->searchLoginLineEdit->text().toStdString();
     if (login.empty()) {

@@ -7,8 +7,7 @@ namespace Ui {
 class LoginPage;
 }
 
-class LoginPage : public QDialog
-{
+class LoginPage : public QDialog {
     Q_OBJECT
 
 public:
@@ -16,7 +15,7 @@ public:
     ~LoginPage();
 
 signals:
-    void on_Login_LoginPage(const std::string& login, std::uint16_t dht_port, const std::string& ip, std::uint16_t port);
+    void SendLoginParameters(const std::string& login, std::uint16_t dht_port, const std::string& ip, std::uint16_t port);
 
 private slots:
     void on_loginPushButton_clicked();

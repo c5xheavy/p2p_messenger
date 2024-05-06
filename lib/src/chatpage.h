@@ -11,8 +11,7 @@ namespace Ui {
 class ChatPage;
 }
 
-class ChatPage : public QDialog
-{
+class ChatPage : public QDialog {
     Q_OBJECT
 
 public:
@@ -24,7 +23,7 @@ signals:
     void on_Logout_ChatPage();
 
 public slots:
-    void on_SuccessfulLogin_ChatPage(const std::string& login, std::uint16_t dht_port, const std::string& ip, std::uint16_t port);
+    void ReceivedLoginParameters(const std::string& login, std::uint16_t dht_port, const std::string& ip, std::uint16_t port);
 
 private slots:
     void on_logoutPushButton_clicked();

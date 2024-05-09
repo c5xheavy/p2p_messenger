@@ -47,13 +47,13 @@ void ChatPage::ReceivedLoginParameters(const std::string& login, std::uint16_t d
         }
     );
     std::osyncstream(std::cout) << "P2P Messenger created!" << std::endl;
-    emit on_AfterSuccessfulLogin_ChatPage();
+    emit LogIn();
 }
 
 void ChatPage::on_logoutPushButton_clicked() {
     std::osyncstream(std::cout) << "Loging out!" << std::endl;
     p2p_messenger_impl_.reset();
-    emit on_Logout_ChatPage();
+    emit LogOut();
 }
 
 void ChatPage::on_sendPushButton_clicked() {

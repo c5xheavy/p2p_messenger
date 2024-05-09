@@ -15,8 +15,8 @@ P2PMessenger::P2PMessenger(QWidget *parent)
     ui->setupUi(this);
     connect(ui->loginPage, &LoginPage::SendLoginParameters, this, &P2PMessenger::ReceivedLoginParameters);
     connect(this, &P2PMessenger::SendLoginParameters, ui->chatPage, &ChatPage::ReceivedLoginParameters);
-    connect(ui->chatPage, &ChatPage::on_AfterSuccessfulLogin_ChatPage, this, &P2PMessenger::on_AfterSuccessfulLogin_P2PMessenger);
-    connect(ui->chatPage, &ChatPage::on_Logout_ChatPage, this, &P2PMessenger::on_Logout_P2PMessenger);
+    connect(ui->chatPage, &ChatPage::LogIn, this, &P2PMessenger::LoggedIn);
+    connect(ui->chatPage, &ChatPage::LogOut, this, &P2PMessenger::LoggedOut);
 }
 
 P2PMessenger::~P2PMessenger() {
@@ -32,12 +32,12 @@ void P2PMessenger::ReceivedLoginParameters(const std::string& login, std::uint16
     std::osyncstream(std::cout) << "After emit" << std::endl;
 }
 
-void P2PMessenger::on_AfterSuccessfulLogin_P2PMessenger() {
+void P2PMessenger::LoggedIn() {
     std::osyncstream(std::cout) << "After successful login" << std::endl;
     ui->stackedWidget->setCurrentWidget(ui->chatPage);
 }
 
-void P2PMessenger::on_Logout_P2PMessenger() {
+void P2PMessenger::LoggedOut() {
     std::cout << "Logging out!" << std::endl;
     ui->stackedWidget->setCurrentWidget(ui->loginPage);
 }

@@ -22,8 +22,8 @@ signals:
 
 private slots:
     void ReceivedLoginParameters(const std::string& login, std::uint16_t dht_port, const std::string& ip, std::uint16_t port);
-    void on_AfterSuccessfulLogin_P2PMessenger();
-    void on_Logout_P2PMessenger();
+    void LoggedIn();
+    void LoggedOut();
 
 private:
     Ui::P2PMessenger *ui;

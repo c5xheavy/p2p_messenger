@@ -19,8 +19,8 @@ public:
     ~ChatPage();
 
 signals:
-    void on_AfterSuccessfulLogin_ChatPage();
-    void on_Logout_ChatPage();
+    void LogIn();
+    void LogOut();
 
 public slots:
     void ReceivedLoginParameters(const std::string& login, std::uint16_t dht_port, const std::string& ip, std::uint16_t port);

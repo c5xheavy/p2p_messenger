@@ -30,11 +30,11 @@ void ChatPage::ReceivedLoginParameters(const std::string& login, std::uint16_t d
     std::osyncstream(std::cout) << "Port: " << port << std::endl;
     p2p_messenger_impl_ = std::make_shared<P2PMessengerImpl>(login, dht_port, ip, port,
         [this](const std::string& source_login, const std::string& message) {
-            std::cout << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Received message from " << source_login << ": " << message << std::endl;
+            std::cout << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Send message: " << message << std::endl;
             ui_->chatTextEdit->append(QString::fromStdString(source_login + ": " + message));
         },
         [this](const std::string& source_login, const std::string& message) {
-            std::cout << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Send message: " << message << std::endl;
+            std::cout << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Received message from " << source_login << ": " << message << std::endl;
             ui_->chatTextEdit->append(QString::fromStdString(source_login + ": " + message));
         },
         [this](const std::string& login, const std::string& address) {

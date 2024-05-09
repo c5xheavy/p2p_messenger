@@ -19,7 +19,7 @@ MessageSender::MessageSender(net::io_context& io_context, DhtIpResolver& dht_ip_
     : io_context_{io_context}
     , dht_ip_resolver_{dht_ip_resolver}
     , source_login_{source_login}
-    , socket_{io_context, udp::v4()} 
+    , socket_{io_context, udp::v4()}
     , handler_{handler} {
 }
 

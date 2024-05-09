@@ -20,8 +20,8 @@ P2PMessengerImpl::P2PMessengerImpl(const std::string& my_login, std::uint16_t dh
     , work_guard_{net::make_work_guard(io_context_)}
     , dht_ip_resolver_{io_context_, dht_port_, listen_login_handler}
     , threads_{}
-    , message_receiver_{io_context_, my_port_, send_message_handler}
-    , message_sender_{io_context_, dht_ip_resolver_, my_login_, receive_message_handler} {
+    , message_receiver_{io_context_, my_port_, receive_message_handler}
+    , message_sender_{io_context_, dht_ip_resolver_, my_login_, send_message_handler} {
     // put data on the dht
     dht_ip_resolver_.Put(my_login_, my_ip_, my_port_);
 

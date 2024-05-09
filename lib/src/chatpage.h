@@ -27,16 +27,12 @@ public slots:
 
 private slots:
     void on_logoutPushButton_clicked();
-
     void on_sendPushButton_clicked();
-
     void on_messageLineEdit_returnPressed();
-
     void on_searchLoginPushButton_clicked();
 
 private:
-    Ui::ChatPage *ui;
-
+    Ui::ChatPage *ui_;
     std::shared_ptr<P2PMessengerImpl> p2p_messenger_impl_;
 };
 

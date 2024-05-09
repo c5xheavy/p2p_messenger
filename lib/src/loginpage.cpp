@@ -3,19 +3,19 @@
 
 LoginPage::LoginPage(QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::LoginPage) {
-    ui->setupUi(this);
+    ui_(new Ui::LoginPage) {
+    ui_->setupUi(this);
 }
 
 LoginPage::~LoginPage() {
-    delete ui;
+    delete ui_;
 }
 
 void LoginPage::on_loginPushButton_clicked() {
     emit SendLoginParameters(
-        ui->loginLineEdit->text().toStdString(),
-        ui->DHTPortLineEdit->text().toUShort(),
-        ui->IPLineEdit->text().toStdString(),
-        ui->portLineEdit->text().toUShort()
+        ui_->loginLineEdit->text().toStdString(),
+        ui_->DHTPortLineEdit->text().toUShort(),
+        ui_->IPLineEdit->text().toStdString(),
+        ui_->portLineEdit->text().toUShort()
     );
 }

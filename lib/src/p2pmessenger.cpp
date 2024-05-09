@@ -11,16 +11,16 @@
 
 P2PMessenger::P2PMessenger(QWidget *parent)
     : QMainWindow(parent)
-    , ui(new Ui::P2PMessenger) {
-    ui->setupUi(this);
-    connect(ui->loginPage, &LoginPage::SendLoginParameters, this, &P2PMessenger::ReceivedLoginParameters);
-    connect(this, &P2PMessenger::SendLoginParameters, ui->chatPage, &ChatPage::ReceivedLoginParameters);
-    connect(ui->chatPage, &ChatPage::LogIn, this, &P2PMessenger::LoggedIn);
-    connect(ui->chatPage, &ChatPage::LogOut, this, &P2PMessenger::LoggedOut);
+    , ui_(new Ui::P2PMessenger) {
+    ui_->setupUi(this);
+    connect(ui_->loginPage, &LoginPage::SendLoginParameters, this, &P2PMessenger::ReceivedLoginParameters);
+    connect(this, &P2PMessenger::SendLoginParameters, ui_->chatPage, &ChatPage::ReceivedLoginParameters);
+    connect(ui_->chatPage, &ChatPage::LogIn, this, &P2PMessenger::LoggedIn);
+    connect(ui_->chatPage, &ChatPage::LogOut, this, &P2PMessenger::LoggedOut);
 }
 
 P2PMessenger::~P2PMessenger() {
-    delete ui;
+    delete ui_;
 }
 
 void P2PMessenger::ReceivedLoginParameters(const std::string& login, std::uint16_t dht_port, const std::string& ip, std::uint16_t port) {
@@ -34,10 +34,10 @@ void P2PMessenger::ReceivedLoginParameters(const std::string& login, std::uint16
 
 void P2PMessenger::LoggedIn() {
     std::osyncstream(std::cout) << "After successful login" << std::endl;
-    ui->stackedWidget->setCurrentWidget(ui->chatPage);
+    ui_->stackedWidget->setCurrentWidget(ui_->chatPage);
 }
 
 void P2PMessenger::LoggedOut() {
     std::cout << "Logging out!" << std::endl;
-    ui->stackedWidget->setCurrentWidget(ui->loginPage);
+    ui_->stackedWidget->setCurrentWidget(ui_->loginPage);
 }

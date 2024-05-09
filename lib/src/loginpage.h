@@ -21,7 +21,7 @@ private slots:
     void on_loginPushButton_clicked();
 
 private:
-    Ui::LoginPage *ui;
+    Ui::LoginPage *ui_;
 };
 
 #endif // LOGINPAGE_H

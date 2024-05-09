@@ -26,7 +26,7 @@ private slots:
     void LoggedOut();
 
 private:
-    Ui::P2PMessenger *ui;
+    Ui::P2PMessenger *ui_;
 };
 
 #endif // P2PMESSENGER_H

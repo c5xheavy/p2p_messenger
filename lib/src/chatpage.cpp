@@ -29,13 +29,13 @@ void ChatPage::ReceivedLoginParameters(const std::string& login, std::uint16_t d
     std::osyncstream(std::cout) << "IP: " << ip << std::endl;
     std::osyncstream(std::cout) << "Port: " << port << std::endl;
     p2p_messenger_impl_ = std::make_shared<P2PMessengerImpl>(login, dht_port, ip, port,
-        [this](const std::string& source_login, const std::string& message) {
+        [this](const std::string& login, const std::string& message) {
             std::cout << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Send message: " << message << std::endl;
-            ui_->chatTextEdit->append(QString::fromStdString(source_login + ": " + message));
+            emit UpdateChatWithSentMessage(login, message);
         },
-        [this](const std::string& source_login, const std::string& message) {
-            std::cout << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Received message from " << source_login << ": " << message << std::endl;
-            ui_->chatTextEdit->append(QString::fromStdString(source_login + ": " + message));
+        [this](const std::string& login, const std::string& message) {
+            std::cout << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Received message from " << login << ": " << message << std::endl;
+            emit UpdateChatWithReceivedMessage(login, message);
         },
         [this](const std::string& login, const std::string& address) {
             std::cout << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Received address for login " << login << ": " << address << std::endl;
@@ -46,8 +46,18 @@ void ChatPage::ReceivedLoginParameters(const std::string& login, std::uint16_t d
             }
         }
     );
+    connect(this, &ChatPage::UpdateChatWithSentMessage, this, &ChatPage::UpdatedChatWithSentMessage);
+    connect(this, &ChatPage::UpdateChatWithReceivedMessage, this, &ChatPage::UpdatedChatWithReceivedMessage);
     std::osyncstream(std::cout) << "P2P Messenger created!" << std::endl;
     emit LogIn();
+}
+
+void ChatPage::UpdatedChatWithSentMessage(const std::string& login, const std::string message) {
+    ui_->chatTextEdit->append(QString::fromStdString(login + ": " + message));
+}
+
+void ChatPage::UpdatedChatWithReceivedMessage(const std::string& login, const std::string& message) {
+    ui_->chatTextEdit->append(QString::fromStdString(login + ": " + message));
 }
 
 void ChatPage::on_logoutPushButton_clicked() {

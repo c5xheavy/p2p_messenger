@@ -21,9 +21,15 @@ public:
 signals:
     void LogIn();
     void LogOut();
+    void UpdateChatWithSentMessage(const std::string& login, const std::string message);
+    void UpdateChatWithReceivedMessage(const std::string& login, const std::string& message);
 
 public slots:
     void ReceivedLoginParameters(const std::string& login, std::uint16_t dht_port, const std::string& ip, std::uint16_t port);
+
+private slots:
+    void UpdatedChatWithSentMessage(const std::string& login, const std::string message);
+    void UpdatedChatWithReceivedMessage(const std::string& login, const std::string& message);
 
 private slots:
     void on_logoutPushButton_clicked();

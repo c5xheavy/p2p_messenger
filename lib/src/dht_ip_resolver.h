@@ -32,7 +32,7 @@ public:
     std::optional<std::string> Resolve(const std::string& login);
 
 private:
-    void put(std::shared_ptr<std::string> login, std::shared_ptr<std::string> address, net::system_timer::duration interval);
+    void Put(std::shared_ptr<std::string> login, std::shared_ptr<std::string> address, net::system_timer::duration interval);
 
 private:
     net::io_context& io_context_;

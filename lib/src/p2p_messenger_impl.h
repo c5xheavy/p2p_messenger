@@ -40,11 +40,11 @@ public:
     ~P2PMessengerImpl();
 
 public:
-    void on_send_message(const std::string& login, const std::string& message);
+    void SendMessage(const std::string& login, const std::string& message);
 
-    std::optional<std::string> on_search_login(const std::string& login);
+    std::optional<std::string> Resolve(const std::string& login);
 
-    void on_listen(const std::string& login);
+    void Listen(const std::string& login);
 
 private:
     std::uint16_t dht_port_; 
@@ -62,9 +62,9 @@ private:
 
     std::vector<std::jthread> threads_;
 
-    MessageReceiver message_receiver_;
-
     MessageSender message_sender_;
+
+    MessageReceiver message_receiver_;
 };
 
 #endif // P2P_MESSENGER_IMPL_H

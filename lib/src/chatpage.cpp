@@ -79,7 +79,7 @@ void ChatPage::on_sendPushButton_clicked() {
         return;
     }
     ui_->messageLineEdit->clear();
-    p2p_messenger_impl_->on_send_message(login, message);
+    p2p_messenger_impl_->SendMessage(login, message);
 }
 
 
@@ -96,7 +96,7 @@ void ChatPage::on_messageLineEdit_returnPressed() {
         return;
     }
     ui_->messageLineEdit->clear();
-    p2p_messenger_impl_->on_send_message(login, message);
+    p2p_messenger_impl_->SendMessage(login, message);
 }
 
 void ChatPage::on_searchLoginPushButton_clicked() {
@@ -108,8 +108,8 @@ void ChatPage::on_searchLoginPushButton_clicked() {
     }
     ui_->searchLoginLineEdit->clear();
     ui_->destinationLoginLabel->setText(QString::fromStdString(login));
-    p2p_messenger_impl_->on_listen(login);
-    std::optional<std::string> address = p2p_messenger_impl_->on_search_login(login);
+    p2p_messenger_impl_->Listen(login);
+    std::optional<std::string> address = p2p_messenger_impl_->Resolve(login);
     if (address) {
         ui_->destinationAddressLabel->setText(QString::fromStdString(*address));
     } else {

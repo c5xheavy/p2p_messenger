@@ -16,6 +16,7 @@ ChatPage::ChatPage(QWidget *parent) :
     QDialog(parent),
     ui_(new Ui::ChatPage) {
     ui_->setupUi(this);
+    ui_->contactsListWidget->setSortingEnabled(true);
 }
 
 ChatPage::~ChatPage() {
@@ -39,15 +40,12 @@ void ChatPage::ReceivedLoginParameters(const std::string& login, std::uint16_t d
         },
         [this](const std::string& login, const std::string& address) {
             std::cout << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Received address for login " << login << ": " << address << std::endl;
-            std::string prev_login = ui_->destinationLoginLabel->text().toStdString();
-            if (prev_login.empty() || prev_login == login) {
-                std::osyncstream(std::cout) << "Updating destination address" << std::endl;
-                ui_->destinationAddressLabel->setText(QString::fromStdString(address));
-            }
+            emit UpdateContactsList(login, address);
         }
     );
     connect(this, &ChatPage::UpdateChatWithSentMessage, this, &ChatPage::UpdatedChatWithSentMessage);
     connect(this, &ChatPage::UpdateChatWithReceivedMessage, this, &ChatPage::UpdatedChatWithReceivedMessage);
+    connect(this, &ChatPage::UpdateContactsList, this, &ChatPage::UpdatedContactsList);
     std::osyncstream(std::cout) << "P2P Messenger created!" << std::endl;
     emit LogIn();
 }
@@ -58,6 +56,18 @@ void ChatPage::UpdatedChatWithSentMessage(const std::string& login, const std::s
 
 void ChatPage::UpdatedChatWithReceivedMessage(const std::string& login, const std::string& message) {
     ui_->chatTextEdit->append(QString::fromStdString(login + ": " + message));
+}
+
+void ChatPage::UpdatedContactsList(const std::string& login, const std::string& address) {
+    std::osyncstream(std::cout) << "UpdatedContactsList" << std::endl;
+    std::string prev_login = ui_->destinationLoginLabel->text().toStdString();
+    if (prev_login.empty() || prev_login == login) {
+        std::osyncstream(std::cout) << "Updating destination address" << std::endl;
+        ui_->destinationAddressLabel->setText(QString::fromStdString(address));
+    }
+    if (ui_->contactsListWidget->findItems(QString::fromStdString(login), Qt::MatchExactly).empty()) {
+        ui_->contactsListWidget->addItem(QString::fromStdString(login));
+    }
 }
 
 void ChatPage::on_logoutPushButton_clicked() {

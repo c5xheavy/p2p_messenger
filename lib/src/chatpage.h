@@ -23,6 +23,7 @@ signals:
     void LogOut();
     void UpdateChatWithSentMessage(const std::string& login, const std::string message);
     void UpdateChatWithReceivedMessage(const std::string& login, const std::string& message);
+    void UpdateContactsList(const std::string& login, const std::string& address);
 
 public slots:
     void ReceivedLoginParameters(const std::string& login, std::uint16_t dht_port, const std::string& ip, std::uint16_t port);
@@ -30,6 +31,7 @@ public slots:
 private slots:
     void UpdatedChatWithSentMessage(const std::string& login, const std::string message);
     void UpdatedChatWithReceivedMessage(const std::string& login, const std::string& message);
+    void UpdatedContactsList(const std::string& login, const std::string& address);
 
 private slots:
     void on_logoutPushButton_clicked();

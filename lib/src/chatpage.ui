@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>633</width>
+    <width>649</width>
     <height>464</height>
    </rect>
   </property>
@@ -44,7 +44,7 @@
       </layout>
      </item>
      <item>
-      <widget class="QListView" name="contactsListView">
+      <widget class="QListWidget" name="contactsListWidget">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
          <horstretch>0</horstretch>

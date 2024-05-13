@@ -17,13 +17,9 @@ public:
     P2PMessenger(QWidget *parent = nullptr);
     ~P2PMessenger();
 
-signals:
-    void SendLoginParameters(const std::string& login, std::uint16_t dht_port, const std::string& ip, std::uint16_t port);
-
 private slots:
-    void ReceivedLoginParameters(const std::string& login, std::uint16_t dht_port, const std::string& ip, std::uint16_t port);
-    void LoggedIn();
-    void LoggedOut();
+    void switch_to_chat_page();
+    void switch_to_login_page();
 
 private:
     Ui::P2PMessenger *ui_;

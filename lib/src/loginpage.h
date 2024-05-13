@@ -15,7 +15,7 @@ public:
     ~LoginPage();
 
 signals:
-    void SendLoginParameters(const std::string& login, std::uint16_t dht_port, const std::string& ip, std::uint16_t port);
+    void log_in_requsted(const std::string& login, std::uint16_t dht_port, const std::string& ip, std::uint16_t port);
 
 private slots:
     void on_loginPushButton_clicked();

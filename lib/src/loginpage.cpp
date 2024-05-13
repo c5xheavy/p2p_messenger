@@ -12,7 +12,7 @@ LoginPage::~LoginPage() {
 }
 
 void LoginPage::on_loginPushButton_clicked() {
-    emit SendLoginParameters(
+    emit log_in_requsted(
         ui_->loginLineEdit->text().toStdString(),
         ui_->DHTPortLineEdit->text().toUShort(),
         ui_->IPLineEdit->text().toStdString(),

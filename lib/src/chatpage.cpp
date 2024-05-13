@@ -23,7 +23,7 @@ ChatPage::~ChatPage() {
     delete ui_;
 }
 
-void ChatPage::ReceivedLoginParameters(const std::string& login, std::uint16_t dht_port, const std::string& ip, std::uint16_t port) {
+void ChatPage::log_in(const std::string& login, std::uint16_t dht_port, const std::string& ip, std::uint16_t port) {
     std::osyncstream(std::cout) << "Successful login!" << std::endl;
     std::osyncstream(std::cout) << "Login: " << login << std::endl;
     std::osyncstream(std::cout) << "DHT Port: " << dht_port << std::endl;
@@ -32,34 +32,34 @@ void ChatPage::ReceivedLoginParameters(const std::string& login, std::uint16_t d
     p2p_messenger_impl_ = std::make_shared<P2PMessengerImpl>(login, dht_port, ip, port,
         [this](const std::string& login, const std::string& message) {
             std::cout << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Send message: " << message << std::endl;
-            emit UpdateChatWithSentMessage(login, message);
+            emit message_sent(login, message);
         },
         [this](const std::string& login, const std::string& message) {
             std::cout << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Received message from " << login << ": " << message << std::endl;
-            emit UpdateChatWithReceivedMessage(login, message);
+            emit message_received(login, message);
         },
         [this](const std::string& login, const std::string& address) {
             std::cout << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Received address for login " << login << ": " << address << std::endl;
-            emit UpdateContactsList(login, address);
+            emit contact_received(login, address);
         }
     );
-    connect(this, &ChatPage::UpdateChatWithSentMessage, this, &ChatPage::UpdatedChatWithSentMessage);
-    connect(this, &ChatPage::UpdateChatWithReceivedMessage, this, &ChatPage::UpdatedChatWithReceivedMessage);
-    connect(this, &ChatPage::UpdateContactsList, this, &ChatPage::UpdatedContactsList);
+    connect(this, &ChatPage::message_sent, this, &ChatPage::update_chat_with_sent_message);
+    connect(this, &ChatPage::message_received, this, &ChatPage::update_chat_with_received_message);
+    connect(this, &ChatPage::contact_received, this, &ChatPage::update_contacts_list_with_received_contact);
     std::osyncstream(std::cout) << "P2P Messenger created!" << std::endl;
-    emit LogIn();
+    emit logged_in();
 }
 
-void ChatPage::UpdatedChatWithSentMessage(const std::string& login, const std::string message) {
+void ChatPage::update_chat_with_sent_message(const std::string& login, const std::string message) {
     ui_->chatTextEdit->append(QString::fromStdString(login + ": " + message));
 }
 
-void ChatPage::UpdatedChatWithReceivedMessage(const std::string& login, const std::string& message) {
+void ChatPage::update_chat_with_received_message(const std::string& login, const std::string& message) {
     ui_->chatTextEdit->append(QString::fromStdString(login + ": " + message));
 }
 
-void ChatPage::UpdatedContactsList(const std::string& login, const std::string& address) {
-    std::osyncstream(std::cout) << "UpdatedContactsList" << std::endl;
+void ChatPage::update_contacts_list_with_received_contact(const std::string& login, const std::string& address) {
+    std::osyncstream(std::cout) << "update_contacts_list_with_received_contact" << std::endl;
     std::string prev_login = ui_->destinationLoginLabel->text().toStdString();
     if (prev_login.empty() || prev_login == login) {
         std::osyncstream(std::cout) << "Updating destination address" << std::endl;
@@ -73,7 +73,7 @@ void ChatPage::UpdatedContactsList(const std::string& login, const std::string& 
 void ChatPage::on_logoutPushButton_clicked() {
     std::osyncstream(std::cout) << "Loging out!" << std::endl;
     p2p_messenger_impl_.reset();
-    emit LogOut();
+    emit logged_out();
 }
 
 void ChatPage::on_sendPushButton_clicked() {

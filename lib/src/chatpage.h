@@ -19,19 +19,19 @@ public:
     ~ChatPage();
 
 signals:
-    void LogIn();
-    void LogOut();
-    void UpdateChatWithSentMessage(const std::string& login, const std::string message);
-    void UpdateChatWithReceivedMessage(const std::string& login, const std::string& message);
-    void UpdateContactsList(const std::string& login, const std::string& address);
+    void logged_in();
+    void logged_out();
+    void message_sent(const std::string& login, const std::string message);
+    void message_received(const std::string& login, const std::string& message);
+    void contact_received(const std::string& login, const std::string& address);
 
 public slots:
-    void ReceivedLoginParameters(const std::string& login, std::uint16_t dht_port, const std::string& ip, std::uint16_t port);
+    void log_in(const std::string& login, std::uint16_t dht_port, const std::string& ip, std::uint16_t port);
 
 private slots:
-    void UpdatedChatWithSentMessage(const std::string& login, const std::string message);
-    void UpdatedChatWithReceivedMessage(const std::string& login, const std::string& message);
-    void UpdatedContactsList(const std::string& login, const std::string& address);
+    void update_chat_with_sent_message(const std::string& login, const std::string message);
+    void update_chat_with_received_message(const std::string& login, const std::string& message);
+    void update_contacts_list_with_received_contact(const std::string& login, const std::string& address);
 
 private slots:
     void on_logoutPushButton_clicked();

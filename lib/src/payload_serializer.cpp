@@ -6,7 +6,7 @@
 
 namespace json = boost::json;
 
-json::object PayloadSerializer::PayloadToJson(const Payload& payload) { 
+json::object PayloadSerializer::payload_to_json(const Payload& payload) { 
     return {
         { "time", payload.time },
         { "text", payload.text }

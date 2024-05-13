@@ -13,7 +13,7 @@
 
 namespace json = boost::json;
 
-Message MessageDeserializer::MessageFromBuffer(char* buffer, std::size_t buffer_size) {
+Message MessageDeserializer::message_from_buffer(char* buffer, std::size_t buffer_size) {
     Message message{};
 
     std::size_t size{sizeof(message.id)
@@ -59,6 +59,6 @@ Message MessageDeserializer::MessageFromBuffer(char* buffer, std::size_t buffer_
     std::string str_payload{buffer, str_payload_size};
     buffer += str_payload_size;
 
-    message.payload = PayloadDeserializer::PayloadFromJson(json::parse(str_payload).as_object());
+    message.payload = PayloadDeserializer::payload_from_json(json::parse(str_payload).as_object());
     return message;
 }

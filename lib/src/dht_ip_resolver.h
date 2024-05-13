@@ -17,35 +17,27 @@
 
 namespace net = boost::asio;
 
-class DhtIpResolver{
+class DhtIpResolver {
 public:
     using ListenLoginHandler = std::function<void(const std::string&, const std::string&)>;
 
     DhtIpResolver(net::io_context& io_context, std::uint16_t port, ListenLoginHandler handler);
-
     ~DhtIpResolver();
 
-    void Put(const std::string& login, const std::string& ip, std::uint16_t port, net::system_timer::duration interval = std::chrono::seconds{60});
-
-    void Listen(const std::string& login);
-
-    std::optional<std::string> Resolve(const std::string& login);
+    void put(const std::string& login, const std::string& ip, std::uint16_t port, net::system_timer::duration interval = std::chrono::seconds{60});
+    void listen(const std::string& login);
+    std::optional<std::string> resolve(const std::string& login);
 
 private:
-    void Put(std::shared_ptr<std::string> login, std::shared_ptr<std::string> address, net::system_timer::duration interval);
+    void put(std::shared_ptr<std::string> login, std::shared_ptr<std::string> address, net::system_timer::duration interval);
 
 private:
-    net::io_context& io_context_;
-    net::system_timer timer_;
-
     dht::DhtRunner node_;
-
+    net::system_timer timer_;
     std::map<std::string, std::string> login_to_address_;
     std::mutex login_to_address_mutex_;
-
     std::map<std::string, std::future<std::size_t>> login_to_token_;
     std::mutex login_to_token_mutex_;
-
     ListenLoginHandler handler_;
 };
 

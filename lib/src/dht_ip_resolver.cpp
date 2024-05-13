@@ -21,9 +21,8 @@ namespace net = boost::asio;
 namespace sys = boost::system;
 
 DhtIpResolver::DhtIpResolver(net::io_context& io_context, std::uint16_t port, ListenLoginHandler handler)
-    : io_context_{io_context}
+    : node_{}
     , timer_{io_context}
-    , node_{}
     , login_to_address_{}
     , login_to_address_mutex_{}
     , login_to_token_{}
@@ -55,23 +54,23 @@ DhtIpResolver::~DhtIpResolver() {
     std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "DhtIpResolver destructor finished" << std::endl;
 }
 
-void DhtIpResolver::Put(const std::string& login, const std::string& ip, std::uint16_t port, net::system_timer::duration interval) {
+void DhtIpResolver::put(const std::string& login, const std::string& ip, std::uint16_t port, net::system_timer::duration interval) {
     std::string address{ip + ":" + std::to_string(port)};
-    Put(std::make_shared<std::string>(login), std::make_shared<std::string>(address), interval);
+    put(std::make_shared<std::string>(login), std::make_shared<std::string>(address), interval);
 }
 
-void DhtIpResolver::Put(std::shared_ptr<std::string> login, std::shared_ptr<std::string> address, net::system_timer::duration interval) {
+void DhtIpResolver::put(std::shared_ptr<std::string> login, std::shared_ptr<std::string> address, net::system_timer::duration interval) {
     node_.put(dht::InfoHash::get(*login), {(const std::uint8_t*)address->data(), address->size()});
     timer_.expires_after(interval);
     timer_.async_wait([this, login, address, interval](const sys::error_code& ec) {
         if (ec) {
             std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Timer error: " << ec.message() << std::endl;
         }
-        Put(login, address, interval);
+        put(login, address, interval);
     });
 }
 
-void DhtIpResolver::Listen(const std::string& login) {
+void DhtIpResolver::listen(const std::string& login) {
     {
         std::lock_guard<std::mutex> lock{login_to_address_mutex_};
         if (login_to_address_.find(login) != login_to_address_.end()) {
@@ -108,7 +107,7 @@ void DhtIpResolver::Listen(const std::string& login) {
     }
 }
 
-std::optional<std::string> DhtIpResolver::Resolve(const std::string& login) {
+std::optional<std::string> DhtIpResolver::resolve(const std::string& login) {
     std::lock_guard<std::mutex> lock{login_to_address_mutex_};
     auto it = login_to_address_.find(login);
     if (it == login_to_address_.end()) {

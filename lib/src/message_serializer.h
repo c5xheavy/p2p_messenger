@@ -9,7 +9,7 @@
 
 class MessageSerializer {
 public:
-    static std::pair<std::shared_ptr<char[]>, std::size_t> MessageToBuffer(const Message& message);
+    static std::pair<std::shared_ptr<char[]>, std::size_t> message_to_buffer(const Message& message);
 };
 
 #endif // MESSAGE_SERIALIZER_H

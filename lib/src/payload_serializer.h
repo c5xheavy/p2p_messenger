@@ -9,7 +9,7 @@ namespace json = boost::json;
 
 class PayloadSerializer {
 public:
-    static json::object PayloadToJson(const Payload& payload);
+    static json::object payload_to_json(const Payload& payload);
 };
 
 #endif // PAYLOAD_SERIALIZER_H

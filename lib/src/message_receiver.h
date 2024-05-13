@@ -20,8 +20,8 @@ public:
     ~MessageReceiver();
 
 private:
-    void AsyncWait();
-    void AsyncWaitHandler(const sys::error_code& ec);
+    void async_wait();
+    void async_wait_handler(const sys::error_code& ec);
 
 private:
     net::io_context& io_context_;

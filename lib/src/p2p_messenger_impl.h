@@ -40,11 +40,11 @@ public:
     ~P2PMessengerImpl();
 
 public:
-    void SendMessage(const std::string& login, const std::string& message);
+    void send_message(const std::string& login, const std::string& message);
 
-    std::optional<std::string> Resolve(const std::string& login);
+    std::optional<std::string> resolve(const std::string& login);
 
-    void Listen(const std::string& login);
+    void listen(const std::string& login);
 
 private:
     std::uint16_t dht_port_; 

@@ -4,11 +4,11 @@
 
 TEST_CASE("Payload Deserialization") {
     SECTION("integer time") {
-        json::object jsonPayload {
+        json::object json_payload {
             { "time", 1700000000 },
             { "text", "hello"}
         };
-        Payload payload{PayloadDeserializer::PayloadFromJson(jsonPayload)};
+        Payload payload{PayloadDeserializer::payload_from_json(json_payload)};
         REQUIRE(payload.time == 1700000000);
         REQUIRE(payload.text == "hello");
     }
@@ -16,65 +16,65 @@ TEST_CASE("Payload Deserialization") {
     // time is always integer
     /*
     SECTION("floating point time") {
-        json::object jsonPayload {
+        json::object json_payload {
             { "time", 1700000000.5 },
             { "text", "hello"}
         };
-        Payload payload{PayloadDeserializer::PayloadFromJson(jsonPayload)};
+        Payload payload{PayloadDeserializer::payload_from_json(json_payload)};
         REQUIRE(payload.time == 1700000000);
         REQUIRE(payload.text == "hello");
     }
     */
 
     SECTION("empty string in text field") {
-        json::object jsonPayload {
+        json::object json_payload {
             { "time", 0 },
             { "text", ""}
         };
-        Payload payload{PayloadDeserializer::PayloadFromJson(jsonPayload)};
+        Payload payload{PayloadDeserializer::payload_from_json(json_payload)};
         REQUIRE(payload.time == 0);
         REQUIRE(payload.text == "");
     }
 
     SECTION("unnecessary extra fields") {
-        json::object jsonPayload {
+        json::object json_payload {
             { "some unnecessary extra field 1", 5},
             { "time", 1700000000 },
             { "text", "hello"},
             { "some unnecessary extra field 2", true }
         };
-        Payload payload{PayloadDeserializer::PayloadFromJson(jsonPayload)};
+        Payload payload{PayloadDeserializer::payload_from_json(json_payload)};
         REQUIRE(payload.time == 1700000000);
         REQUIRE(payload.text == "hello");
     }
 
     SECTION("no required time field") {
-        json::object jsonPayload {
+        json::object json_payload {
             { "some unnecessary extra field 1", 5},
             { "text", "hello"},
             { "some unnecessary extra field 2", true }
         };
-        REQUIRE_THROWS(PayloadDeserializer::PayloadFromJson(jsonPayload));
+        REQUIRE_THROWS(PayloadDeserializer::payload_from_json(json_payload));
     }
 
     SECTION("no fields") {
-        json::object jsonPayload{};
-        REQUIRE_THROWS(PayloadDeserializer::PayloadFromJson(jsonPayload));
+        json::object json_payload{};
+        REQUIRE_THROWS(PayloadDeserializer::payload_from_json(json_payload));
     }
 
     SECTION("string time") {
-        json::object jsonPayload {
+        json::object json_payload {
             { "time", "1700000000" },
             { "text", "hello"}
         };
-        REQUIRE_THROWS(PayloadDeserializer::PayloadFromJson(jsonPayload));
+        REQUIRE_THROWS(PayloadDeserializer::payload_from_json(json_payload));
     }
 
     SECTION("boolean text") {
-        json::object jsonPayload {
+        json::object json_payload {
             { "time", 1700000000 },
             { "text", false}
         };
-        REQUIRE_THROWS(PayloadDeserializer::PayloadFromJson(jsonPayload));
+        REQUIRE_THROWS(PayloadDeserializer::payload_from_json(json_payload));
     }
 }

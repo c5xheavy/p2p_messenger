@@ -7,7 +7,7 @@
 
 class MessageDeserializer {
 public:
-    static Message MessageFromBuffer(char* buffer, std::size_t buffer_size);
+    static Message message_from_buffer(char* buffer, std::size_t buffer_size);
 };
 
 #endif // MESSAGE_DESERIALIZER_H

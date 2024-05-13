@@ -19,7 +19,7 @@ MessageReceiver::MessageReceiver(net::io_context& io_context, std::uint16_t port
     : io_context_{io_context}
     , socket_{io_context, udp::endpoint(udp::v4(), port)}
     , handler_{handler} {
-    AsyncWait();
+    async_wait();
 }
 
 MessageReceiver::~MessageReceiver() {    
@@ -30,12 +30,12 @@ MessageReceiver::~MessageReceiver() {
     std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "MessageReceiver destructor finished" << std::endl;
 }
 
-void MessageReceiver::AsyncWait() {
+void MessageReceiver::async_wait() {
     std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Waiting for incoming message" << std::endl;
-    socket_.async_wait(udp::socket::wait_read, std::bind(&MessageReceiver::AsyncWaitHandler, this, std::placeholders::_1));
+    socket_.async_wait(udp::socket::wait_read, std::bind(&MessageReceiver::async_wait_handler, this, std::placeholders::_1));
 }
 
-void MessageReceiver::AsyncWaitHandler(const sys::error_code& ec) {
+void MessageReceiver::async_wait_handler(const sys::error_code& ec) {
     std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Got message" << std::endl;
     if (!ec) {
         std::size_t bytes_available{socket_.available()};
@@ -48,7 +48,7 @@ void MessageReceiver::AsyncWaitHandler(const sys::error_code& ec) {
             throw std::logic_error{"Bytes available is not equal bytes read"};
         }
 
-        Message message{MessageDeserializer::MessageFromBuffer(buffer.get(), buffer_size)};
+        Message message{MessageDeserializer::message_from_buffer(buffer.get(), buffer_size)};
 
         std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Received message:" << std::endl;
         std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << message.id << std::endl;
@@ -63,5 +63,5 @@ void MessageReceiver::AsyncWaitHandler(const sys::error_code& ec) {
         std::osyncstream(std::cerr) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Wait message error: " << ec.what() << std::endl;
     }
 
-    AsyncWait();
+    async_wait();
 }

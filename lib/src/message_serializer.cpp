@@ -14,8 +14,8 @@
 
 namespace json = boost::json;
 
-std::pair<std::shared_ptr<char[]>, std::size_t> MessageSerializer::MessageToBuffer(const Message& message) {
-    std::string str_payload{json::serialize(PayloadSerializer::PayloadToJson(message.payload))};
+std::pair<std::shared_ptr<char[]>, std::size_t> MessageSerializer::message_to_buffer(const Message& message) {
+    std::string str_payload{json::serialize(PayloadSerializer::payload_to_json(message.payload))};
 
     std::size_t size{sizeof(message.id)
                      + sizeof(std::uint8_t) + message.source_login.size()

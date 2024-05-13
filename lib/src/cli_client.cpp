@@ -53,7 +53,7 @@ void send_message(udp::socket& socket, const std::string& destination_login, con
                 text
             }
         };
-        auto [buffer, buffer_size]{MessageSerializer::MessageToBuffer(message)};
+        auto [buffer, buffer_size]{MessageSerializer::message_to_buffer(message)};
 
         std::string address;
         {
@@ -171,7 +171,7 @@ int main(int argc, const char** argv) {
                 throw std::logic_error{"Bytes available is not equal bytes read"};
             }
 
-            Message message{MessageDeserializer::MessageFromBuffer(buffer.get(), buffer_size)};
+            Message message{MessageDeserializer::message_from_buffer(buffer.get(), buffer_size)};
 
             std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Received message:" << std::endl;
             std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << message.id << std::endl;

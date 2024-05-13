@@ -31,7 +31,7 @@ MessageSender::~MessageSender() {
     std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "MessageSender destructor finished" << std::endl;
 }
 
-void MessageSender::SendMessage(const std::string& destination_login, const std::string& text) {
+void MessageSender::send_message(const std::string& destination_login, const std::string& text) {
     try {
         Message message {
             1,
@@ -42,13 +42,13 @@ void MessageSender::SendMessage(const std::string& destination_login, const std:
                 text
             }
         };
-        auto [buffer, buffer_size]{MessageSerializer::MessageToBuffer(message)};
+        auto [buffer, buffer_size]{MessageSerializer::message_to_buffer(message)};
 
-        std::optional<std::string> destination_address = dht_ip_resolver_.Resolve(destination_login);
+        std::optional<std::string> destination_address = dht_ip_resolver_.resolve(destination_login);
         if (!destination_address) {
             throw std::logic_error{"Destination address is not set"};
         }
-        auto [destination_ip, destination_port]{GetIpAndPortFromAddress(*destination_address)};
+        auto [destination_ip, destination_port]{get_ip_and_port_from_address(*destination_address)};
 
         udp::endpoint endpoint{net::ip::make_address(destination_ip), destination_port};
         std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Send message to " << destination_ip << ':' << destination_port << std::endl;
@@ -59,7 +59,7 @@ void MessageSender::SendMessage(const std::string& destination_login, const std:
     }
 }
 
-std::pair<std::string, std::uint16_t> MessageSender::GetIpAndPortFromAddress(const std::string& address) {
+std::pair<std::string, std::uint16_t> MessageSender::get_ip_and_port_from_address(const std::string& address) {
     std::size_t pos = address.find(':');
     if (pos == std::string::npos) {
         throw std::invalid_argument{"Invalid address"};

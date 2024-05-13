@@ -9,9 +9,9 @@
 
 namespace json = boost::json;
 
-Payload PayloadDeserializer::PayloadFromJson(const json::object& jsonPayload) {
+Payload PayloadDeserializer::payload_from_json(const json::object& json_payload) {
     return {
-        jsonPayload.at("time").to_number<std::uint64_t>(),
-        json::value_to<std::string>(jsonPayload.at("text"))
+        json_payload.at("time").to_number<std::uint64_t>(),
+        json::value_to<std::string>(json_payload.at("text"))
     };
 }

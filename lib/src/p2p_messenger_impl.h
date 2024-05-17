@@ -34,6 +34,7 @@ class P2PMessengerImpl
 public:
     P2PMessengerImpl(const std::string& my_login, std::uint16_t dht_port,
                      const std::string& my_ip, std::uint16_t my_port,
+                     bool generate_crypto_identity, const std::string& crypto_identity_path,
                      MessageSender::SendMessageHandler send_message_handler,
                      MessageReceiver::ReceiveMessageHandler receive_message_handler,
                      DhtIpResolver::ListenLoginHandler listen_login_handler);
@@ -51,6 +52,8 @@ private:
     std::string my_ip_;
     std::uint16_t my_port_; 
     std::string my_login_;
+    bool generate_crypto_identity_;
+    const std::string& crypto_identity_path_;
 
     const std::size_t num_threads_;
 

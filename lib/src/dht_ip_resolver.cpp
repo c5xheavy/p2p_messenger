@@ -20,17 +20,23 @@
 namespace net = boost::asio;
 namespace sys = boost::system;
 
-DhtIpResolver::DhtIpResolver(net::io_context& io_context, std::uint16_t port, ListenLoginHandler handler)
+DhtIpResolver::DhtIpResolver(net::io_context& io_context, std::uint16_t port, bool generate_crypto_identity, const std::string& crypto_identity_path, ListenLoginHandler handler)
     : node_{}
+    , port_{port}
+    , generate_crypto_identity_{generate_crypto_identity}
+    , crypto_identity_path_{crypto_identity_path}
     , timer_{io_context}
-    , login_to_address_{}
-    , login_to_address_mutex_{}
+    , login_to_public_key_to_address_{}
+    , login_to_public_key_to_address_mutex_{}
     , login_to_token_{}
     , login_to_token_mutex_{}
     , handler_{handler} {
     // Launch a dht node on a new thread, using a
     // generated RSA key pair, and listen on port.
-    node_.run(port, dht::crypto::generateIdentity(), true);
+    if (generate_crypto_identity_) {
+        dht::crypto::saveIdentity(dht::crypto::generateIdentity(), crypto_identity_path_);
+    }
+    node_.run(port, dht::crypto::loadIdentity(crypto_identity_path_), true);
 
     // Join the network through any running node,
     // here using a known bootstrap node.
@@ -59,6 +65,11 @@ void DhtIpResolver::put(const std::string& login, const std::string& ip, std::ui
     put(std::make_shared<std::string>(login), std::make_shared<std::string>(address), interval);
 }
 
+void DhtIpResolver::put_signed(const std::string& login, const std::string& ip, std::uint16_t port, net::system_timer::duration interval) {
+    std::string address{ip + ":" + std::to_string(port)};
+    put_signed(std::make_shared<std::string>(login), std::make_shared<std::string>(address), interval);
+}
+
 void DhtIpResolver::put(std::shared_ptr<std::string> login, std::shared_ptr<std::string> address, net::system_timer::duration interval) {
     node_.put(dht::InfoHash::get(*login), {(const std::uint8_t*)address->data(), address->size()});
     timer_.expires_after(interval);
@@ -70,10 +81,21 @@ void DhtIpResolver::put(std::shared_ptr<std::string> login, std::shared_ptr<std:
     });
 }
 
+void DhtIpResolver::put_signed(std::shared_ptr<std::string> login, std::shared_ptr<std::string> address, net::system_timer::duration interval) {
+    node_.putSigned(dht::InfoHash::get(*login), {(const std::uint8_t*)address->data(), address->size()});
+    timer_.expires_after(interval);
+    timer_.async_wait([this, login, address, interval](const sys::error_code& ec) {
+        if (ec) {
+            std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Timer error: " << ec.message() << std::endl;
+        }
+        put(login, address, interval);
+    });
+}
+
 void DhtIpResolver::listen(const std::string& login) {
     {
-        std::lock_guard<std::mutex> lock{login_to_address_mutex_};
-        if (login_to_address_.find(login) != login_to_address_.end()) {
+        std::lock_guard<std::mutex> lock{login_to_public_key_to_address_mutex_};
+        if (login_to_public_key_to_address_.find(login) != login_to_public_key_to_address_.end()) {
             return;
         }
     }
@@ -92,10 +114,10 @@ void DhtIpResolver::listen(const std::string& login) {
                     }
                     std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Update destination address to " << address << std::endl;
                     {
-                        std::lock_guard<std::mutex> lock{login_to_address_mutex_};
-                        login_to_address_[login] = address;
+                        std::lock_guard<std::mutex> lock{login_to_public_key_to_address_mutex_};
+                        login_to_public_key_to_address_[login][value->owner] = address;
                     }
-                    handler_(login, address);
+                    handler_(login, value->owner, address);
                 }
             }
             return true; // keep listening
@@ -108,12 +130,12 @@ void DhtIpResolver::listen(const std::string& login) {
 }
 
 std::optional<std::string> DhtIpResolver::resolve(const std::string& login) {
-    std::lock_guard<std::mutex> lock{login_to_address_mutex_};
-    auto it = login_to_address_.find(login);
-    if (it == login_to_address_.end()) {
+    std::lock_guard<std::mutex> lock{login_to_public_key_to_address_mutex_};
+    auto it = login_to_public_key_to_address_.find(login);
+    if (it == login_to_public_key_to_address_.end()) {
         std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Destination address is not set" << std::endl;
         return std::nullopt;
     }
     std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Destination address is set" << std::endl;
-    return it->second;
+    return it->second.begin()->second;
 }

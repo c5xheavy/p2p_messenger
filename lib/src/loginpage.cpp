@@ -16,6 +16,8 @@ void LoginPage::on_loginPushButton_clicked() {
         ui_->loginLineEdit->text().toStdString(),
         ui_->DHTPortLineEdit->text().toUShort(),
         ui_->IPLineEdit->text().toStdString(),
-        ui_->portLineEdit->text().toUShort()
+        ui_->portLineEdit->text().toUShort(),
+        ui_->generateCryptoIdentityCheckBox->isChecked(),
+        ui_->cryptoIdentityPathLineEdit->text().toStdString()
     );
 }

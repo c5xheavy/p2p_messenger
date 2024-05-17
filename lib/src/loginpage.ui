@@ -96,6 +96,27 @@
         <widget class="QLineEdit" name="portLineEdit"/>
        </item>
        <item row="4" column="1">
+        <widget class="QCheckBox" name="generateCryptoIdentityCheckBox">
+         <property name="text">
+          <string>Generate crypto identity</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="0">
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>Crypto identity path</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="1">
+        <widget class="QLineEdit" name="cryptoIdentityPathLineEdit">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="1">
         <widget class="QPushButton" name="loginPushButton">
          <property name="text">
           <string>Login</string>

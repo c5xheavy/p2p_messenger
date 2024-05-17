@@ -23,13 +23,16 @@ ChatPage::~ChatPage() {
     delete ui_;
 }
 
-void ChatPage::log_in(const std::string& login, std::uint16_t dht_port, const std::string& ip, std::uint16_t port) {
+void ChatPage::log_in(const std::string& login, std::uint16_t dht_port, const std::string& ip,
+                      std::uint16_t port, bool generate_crypto_identity, const std::string& crypto_identity_path) {
     std::osyncstream(std::cout) << "Successful login!" << std::endl;
     std::osyncstream(std::cout) << "Login: " << login << std::endl;
     std::osyncstream(std::cout) << "DHT Port: " << dht_port << std::endl;
     std::osyncstream(std::cout) << "IP: " << ip << std::endl;
     std::osyncstream(std::cout) << "Port: " << port << std::endl;
-    p2p_messenger_impl_ = std::make_shared<P2PMessengerImpl>(login, dht_port, ip, port,
+    std::osyncstream(std::cout) << "Generate crypto identity: " << generate_crypto_identity << std::endl;
+    std::osyncstream(std::cout) << "Crypto identity path: " << crypto_identity_path << std::endl;
+    p2p_messenger_impl_ = std::make_shared<P2PMessengerImpl>(login, dht_port, ip, port, generate_crypto_identity, crypto_identity_path,
         [this](const std::string& login, const std::string& message) {
             std::cout << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Send message: " << message << std::endl;
             emit message_sent(login, message);
@@ -38,9 +41,9 @@ void ChatPage::log_in(const std::string& login, std::uint16_t dht_port, const st
             std::cout << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Received message from " << login << ": " << message << std::endl;
             emit message_received(login, message);
         },
-        [this](const std::string& login, const std::string& address) {
+        [this](const std::string& login, std::shared_ptr<dht::crypto::PublicKey> public_key, const std::string& address) {
             std::cout << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Received address for login " << login << ": " << address << std::endl;
-            emit contact_received(login, address);
+            emit contact_received(login, public_key, address);
         }
     );
     connect(this, &ChatPage::message_sent, this, &ChatPage::update_chat_with_sent_message);
@@ -58,15 +61,20 @@ void ChatPage::update_chat_with_received_message(const std::string& login, const
     ui_->chatTextEdit->append(QString::fromStdString(login + ": " + message));
 }
 
-void ChatPage::update_contacts_list_with_received_contact(const std::string& login, const std::string& address) {
+void ChatPage::update_contacts_list_with_received_contact(const std::string& login, std::shared_ptr<dht::crypto::PublicKey> public_key, const std::string& address) {
     std::osyncstream(std::cout) << "update_contacts_list_with_received_contact" << std::endl;
     std::string prev_login = ui_->destinationLoginLabel->text().toStdString();
     if (prev_login.empty() || prev_login == login) {
         std::osyncstream(std::cout) << "Updating destination address" << std::endl;
         ui_->destinationAddressLabel->setText(QString::fromStdString(address));
     }
-    if (ui_->contactsListWidget->findItems(QString::fromStdString(login), Qt::MatchExactly).empty()) {
-        ui_->contactsListWidget->addItem(QString::fromStdString(login));
+    if (public_key) {
+        QString item{QString::fromStdString("[" + public_key->getId().toString().substr(0, 8) + "] " + login)};
+        if (ui_->contactsListWidget->findItems(item, Qt::MatchExactly).empty()) {
+            ui_->contactsListWidget->addItem(item);
+        }
+    } else {
+        std::osyncstream(std::cout) << "Public key is null" << std::endl;
     }
 }
 

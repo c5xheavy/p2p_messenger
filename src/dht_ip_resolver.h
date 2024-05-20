@@ -21,7 +21,7 @@ class DhtIpResolver {
 public:
     using ListenLoginHandler = std::function<void(const std::string&, std::shared_ptr<dht::crypto::PublicKey>, const std::string&)>;
 
-    DhtIpResolver(net::io_context& io_context, std::uint16_t port, bool generate_crypto_identity, const std::string& crypto_identity_path, ListenLoginHandler handler);
+    DhtIpResolver(net::io_context& io_context, std::uint16_t port, const dht::crypto::Identity& identity, ListenLoginHandler handler);
     ~DhtIpResolver();
 
     void put(const std::string& login, const std::string& ip, std::uint16_t port, net::system_timer::duration interval = std::chrono::seconds{60});
@@ -36,8 +36,7 @@ private:
 private:
     dht::DhtRunner node_;
     std::uint16_t port_;
-    bool generate_crypto_identity_;
-    const std::string& crypto_identity_path_;
+    dht::crypto::Identity identity_;
     net::system_timer timer_;
     std::map<std::string, std::map<std::shared_ptr<dht::crypto::PublicKey>, std::string>> login_to_public_key_to_address_;
     std::mutex login_to_public_key_to_address_mutex_;

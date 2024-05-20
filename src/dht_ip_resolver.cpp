@@ -20,11 +20,10 @@
 namespace net = boost::asio;
 namespace sys = boost::system;
 
-DhtIpResolver::DhtIpResolver(net::io_context& io_context, std::uint16_t port, bool generate_crypto_identity, const std::string& crypto_identity_path, ListenLoginHandler handler)
+DhtIpResolver::DhtIpResolver(net::io_context& io_context, std::uint16_t port, const dht::crypto::Identity& identity, ListenLoginHandler handler)
     : node_{}
     , port_{port}
-    , generate_crypto_identity_{generate_crypto_identity}
-    , crypto_identity_path_{crypto_identity_path}
+    , identity_{identity}
     , timer_{io_context}
     , login_to_public_key_to_address_{}
     , login_to_public_key_to_address_mutex_{}
@@ -33,10 +32,7 @@ DhtIpResolver::DhtIpResolver(net::io_context& io_context, std::uint16_t port, bo
     , handler_{handler} {
     // Launch a dht node on a new thread, using a
     // generated RSA key pair, and listen on port.
-    if (generate_crypto_identity_) {
-        dht::crypto::saveIdentity(dht::crypto::generateIdentity(), crypto_identity_path_);
-    }
-    node_.run(port, dht::crypto::loadIdentity(crypto_identity_path_), true);
+    node_.run(port, identity_, true);
 
     // Join the network through any running node,
     // here using a known bootstrap node.

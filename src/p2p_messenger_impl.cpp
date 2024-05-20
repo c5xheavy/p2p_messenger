@@ -22,7 +22,7 @@ P2PMessengerImpl::P2PMessengerImpl(const std::string& my_login, std::uint16_t dh
     , num_threads_{4}
     , io_context_{static_cast<int>(num_threads_)}
     , work_guard_{net::make_work_guard(io_context_)}
-    , dht_ip_resolver_{io_context_, dht_port_, generate_crypto_identity_, crypto_identity_path_, listen_login_handler}
+    , dht_ip_resolver_{io_context_, dht_port_, get_identity(generate_crypto_identity_, crypto_identity_path_), listen_login_handler}
     , threads_{}
     , message_sender_{io_context_, dht_ip_resolver_, my_login_, send_message_handler}
     , message_receiver_{io_context_, my_port_, receive_message_handler} {
@@ -106,4 +106,13 @@ void P2PMessengerImpl::listen(const std::string& login) {
         return;
     }
     dht_ip_resolver_.listen(login);
+}
+
+dht::crypto::Identity P2PMessengerImpl::get_identity(bool generate_crypto_identity, const std::string& crypto_identity_path) {
+    if (generate_crypto_identity) {
+        dht::crypto::Identity identity = dht::crypto::generateIdentity();
+        dht::crypto::saveIdentity(identity, crypto_identity_path);
+        return identity;
+    }
+    return dht::crypto::loadIdentity(crypto_identity_path);
 }

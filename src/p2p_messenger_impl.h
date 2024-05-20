@@ -48,6 +48,9 @@ public:
     void listen(const std::string& login);
 
 private:
+    dht::crypto::Identity get_identity(bool generate_crypto_identity, const std::string& crypto_identity_path) ;
+
+private:
     std::uint16_t dht_port_; 
     std::string my_ip_;
     std::uint16_t my_port_; 

@@ -84,7 +84,7 @@ void DhtIpResolver::put_signed(std::shared_ptr<std::string> login, std::shared_p
         if (ec) {
             std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Timer error: " << ec.message() << std::endl;
         }
-        put(login, address, interval);
+        put_signed(login, address, interval);
     });
 }
 

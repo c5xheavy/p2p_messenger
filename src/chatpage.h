@@ -19,7 +19,7 @@ public:
     ~ChatPage();
 
 private:
-    std::string login_and_public_key_to_contact(const std::string& login, const dht::InfoHash& public_key_id) {
+    std::string login_and_public_key_id_to_contact(const std::string& login, const dht::InfoHash& public_key_id) {
         return "[" + public_key_id.toString() + "] " + login;
     }
 

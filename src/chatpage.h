@@ -18,12 +18,17 @@ public:
     explicit ChatPage(QWidget *parent = nullptr);
     ~ChatPage();
 
+private:
+    std::string login_and_public_key_to_contact(const std::string& login, const dht::InfoHash& public_key_id) {
+        return "[" + public_key_id.toString() + "] " + login;
+    }
+
 signals:
     void logged_in();
     void logged_out();
     void message_sent(const std::string& login, const std::string message);
     void message_received(const std::string& login, const std::string& message);
-    void contact_received(const std::string& login, std::shared_ptr<dht::crypto::PublicKey> public_key, const std::string& address);
+    void contact_received(const std::string& login, const dht::InfoHash& public_key_id, const std::string& address);
 
 public slots:
     void log_in(const std::string& login, std::uint16_t dht_port, const std::string& ip,
@@ -32,7 +37,7 @@ public slots:
 private slots:
     void update_chat_with_sent_message(const std::string& login, const std::string message);
     void update_chat_with_received_message(const std::string& login, const std::string& message);
-    void update_contacts_list_with_received_contact(const std::string& login, std::shared_ptr<dht::crypto::PublicKey> public_key, const std::string& address);
+    void update_contacts_list_with_received_contact(const std::string& login, const dht::InfoHash& public_key_id, const std::string& address);
 
 private slots:
     void on_logoutPushButton_clicked();

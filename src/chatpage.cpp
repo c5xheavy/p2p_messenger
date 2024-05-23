@@ -41,9 +41,9 @@ void ChatPage::log_in(const std::string& login, std::uint16_t dht_port, const st
             std::cout << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Received message from " << login << ": " << message << std::endl;
             emit message_received(login, message);
         },
-        [this](const std::string& login, std::shared_ptr<dht::crypto::PublicKey> public_key, const std::string& address) {
+        [this](const std::string& login, const dht::InfoHash& public_key_id, const std::string& address) {
             std::cout << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Received address for login " << login << ": " << address << std::endl;
-            emit contact_received(login, public_key, address);
+            emit contact_received(login, public_key_id, address);
         }
     );
     connect(this, &ChatPage::message_sent, this, &ChatPage::update_chat_with_sent_message);
@@ -61,20 +61,20 @@ void ChatPage::update_chat_with_received_message(const std::string& login, const
     ui_->chatTextEdit->append(QString::fromStdString(login + ": " + message));
 }
 
-void ChatPage::update_contacts_list_with_received_contact(const std::string& login, std::shared_ptr<dht::crypto::PublicKey> public_key, const std::string& address) {
+void ChatPage::update_contacts_list_with_received_contact(const std::string& login, const dht::InfoHash& public_key_id, const std::string& address) {
     std::osyncstream(std::cout) << "update_contacts_list_with_received_contact" << std::endl;
     std::string prev_login = ui_->destinationLoginLabel->text().toStdString();
     if (prev_login.empty() || prev_login == login) {
         std::osyncstream(std::cout) << "Updating destination address" << std::endl;
         ui_->destinationAddressLabel->setText(QString::fromStdString(address));
     }
-    if (public_key) {
-        QString item{QString::fromStdString("[" + public_key->getId().toString().substr(0, 8) + "] " + login)};
+    if (public_key_id) {
+        QString item{QString::fromStdString(login_and_public_key_id_to_contact(login, public_key_id))};
         if (ui_->contactsListWidget->findItems(item, Qt::MatchExactly).empty()) {
             ui_->contactsListWidget->addItem(item);
         }
     } else {
-        std::osyncstream(std::cout) << "Public key is null" << std::endl;
+        std::osyncstream(std::cout) << "Public key ID is null" << std::endl;
     }
 }
 

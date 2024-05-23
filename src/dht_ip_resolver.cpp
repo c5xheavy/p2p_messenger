@@ -113,7 +113,7 @@ void DhtIpResolver::listen(const std::string& login) {
                         std::lock_guard<std::mutex> lock{login_to_public_key_to_address_mutex_};
                         login_to_public_key_to_address_[login][value->owner] = address;
                     }
-                    handler_(login, value->owner, address);
+                    handler_(login, value->owner ? value->owner->getId() : dht::InfoHash{}, address);
                 }
             }
             return true; // keep listening

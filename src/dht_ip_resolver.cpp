@@ -25,8 +25,10 @@ DhtIpResolver::DhtIpResolver(net::io_context& io_context, std::uint16_t port, co
     , port_{port}
     , identity_{identity}
     , timer_{io_context}
-    , login_to_public_key_to_address_{}
-    , login_to_public_key_to_address_mutex_{}
+    , login_to_public_key_id_to_address_{}
+    , login_to_public_key_id_to_address_mutex_{}
+    , public_key_id_to_public_key_{}
+    , public_key_id_to_public_key_mutex_{}
     , login_to_token_{}
     , login_to_token_mutex_{}
     , handler_{handler} {
@@ -90,8 +92,8 @@ void DhtIpResolver::put_signed(std::shared_ptr<std::string> login, std::shared_p
 
 void DhtIpResolver::listen(const std::string& login) {
     {
-        std::lock_guard<std::mutex> lock{login_to_public_key_to_address_mutex_};
-        if (login_to_public_key_to_address_.find(login) != login_to_public_key_to_address_.end()) {
+        std::lock_guard<std::mutex> lock{login_to_token_mutex_};
+        if (login_to_token_.find(login) != login_to_token_.end()) {
             return;
         }
     }
@@ -109,11 +111,20 @@ void DhtIpResolver::listen(const std::string& login) {
                         throw std::invalid_argument{"Invalid address"};
                     }
                     std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Update destination address to " << address << std::endl;
-                    {
-                        std::lock_guard<std::mutex> lock{login_to_public_key_to_address_mutex_};
-                        login_to_public_key_to_address_[login][value->owner] = address;
+                    if (value->owner) {
+                        dht::InfoHash public_key_id{value->owner->getId()};
+                        {
+                            std::lock_guard<std::mutex> lock{login_to_public_key_id_to_address_mutex_};
+                            login_to_public_key_id_to_address_[login][public_key_id] = address;
+                        }
+                        {
+                            std::lock_guard<std::mutex> lock{public_key_id_to_public_key_mutex_};
+                            public_key_id_to_public_key_[public_key_id] =  value->owner;
+                        }
+                        handler_(login, public_key_id, address);
+                    } else {
+                        std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "In listen public key is null" << std::endl;
                     }
-                    handler_(login, value->owner ? value->owner->getId() : dht::InfoHash{}, address);
                 }
             }
             return true; // keep listening
@@ -126,9 +137,9 @@ void DhtIpResolver::listen(const std::string& login) {
 }
 
 std::optional<std::string> DhtIpResolver::resolve(const std::string& login) {
-    std::lock_guard<std::mutex> lock{login_to_public_key_to_address_mutex_};
-    auto it = login_to_public_key_to_address_.find(login);
-    if (it == login_to_public_key_to_address_.end()) {
+    std::lock_guard<std::mutex> lock{login_to_public_key_id_to_address_mutex_};
+    auto it = login_to_public_key_id_to_address_.find(login);
+    if (it == login_to_public_key_id_to_address_.end()) {
         std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Destination address is not set" << std::endl;
         return std::nullopt;
     }

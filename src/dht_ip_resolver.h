@@ -38,8 +38,10 @@ private:
     std::uint16_t port_;
     dht::crypto::Identity identity_;
     net::system_timer timer_;
-    std::map<std::string, std::map<std::shared_ptr<dht::crypto::PublicKey>, std::string>> login_to_public_key_to_address_;
-    std::mutex login_to_public_key_to_address_mutex_;
+    std::map<std::string, std::map<dht::InfoHash, std::string>> login_to_public_key_id_to_address_;
+    std::mutex login_to_public_key_id_to_address_mutex_;
+    std::map<dht::InfoHash, std::shared_ptr<dht::crypto::PublicKey>> public_key_id_to_public_key_;
+    std::mutex public_key_id_to_public_key_mutex_;
     std::map<std::string, std::future<std::size_t>> login_to_token_;
     std::mutex login_to_token_mutex_;
     ListenLoginHandler handler_;

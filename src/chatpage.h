@@ -20,24 +20,8 @@ public:
     ~ChatPage();
 
 private:
-    std::pair<std::string, dht::InfoHash> contact_to_login_and_public_key_id(const std::string& contact) {
-        size_t start = contact.find('[');
-        size_t end = contact.find(']');
-
-        if (start == std::string::npos || end == std::string::npos || start >= end) {
-            throw std::invalid_argument("Invalid contact format");
-        }
-
-        std::string public_key_str = contact.substr(start + 1, end - start - 1);
-        std::string login = contact.substr(end + 2); // +2 to skip '] ' (closing bracket and space)
-
-        dht::InfoHash public_key(public_key_str);
-
-        return {login, public_key};
-    }
-    std::string login_and_public_key_id_to_contact(const std::string& login, const dht::InfoHash& public_key_id) {
-        return "[" + public_key_id.toString() + "] " + login;
-    }
+    std::pair<std::string, dht::InfoHash> contact_to_login_and_public_key_id(const std::string& contact);
+    std::string login_and_public_key_id_to_contact(const std::string& login, const dht::InfoHash& public_key_id);
 
 signals:
     void logged_in();

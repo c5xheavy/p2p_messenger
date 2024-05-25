@@ -41,9 +41,9 @@ void ChatPage::log_in(const std::string& login, std::uint16_t dht_port, const st
             std::cout << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Received message from " << login << ": " << message << std::endl;
             emit message_received(login, message);
         },
-        [this](const std::string& login, const dht::InfoHash& public_key_id, const std::string& address) {
-            std::cout << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Received address for login " << login << ": " << address << std::endl;
-            emit contact_received(login, public_key_id, address);
+        [this](const std::string& login, const dht::InfoHash& public_key_id) {
+            std::cout << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Received contact " << login << ": " << public_key_id.toString() << std::endl;
+            emit contact_received(login, public_key_id);
         }
     );
     connect(this, &ChatPage::message_sent, this, &ChatPage::update_chat_with_sent_message);
@@ -61,13 +61,8 @@ void ChatPage::update_chat_with_received_message(const std::string& login, const
     ui_->chatTextEdit->append(QString::fromStdString(login + ": " + message));
 }
 
-void ChatPage::update_contacts_list_with_received_contact(const std::string& login, const dht::InfoHash& public_key_id, const std::string& address) {
+void ChatPage::update_contacts_list_with_received_contact(const std::string& login, const dht::InfoHash& public_key_id) {
     std::osyncstream(std::cout) << "update_contacts_list_with_received_contact" << std::endl;
-    std::string prev_login = ui_->destinationLoginLabel->text().toStdString();
-    if (prev_login.empty() || prev_login == login) {
-        std::osyncstream(std::cout) << "Updating destination address" << std::endl;
-        ui_->destinationAddressLabel->setText(QString::fromStdString(address));
-    }
     if (public_key_id) {
         QString item{QString::fromStdString(login_and_public_key_id_to_contact(login, public_key_id))};
         if (ui_->contactsListWidget->findItems(item, Qt::MatchExactly).empty()) {
@@ -125,8 +120,12 @@ void ChatPage::on_searchLoginPushButton_clicked() {
         return;
     }
     ui_->searchLoginLineEdit->clear();
-    ui_->destinationLoginLabel->setText(QString::fromStdString(login));
     p2p_messenger_impl_->listen(login);
+}
+
+void ChatPage::on_contactsListWidget_itemClicked(QListWidgetItem *item) {
+    auto [login, public_key_id]{contact_to_login_and_public_key_id(item->text().toStdString())};
+    ui_->destinationLoginLabel->setText(QString::fromStdString(login));
     std::optional<std::string> address = p2p_messenger_impl_->resolve(login);
     if (address) {
         ui_->destinationAddressLabel->setText(QString::fromStdString(*address));
@@ -134,4 +133,3 @@ void ChatPage::on_searchLoginPushButton_clicked() {
         ui_->destinationAddressLabel->setText("Not found");
     }
 }
-

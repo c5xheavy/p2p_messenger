@@ -13,17 +13,17 @@ P2PMessengerImpl::P2PMessengerImpl(const std::string& my_login, std::uint16_t dh
                                    MessageSender::SendMessageHandler send_message_handler,
                                    MessageReceiver::ReceiveMessageHandler receive_message_handler,
                                    DhtIpResolver::ListenLoginHandler listen_login_handler)
-    : dht_port_{dht_port}
+    : my_login_{my_login}
+    , dht_port_{dht_port}
     , my_ip_{my_ip}
     , my_port_{my_port}
-    , my_login_{my_login}
     , generate_crypto_identity_{generate_crypto_identity}
     , crypto_identity_path_{crypto_identity_path}
     , num_threads_{4}
+    , threads_{}
     , io_context_{static_cast<int>(num_threads_)}
     , work_guard_{net::make_work_guard(io_context_)}
     , dht_ip_resolver_{io_context_, dht_port_, get_identity(generate_crypto_identity_, crypto_identity_path_), listen_login_handler}
-    , threads_{}
     , message_sender_{io_context_, dht_ip_resolver_, my_login_, send_message_handler}
     , message_receiver_{io_context_, my_port_, receive_message_handler} {
     // put data on the dht

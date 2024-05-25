@@ -42,34 +42,25 @@ public:
 
 public:
     void send_message(const std::string& login, const dht::InfoHash& public_key_id, const std::string& message);
-
-    std::optional<std::string> resolve(const std::string& login, const dht::InfoHash& public_key_id);
-
     void listen(const std::string& login);
+    std::optional<std::string> resolve(const std::string& login, const dht::InfoHash& public_key_id);
 
 private:
     dht::crypto::Identity get_identity(bool generate_crypto_identity, const std::string& crypto_identity_path);
 
 private:
-    std::uint16_t dht_port_; 
-    std::string my_ip_;
-    std::uint16_t my_port_; 
     std::string my_login_;
+    std::uint16_t dht_port_;
+    std::string my_ip_;
+    std::uint16_t my_port_;
     bool generate_crypto_identity_;
     const std::string& crypto_identity_path_;
-
     const std::size_t num_threads_;
-
-    net::io_context io_context_;
-
-    net::executor_work_guard<net::io_context::executor_type> work_guard_;
-
-    DhtIpResolver dht_ip_resolver_;
-
     std::vector<std::jthread> threads_;
-
+    net::io_context io_context_;
+    net::executor_work_guard<net::io_context::executor_type> work_guard_;
+    DhtIpResolver dht_ip_resolver_;
     MessageSender message_sender_;
-
     MessageReceiver message_receiver_;
 };
 

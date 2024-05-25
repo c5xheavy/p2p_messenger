@@ -20,6 +20,7 @@ public:
     ~ChatPage();
 
 private:
+    void send_message();
     std::pair<std::string, dht::InfoHash> contact_to_login_and_public_key_id(const std::string& contact);
     std::string login_and_public_key_id_to_contact(const std::string& login, const dht::InfoHash& public_key_id);
 

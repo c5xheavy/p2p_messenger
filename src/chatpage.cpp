@@ -79,8 +79,7 @@ void ChatPage::on_logoutPushButton_clicked() {
     emit logged_out();
 }
 
-void ChatPage::on_sendPushButton_clicked() {
-    std::osyncstream(std::cout) << "Send button clicked!" << std::endl;
+void ChatPage::send_message() {
     auto [login, public_key_id]{contact_to_login_and_public_key_id(ui_->contactsListWidget->currentItem()->text().toStdString())};
     std::string message = ui_->messageLineEdit->text().toStdString();
     if (message.empty()) {
@@ -91,17 +90,15 @@ void ChatPage::on_sendPushButton_clicked() {
     p2p_messenger_impl_->send_message(login, public_key_id, message);
 }
 
+void ChatPage::on_sendPushButton_clicked() {
+    std::osyncstream(std::cout) << "Send button clicked!" << std::endl;
+    send_message();
+}
+
 
 void ChatPage::on_messageLineEdit_returnPressed() {
     std::osyncstream(std::cout) << "Return pressed!" << std::endl;
-    auto [login, public_key_id]{contact_to_login_and_public_key_id(ui_->contactsListWidget->currentItem()->text().toStdString())};
-    std::string message = ui_->messageLineEdit->text().toStdString();
-    if (message.empty()) {
-        std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Message is empty" << std::endl;
-        return;
-    }
-    ui_->messageLineEdit->clear();
-    p2p_messenger_impl_->send_message(login, public_key_id, message);
+    send_message();
 }
 
 void ChatPage::on_searchLoginPushButton_clicked() {

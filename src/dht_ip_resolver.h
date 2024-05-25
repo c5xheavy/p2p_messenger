@@ -27,7 +27,7 @@ public:
     void put(const std::string& login, const std::string& ip, std::uint16_t port, net::system_timer::duration interval = std::chrono::seconds{60});
     void put_signed(const std::string& login, const std::string& ip, std::uint16_t port, net::system_timer::duration interval = std::chrono::seconds{60});
     void listen(const std::string& login);
-    std::optional<std::string> resolve(const std::string& login);
+    std::optional<std::string> resolve(const std::string& login, const dht::InfoHash& public_key_id);
 
 private:
     void put(std::shared_ptr<std::string> login, std::shared_ptr<std::string> address, net::system_timer::duration interval);

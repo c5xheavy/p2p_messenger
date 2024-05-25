@@ -41,9 +41,9 @@ public:
     ~P2PMessengerImpl();
 
 public:
-    void send_message(const std::string& login, const std::string& message);
+    void send_message(const std::string& login, const dht::InfoHash& public_key_id, const std::string& message);
 
-    std::optional<std::string> resolve(const std::string& login);
+    std::optional<std::string> resolve(const std::string& login, const dht::InfoHash& public_key_id);
 
     void listen(const std::string& login);
 

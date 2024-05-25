@@ -31,7 +31,7 @@ MessageSender::~MessageSender() {
     std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "MessageSender destructor finished" << std::endl;
 }
 
-void MessageSender::send_message(const std::string& destination_login, const std::string& text) {
+void MessageSender::send_message(const std::string& destination_login, const dht::InfoHash& public_key_id, const std::string& text) {
     try {
         Message message {
             1,
@@ -44,7 +44,7 @@ void MessageSender::send_message(const std::string& destination_login, const std
         };
         auto [buffer, buffer_size]{MessageSerializer::message_to_buffer(message)};
 
-        std::optional<std::string> destination_address = dht_ip_resolver_.resolve(destination_login);
+        std::optional<std::string> destination_address = dht_ip_resolver_.resolve(destination_login, public_key_id);
         if (!destination_address) {
             throw std::logic_error{"Destination address is not set"};
         }

@@ -81,35 +81,27 @@ void ChatPage::on_logoutPushButton_clicked() {
 
 void ChatPage::on_sendPushButton_clicked() {
     std::osyncstream(std::cout) << "Send button clicked!" << std::endl;
-    std::string login = ui_->destinationLoginLabel->text().toStdString();
-    if (login.empty()) {
-        std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Destination login is empty" << std::endl;
-        return;
-    }
+    auto [login, public_key_id]{contact_to_login_and_public_key_id(ui_->contactsListWidget->currentItem()->text().toStdString())};
     std::string message = ui_->messageLineEdit->text().toStdString();
     if (message.empty()) {
         std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Message is empty" << std::endl;
         return;
     }
     ui_->messageLineEdit->clear();
-    p2p_messenger_impl_->send_message(login, message);
+    p2p_messenger_impl_->send_message(login, public_key_id, message);
 }
 
 
 void ChatPage::on_messageLineEdit_returnPressed() {
     std::osyncstream(std::cout) << "Return pressed!" << std::endl;
-    std::string login = ui_->destinationLoginLabel->text().toStdString();
-    if (login.empty()) {
-        std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Destination login is empty" << std::endl;
-        return;
-    }
+    auto [login, public_key_id]{contact_to_login_and_public_key_id(ui_->contactsListWidget->currentItem()->text().toStdString())};
     std::string message = ui_->messageLineEdit->text().toStdString();
     if (message.empty()) {
         std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Message is empty" << std::endl;
         return;
     }
     ui_->messageLineEdit->clear();
-    p2p_messenger_impl_->send_message(login, message);
+    p2p_messenger_impl_->send_message(login, public_key_id, message);
 }
 
 void ChatPage::on_searchLoginPushButton_clicked() {
@@ -126,7 +118,7 @@ void ChatPage::on_searchLoginPushButton_clicked() {
 void ChatPage::on_contactsListWidget_itemClicked(QListWidgetItem *item) {
     auto [login, public_key_id]{contact_to_login_and_public_key_id(item->text().toStdString())};
     ui_->destinationLoginLabel->setText(QString::fromStdString(login));
-    std::optional<std::string> address = p2p_messenger_impl_->resolve(login);
+    std::optional<std::string> address = p2p_messenger_impl_->resolve(login, public_key_id);
     if (address) {
         ui_->destinationAddressLabel->setText(QString::fromStdString(*address));
     } else {

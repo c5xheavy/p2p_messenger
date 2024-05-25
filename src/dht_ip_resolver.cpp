@@ -136,13 +136,18 @@ void DhtIpResolver::listen(const std::string& login) {
     }
 }
 
-std::optional<std::string> DhtIpResolver::resolve(const std::string& login) {
+std::optional<std::string> DhtIpResolver::resolve(const std::string& login, const dht::InfoHash& public_key_id) {
     std::lock_guard<std::mutex> lock{login_to_public_key_id_to_address_mutex_};
-    auto it = login_to_public_key_id_to_address_.find(login);
-    if (it == login_to_public_key_id_to_address_.end()) {
-        std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Destination address is not set" << std::endl;
+    auto login_map_it = login_to_public_key_id_to_address_.find(login);
+    if (login_map_it == login_to_public_key_id_to_address_.end()) {
+        std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Login is not listened for" << std::endl;
+        return std::nullopt;
+    }
+    auto public_key_id_it = login_map_it->second.find(public_key_id);
+    if (public_key_id_it == login_map_it->second.end()) {
+        std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Public key is not found" << std::endl;
         return std::nullopt;
     }
     std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Destination address is set" << std::endl;
-    return it->second.begin()->second;
+    return public_key_id_it->second;
 }

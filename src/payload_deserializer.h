@@ -9,7 +9,7 @@ namespace json = boost::json;
 
 class PayloadDeserializer {
 public:
-    static Payload payload_from_json(const json::object& json_payload);
+    static Payload payload_from_buffer(const std::vector<uint8_t>& buffer);
 };
 
 #endif // PAYLOAD_DESERIALIZER_H

@@ -61,8 +61,7 @@ endif()
 add_executable(p2p_messenger_tests
     tests/payload_utils.h
     tests/payload_utils.cpp
-    tests/payload_serializer_tests.cpp
-    tests/payload_deserializer_tests.cpp
+    tests/payload_serializer_deserializer_tests.cpp
     tests/message_utils.h
     tests/message_utils.cpp
     tests/message_serializer_deserializer_tests.cpp

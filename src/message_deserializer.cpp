@@ -48,19 +48,19 @@ Message MessageDeserializer::message_from_buffer(const std::vector<uint8_t>& buf
     message.destination_login = {ptr, ptr + destination_login_size};
     ptr += destination_login_size;
 
-    std::uint16_t str_payload_size;
-    std::memcpy(&str_payload_size, ptr, sizeof(str_payload_size));
-    ptr += sizeof(str_payload_size);
+    std::uint16_t payload_buffer_size;
+    std::memcpy(&payload_buffer_size, ptr, sizeof(payload_buffer_size));
+    ptr += sizeof(payload_buffer_size);
 
-    size += str_payload_size;
+    size += payload_buffer_size;
 
     if (buffer.size() < size) {
         throw std::length_error{"Not enough buffer size"};
     }
 
-    std::string str_payload{ptr, ptr + str_payload_size};
-    ptr += str_payload_size;
+    std::vector<uint8_t> payload_buffer{ptr, ptr + payload_buffer_size};
+    ptr += payload_buffer_size;
 
-    message.payload = PayloadDeserializer::payload_from_json(json::parse(str_payload).as_object());
+    message.payload = PayloadDeserializer::payload_from_buffer(payload_buffer);
     return message;
 }

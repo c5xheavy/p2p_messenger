@@ -14,12 +14,12 @@
 namespace json = boost::json;
 
 std::vector<uint8_t> MessageSerializer::message_to_buffer(const Message& message) {
-    std::string str_payload{json::serialize(PayloadSerializer::payload_to_json(message.payload))};
+    std::vector<uint8_t> payload_buffer{PayloadSerializer::payload_to_buffer(message.payload)};
 
     std::size_t size{sizeof(message.id)
                      + sizeof(std::uint8_t) + message.source_login.size()
                      + sizeof(std::uint8_t) + message.destination_login.size()
-                     + sizeof(std::uint16_t) + str_payload.size()};
+                     + sizeof(std::uint16_t) + payload_buffer.size()};
 
     std::vector<uint8_t> buffer(size);
     uint8_t* ptr{buffer.data()};
@@ -41,12 +41,12 @@ std::vector<uint8_t> MessageSerializer::message_to_buffer(const Message& message
     std::memcpy(ptr, message.destination_login.data(), destination_login_size);
     ptr += destination_login_size;
 
-    std::uint16_t str_payload_size{static_cast<std::uint16_t>(str_payload.size())};
-    std::memcpy(ptr, &str_payload_size, sizeof(str_payload_size));
-    ptr += sizeof(str_payload_size);
+    std::uint16_t payload_buffer_size{static_cast<std::uint16_t>(payload_buffer.size())};
+    std::memcpy(ptr, &payload_buffer_size, sizeof(payload_buffer_size));
+    ptr += sizeof(payload_buffer_size);
 
-    std::memcpy(ptr, str_payload.data(), str_payload_size);
-    ptr += str_payload_size;
+    std::memcpy(ptr, payload_buffer.data(), payload_buffer_size);
+    ptr += payload_buffer_size;
 
     return buffer;
 }

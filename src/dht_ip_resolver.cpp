@@ -151,3 +151,13 @@ std::optional<std::string> DhtIpResolver::resolve(const std::string& login, cons
     std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Destination address is set" << std::endl;
     return public_key_id_it->second;
 }
+
+std::shared_ptr<dht::crypto::PublicKey> DhtIpResolver::get_public_key_by_public_key_id(const dht::InfoHash& public_key_id) {
+    std::lock_guard<std::mutex> lock{public_key_id_to_public_key_mutex_};
+    auto it = public_key_id_to_public_key_.find(public_key_id);
+    if (it == public_key_id_to_public_key_.end()) {
+        std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "No public key with such public key ID" << std::endl;
+        return nullptr;
+    }
+    return it->second;
+}

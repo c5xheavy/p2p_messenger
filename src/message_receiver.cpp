@@ -38,17 +38,16 @@ void MessageReceiver::async_wait() {
 void MessageReceiver::async_wait_handler(const sys::error_code& ec) {
     std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Got message" << std::endl;
     if (!ec) {
-        std::size_t bytes_available{socket_.available()};
-        std::shared_ptr<char[]> buffer{new char[bytes_available]};
+        std::vector<uint8_t> buffer(socket_.available());
 
         udp::endpoint remote_endpoint;
-        std::size_t buffer_size{socket_.receive_from(net::buffer(buffer.get(), bytes_available), remote_endpoint)};
+        std::size_t bytes_received{socket_.receive_from(net::buffer(buffer), remote_endpoint)};
 
-        if (bytes_available != buffer_size) {
+        if (buffer.size() != bytes_received) {
             throw std::logic_error{"Bytes available is not equal bytes read"};
         }
 
-        Message message{MessageDeserializer::message_from_buffer(buffer.get(), buffer_size)};
+        Message message{MessageDeserializer::message_from_buffer(buffer)};
 
         std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Received message:" << std::endl;
         std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << message.id << std::endl;

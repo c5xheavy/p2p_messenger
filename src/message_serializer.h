@@ -1,15 +1,14 @@
 #ifndef MESSAGE_SERIALIZER_H
 #define MESSAGE_SERIALIZER_H
 
-#include <cstddef>
-#include <memory>
-#include <utility>
+#include <cstdint>
+#include <vector>
 
 #include "message.h"
 
 class MessageSerializer {
 public:
-    static std::pair<std::shared_ptr<char[]>, std::size_t> message_to_buffer(const Message& message);
+    static std::vector<uint8_t> message_to_buffer(const Message& message);
 };
 
 #endif // MESSAGE_SERIALIZER_H

@@ -53,7 +53,7 @@ void send_message(udp::socket& socket, const std::string& destination_login, con
                 text
             }
         };
-        auto [buffer, buffer_size]{MessageSerializer::message_to_buffer(message)};
+        std::vector<uint8_t> buffer{MessageSerializer::message_to_buffer(message)};
 
         std::string address;
         {
@@ -67,7 +67,7 @@ void send_message(udp::socket& socket, const std::string& destination_login, con
 
         udp::endpoint endpoint{net::ip::make_address(destination_ip), destination_port};
         std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Send message to " << destination_ip << ':' << destination_port << std::endl;
-        socket.send_to(net::buffer(buffer.get(), buffer_size), endpoint);
+        socket.send_to(net::buffer(buffer), endpoint);
     } catch (std::exception& e) {
         std::cerr << "Exception in send_message: " << e.what() << std::endl;
     }
@@ -161,17 +161,16 @@ int main(int argc, const char** argv) {
     std::function<void(const sys::error_code&)> async_wait_handler = [&receive_socket, &async_wait_handler](const sys::error_code& ec) {
         std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Got message" << std::endl;
         if (!ec) {
-            std::size_t bytes_available{receive_socket.available()};
-            std::shared_ptr<char[]> buffer{new char[bytes_available]};
+            std::vector<uint8_t> buffer(receive_socket.available());
 
             udp::endpoint remote_endpoint;
-            std::size_t buffer_size{receive_socket.receive_from(net::buffer(buffer.get(), bytes_available), remote_endpoint)};
+            std::size_t bytes_received{receive_socket.receive_from(net::buffer(buffer), remote_endpoint)};
 
-            if (bytes_available != buffer_size) {
-                throw std::logic_error{"Bytes available is not equal bytes read"};
+            if (buffer.size() != bytes_received) {
+                throw std::logic_error{"buffer.size() is not equal bytes_received"};
             }
 
-            Message message{MessageDeserializer::message_from_buffer(buffer.get(), buffer_size)};
+            Message message{MessageDeserializer::message_from_buffer(buffer)};
 
             std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Received message:" << std::endl;
             std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << message.id << std::endl;

@@ -3,9 +3,8 @@
 #include <cstddef>
 #include <cstdint>
 #include <cstring>
-#include <memory>
 #include <string>
-#include <utility>
+#include <vector>
 
 #include <boost/json.hpp>
 
@@ -14,7 +13,7 @@
 
 namespace json = boost::json;
 
-std::pair<std::shared_ptr<char[]>, std::size_t> MessageSerializer::message_to_buffer(const Message& message) {
+std::vector<uint8_t> MessageSerializer::message_to_buffer(const Message& message) {
     std::string str_payload{json::serialize(PayloadSerializer::payload_to_json(message.payload))};
 
     std::size_t size{sizeof(message.id)
@@ -22,8 +21,8 @@ std::pair<std::shared_ptr<char[]>, std::size_t> MessageSerializer::message_to_bu
                      + sizeof(std::uint8_t) + message.destination_login.size()
                      + sizeof(std::uint16_t) + str_payload.size()};
 
-    const std::shared_ptr<char[]> buffer{new char[size]};
-    char* ptr{buffer.get()};
+    std::vector<uint8_t> buffer(size);
+    uint8_t* ptr{buffer.data()};
 
     std::memcpy(ptr, &message.id, sizeof(message.id));
     ptr += sizeof(message.id);
@@ -49,5 +48,5 @@ std::pair<std::shared_ptr<char[]>, std::size_t> MessageSerializer::message_to_bu
     std::memcpy(ptr, str_payload.data(), str_payload_size);
     ptr += str_payload_size;
 
-    return {buffer, size};
+    return buffer;
 }

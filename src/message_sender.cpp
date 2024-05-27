@@ -42,7 +42,7 @@ void MessageSender::send_message(const std::string& destination_login, const dht
                 text
             }
         };
-        auto [buffer, buffer_size]{MessageSerializer::message_to_buffer(message)};
+        std::vector<uint8_t> buffer{MessageSerializer::message_to_buffer(message)};
 
         std::optional<std::string> destination_address = dht_ip_resolver_.resolve(destination_login, public_key_id);
         if (!destination_address) {
@@ -52,7 +52,7 @@ void MessageSender::send_message(const std::string& destination_login, const dht
 
         udp::endpoint endpoint{net::ip::make_address(destination_ip), destination_port};
         std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Send message to " << destination_ip << ':' << destination_port << std::endl;
-        socket_.send_to(net::buffer(buffer.get(), buffer_size), endpoint);
+        socket_.send_to(net::buffer(buffer), endpoint);
         handler_(source_login_, text);
     } catch (std::exception& e) {
         std::cerr << "Exception in send_message: " << e.what() << std::endl;

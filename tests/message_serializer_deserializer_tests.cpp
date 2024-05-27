@@ -18,8 +18,8 @@ TEST_CASE("Message Serialization & Deserialization") {
             "user2",
             payload
         };
-        auto [buffer, size]{MessageSerializer::message_to_buffer(message)};
-        Message post_message{MessageDeserializer::message_from_buffer(buffer.get(), size)};
+        std::vector<uint8_t> buffer{MessageSerializer::message_to_buffer(message)};
+        Message post_message{MessageDeserializer::message_from_buffer(buffer)};
         REQUIRE(message == post_message);
     }
 
@@ -30,8 +30,8 @@ TEST_CASE("Message Serialization & Deserialization") {
             "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
             payload
         };
-        auto [buffer, size]{MessageSerializer::message_to_buffer(message)};
-        Message post_message{MessageDeserializer::message_from_buffer(buffer.get(), size)};
+        std::vector<uint8_t> buffer{MessageSerializer::message_to_buffer(message)};
+        Message post_message{MessageDeserializer::message_from_buffer(buffer)};
         REQUIRE(message == post_message);
     }
 
@@ -42,8 +42,8 @@ TEST_CASE("Message Serialization & Deserialization") {
             "user2",
             payload
         };
-        auto [buffer, size]{MessageSerializer::message_to_buffer(message)};
-        Message post_message{MessageDeserializer::message_from_buffer(buffer.get(), size)};
+        std::vector<uint8_t> buffer{MessageSerializer::message_to_buffer(message)};
+        Message post_message{MessageDeserializer::message_from_buffer(buffer)};
         REQUIRE(message == post_message);
     }
 
@@ -58,8 +58,8 @@ TEST_CASE("Message Serialization & Deserialization") {
             "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
             long_payload
         };
-        auto [buffer, size]{MessageSerializer::message_to_buffer(message)};
-        Message post_message{MessageDeserializer::message_from_buffer(buffer.get(), size)};
+        std::vector<uint8_t> buffer{MessageSerializer::message_to_buffer(message)};
+        Message post_message{MessageDeserializer::message_from_buffer(buffer)};
         REQUIRE(message == post_message);
     }
 
@@ -70,19 +70,8 @@ TEST_CASE("Message Serialization & Deserialization") {
             "раводлыофврадцукенщцшгукрповмтоывмтьлждьфылоывшщ15468768   ",
             payload
         };
-        auto [buffer, size]{MessageSerializer::message_to_buffer(message)};
-        Message post_message{MessageDeserializer::message_from_buffer(buffer.get(), size)};
+        std::vector<uint8_t> buffer{MessageSerializer::message_to_buffer(message)};
+        Message post_message{MessageDeserializer::message_from_buffer(buffer)};
         REQUIRE(message == post_message);
-    }
-
-    SECTION("small buffer size") {
-        Message message {
-            1,
-            "user1",
-            "user2",
-            payload
-        };
-        auto [buffer, size]{MessageSerializer::message_to_buffer(message)};
-        REQUIRE_THROWS(MessageDeserializer::message_from_buffer(buffer.get(), size - 1));
     }
 }

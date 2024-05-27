@@ -1,13 +1,14 @@
 #ifndef MESSAGE_DESERIALIZER_H
 #define MESSAGE_DESERIALIZER_H
 
-#include <cstddef>
+#include <cstdint>
+#include <vector>
 
 #include "message.h"
 
 class MessageDeserializer {
 public:
-    static Message message_from_buffer(char* buffer, std::size_t buffer_size);
+    static Message message_from_buffer(const std::vector<uint8_t>& buffer);
 };
 
 #endif // MESSAGE_DESERIALIZER_H

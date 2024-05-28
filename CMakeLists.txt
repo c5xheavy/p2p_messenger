@@ -38,7 +38,7 @@ add_library(p2p_messenger_lib STATIC
     src/dht_ip_resolver.cpp
 )
 
-target_link_libraries(p2p_messenger_lib PRIVATE Threads::Threads)
+target_link_libraries(p2p_messenger_lib PRIVATE "${OPENDHT_LIB}" PRIVATE Threads::Threads)
 
 if(MSVC)
   target_compile_options(p2p_messenger_lib PRIVATE /W4 /WX)
@@ -110,7 +110,7 @@ else()
     endif()
 endif()
 
-target_link_libraries(p2p_messenger PRIVATE Qt${QT_VERSION_MAJOR}::Widgets PRIVATE p2p_messenger_lib PRIVATE "${OPENDHT_LIB}" PRIVATE Threads::Threads)
+target_link_libraries(p2p_messenger PRIVATE Qt${QT_VERSION_MAJOR}::Widgets PRIVATE p2p_messenger_lib PRIVATE Threads::Threads)
 
 if(MSVC)
   target_compile_options(p2p_messenger PRIVATE /W4 /WX)

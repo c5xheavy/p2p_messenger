@@ -3,10 +3,12 @@
 
 #include <cstdint>
 #include <functional>
+#include <memory>
 #include <string>
 
 #include <boost/asio.hpp>
 #include <boost/system.hpp>
+#include <opendht.h>
 
 namespace net = boost::asio;
 using net::ip::udp;
@@ -16,7 +18,7 @@ class MessageReceiver {
 public:
     using ReceiveMessageHandler = std::function<void(const std::string&, const std::string&)>;
 
-    MessageReceiver(net::io_context& io_context, std::uint16_t port, ReceiveMessageHandler handler);
+    MessageReceiver(net::io_context& io_context, std::uint16_t port, std::shared_ptr<dht::crypto::PrivateKey> private_key, ReceiveMessageHandler handler);
     ~MessageReceiver();
 
 private:
@@ -26,6 +28,7 @@ private:
 private:
     net::io_context& io_context_;
     udp::socket socket_;
+    std::shared_ptr<dht::crypto::PrivateKey> private_key_;
     ReceiveMessageHandler handler_;
 };
 

@@ -50,9 +50,11 @@ add_executable(p2p_messenger_tests
     tests/payload_utils.h
     tests/payload_utils.cpp
     tests/payload_serializer_deserializer_tests.cpp
+    tests/encrypted_payload_serializer_deserializer_tests.cpp
     tests/message_utils.h
     tests/message_utils.cpp
     tests/message_serializer_deserializer_tests.cpp
+    tests/encrypted_message_serializer_deserializer_tests.cpp
 )
 
 target_link_libraries(p2p_messenger_tests PRIVATE p2p_messenger_lib PRIVATE Catch2::Catch2WithMain)

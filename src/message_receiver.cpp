@@ -7,6 +7,7 @@
 
 #include <boost/asio.hpp>
 #include <boost/system.hpp>
+#include <opendht.h>
 
 #include "message.h"
 #include "message_deserializer.h"
@@ -15,9 +16,10 @@ namespace net = boost::asio;
 using net::ip::udp;
 namespace sys = boost::system;
 
-MessageReceiver::MessageReceiver(net::io_context& io_context, std::uint16_t port, ReceiveMessageHandler handler)
+MessageReceiver::MessageReceiver(net::io_context& io_context, std::uint16_t port, std::shared_ptr<dht::crypto::PrivateKey> private_key, ReceiveMessageHandler handler)
     : io_context_{io_context}
     , socket_{io_context, udp::endpoint(udp::v4(), port)}
+    , private_key_{private_key}
     , handler_{handler} {
     async_wait();
 }
@@ -47,7 +49,7 @@ void MessageReceiver::async_wait_handler(const sys::error_code& ec) {
             throw std::logic_error{"Bytes available is not equal bytes read"};
         }
 
-        Message message{MessageDeserializer::message_from_buffer(buffer)};
+        Message message{MessageDeserializer::message_from_buffer(buffer, private_key_)};
 
         std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Received message:" << std::endl;
         std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << message.id << std::endl;

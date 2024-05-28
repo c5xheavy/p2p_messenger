@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include <iostream>
+#include <memory>
 #include <string>
 #include <syncstream>
 #include <utility>
@@ -42,7 +43,7 @@ void MessageSender::send_message(const std::string& destination_login, const dht
                 text
             }
         };
-        std::vector<uint8_t> buffer{MessageSerializer::message_to_buffer(message)};
+        std::vector<uint8_t> buffer{MessageSerializer::message_to_buffer(message, dht_ip_resolver_.get_public_key_by_public_key_id(public_key_id))};
 
         std::optional<std::string> destination_address = dht_ip_resolver_.resolve(destination_login, public_key_id);
         if (!destination_address) {

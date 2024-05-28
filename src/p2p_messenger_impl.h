@@ -55,6 +55,7 @@ private:
     std::uint16_t my_port_;
     bool generate_crypto_identity_;
     const std::string& crypto_identity_path_;
+    dht::crypto::Identity identity_;
     const std::size_t num_threads_;
     std::vector<std::jthread> threads_;
     net::io_context io_context_;

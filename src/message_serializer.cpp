@@ -3,18 +3,23 @@
 #include <cstddef>
 #include <cstdint>
 #include <cstring>
+#include <memory>
 #include <string>
 #include <vector>
 
-#include <boost/json.hpp>
+#include <opendht.h>
 
 #include "message.h"
 #include "payload_serializer.h"
 
 namespace json = boost::json;
 
-std::vector<uint8_t> MessageSerializer::message_to_buffer(const Message& message) {
+std::vector<uint8_t> MessageSerializer::message_to_buffer(const Message& message, std::shared_ptr<dht::crypto::PublicKey> public_key) {
     std::vector<uint8_t> payload_buffer{PayloadSerializer::payload_to_buffer(message.payload)};
+
+    if (public_key) {
+        payload_buffer = PayloadSerializer::encrypt(payload_buffer, *public_key);
+    }
 
     std::size_t size{sizeof(message.id)
                      + sizeof(std::uint8_t) + message.source_login.size()

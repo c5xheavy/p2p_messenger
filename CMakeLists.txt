@@ -46,18 +46,6 @@ else()
   target_compile_options(p2p_messenger_lib PRIVATE -Wall -Wextra -Wpedantic -Werror)
 endif()
 
-add_executable(cli_client
-    src/cli_client.cpp
-)
-
-target_link_libraries(cli_client PRIVATE p2p_messenger_lib PRIVATE "${OPENDHT_LIB}" PRIVATE Threads::Threads)
-
-if(MSVC)
-  target_compile_options(cli_client PRIVATE /W4 /WX)
-else()
-  target_compile_options(cli_client PRIVATE -Wall -Wextra -Wpedantic -Werror)
-endif()
-
 add_executable(p2p_messenger_tests
     tests/payload_utils.h
     tests/payload_utils.cpp

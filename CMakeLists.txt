@@ -34,6 +34,7 @@ add_library(p2p_messenger_lib STATIC
     src/message_serializer.cpp
     src/message_deserializer.h
     src/message_deserializer.cpp
+    src/signed_message.h
     src/dht_ip_resolver.h
     src/dht_ip_resolver.cpp
 )
@@ -55,6 +56,9 @@ add_executable(p2p_messenger_tests
     tests/message_utils.cpp
     tests/message_serializer_deserializer_tests.cpp
     tests/encrypted_message_serializer_deserializer_tests.cpp
+    tests/signed_message_utils.h
+    tests/signed_message_utils.cpp
+    tests/signed_message_serializer_deserializer_tests.cpp
 )
 
 target_link_libraries(p2p_messenger_tests PRIVATE p2p_messenger_lib PRIVATE Catch2::Catch2WithMain)

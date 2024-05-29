@@ -14,11 +14,53 @@
 
 namespace json = boost::json;
 
+SignedMessage MessageDeserializer::signed_message_from_buffer(const std::vector<uint8_t>& buffer) {
+    SignedMessage signed_message{};
+
+    std::size_t size{sizeof(std::uint16_t)
+                     + sizeof(std::uint16_t)};
+
+    if (buffer.size() < size) {
+        throw std::length_error{"Not enough buffer size"};
+    }
+
+    const uint8_t* ptr{buffer.data()};
+
+    std::uint16_t message_size;
+    std::memcpy(&message_size, ptr, sizeof(message_size));
+    ptr += sizeof(message_size);
+
+    size += message_size;
+
+    signed_message.message = {ptr, ptr + message_size};
+    ptr += message_size;
+
+    std::uint16_t signature_size;
+    std::memcpy(&signature_size, ptr, sizeof(signature_size));
+    ptr += sizeof(signature_size);
+
+    size += signature_size;
+
+    signed_message.signature = {ptr, ptr + signature_size};
+    ptr += signature_size;
+
+    if (buffer.size() < size) {
+        throw std::length_error{"Not enough buffer size"};
+    }
+
+    return signed_message;
+}
+
+bool MessageDeserializer::check_signature(const SignedMessage& signed_message, std::shared_ptr<dht::crypto::PublicKey> public_key) {
+    return public_key->checkSignature(signed_message.message, signed_message.signature);
+}
+
 Message MessageDeserializer::message_from_buffer(const std::vector<uint8_t>& buffer, std::shared_ptr<dht::crypto::PrivateKey> private_key) {
     Message message{};
 
     std::size_t size{sizeof(message.id)
                      + sizeof(std::uint8_t)
+                     + sizeof(std::uint16_t)
                      + sizeof(std::uint8_t)
                      + sizeof(std::uint16_t)};
 
@@ -39,6 +81,15 @@ Message MessageDeserializer::message_from_buffer(const std::vector<uint8_t>& buf
 
     message.source_login = {ptr, ptr + source_login_size};
     ptr += source_login_size;
+
+    std::uint16_t source_public_key_size;
+    std::memcpy(&source_public_key_size, ptr, sizeof(source_public_key_size));
+    ptr += sizeof(source_public_key_size);
+
+    size += source_public_key_size;
+
+    message.source_public_key = {ptr, ptr + source_public_key_size};
+    ptr += source_public_key_size;
 
     std::uint8_t destination_login_size;
     std::memcpy(&destination_login_size, ptr, sizeof(destination_login_size));

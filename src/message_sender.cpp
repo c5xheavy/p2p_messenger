@@ -11,15 +11,18 @@
 
 #include "dht_ip_resolver.h"
 #include "message.h"
+#include "signed_message.h"
 #include "message_serializer.h"
 
 namespace net = boost::asio;
 using net::ip::udp;
 
-MessageSender::MessageSender(net::io_context& io_context, DhtIpResolver& dht_ip_resolver, const std::string& source_login, SendMessageHandler handler)
+MessageSender::MessageSender(net::io_context& io_context, DhtIpResolver& dht_ip_resolver,
+                             const std::string& source_login, const dht::crypto::Identity& identity, SendMessageHandler handler)
     : io_context_{io_context}
     , dht_ip_resolver_{dht_ip_resolver}
     , source_login_{source_login}
+    , identity_{identity}
     , socket_{io_context, udp::v4()}
     , handler_{handler} {
 }
@@ -37,6 +40,7 @@ void MessageSender::send_message(const std::string& destination_login, const dht
         Message message {
             1,
             source_login_,
+            identity_.first->getSharedPublicKey()->toString(),
             destination_login,
             {
                 1700000000,
@@ -44,6 +48,11 @@ void MessageSender::send_message(const std::string& destination_login, const dht
             }
         };
         std::vector<uint8_t> buffer{MessageSerializer::message_to_buffer(message, dht_ip_resolver_.get_public_key_by_public_key_id(public_key_id))};
+        SignedMessage signed_message {
+            buffer,
+            MessageSerializer::sign(buffer, identity_.first)
+        };
+        buffer = MessageSerializer::signed_message_to_buffer(signed_message);
 
         std::optional<std::string> destination_address = dht_ip_resolver_.resolve(destination_login, public_key_id);
         if (!destination_address) {

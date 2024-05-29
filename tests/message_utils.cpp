@@ -5,10 +5,10 @@
 #include "payload_utils.h"
 
 std::ostream& operator<<(std::ostream& out, const Message& message) {
-    out << message.id << '\n';
-    out << message.source_login << '\n';
-    out << message.destination_login << '\n';
-    out << message.payload << '\n';
+    out << message.id << std::endl;
+    out << message.source_login << std::endl;
+    out << message.destination_login << std::endl;
+    out << message.payload << std::endl;
     return out;
 }
 

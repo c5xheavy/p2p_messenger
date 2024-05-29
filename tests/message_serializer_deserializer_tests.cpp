@@ -15,6 +15,7 @@ TEST_CASE("Message Serialization & Deserialization") {
         Message message {
             1,
             "user1",
+            "public_key1",
             "user2",
             payload
         };
@@ -27,6 +28,7 @@ TEST_CASE("Message Serialization & Deserialization") {
         Message message {
             1,
             "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "public_key1",
             "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
             payload
         };
@@ -39,6 +41,7 @@ TEST_CASE("Message Serialization & Deserialization") {
         Message message {
             999999999999999,
             "user1",
+            "public_key1",
             "user2",
             payload
         };
@@ -55,6 +58,7 @@ TEST_CASE("Message Serialization & Deserialization") {
         Message message {
             123123123123123,
             "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "public_key1",
             "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
             long_payload
         };
@@ -67,6 +71,7 @@ TEST_CASE("Message Serialization & Deserialization") {
         Message message {
             1,
             "qweasdzxcrtyfghvbnuiojklm,.p[];'/1234567689   53742y52734805",
+            "public_key1",
             "раводлыофврадцукенщцшгукрповмтоывмтьлждьфылоывшщ15468768   ",
             payload
         };

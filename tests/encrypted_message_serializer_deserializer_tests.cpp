@@ -14,13 +14,14 @@ TEST_CASE("Encrypted Message Serialization & Deserialization") {
     };
 
     SECTION("encrypting and decrypting with the same RSA key pair") {
+        dht::crypto::Identity identity{dht::crypto::generateIdentity()};
         Message message {
             1,
             "user1",
+            identity.first->getSharedPublicKey()->toString(),
             "user2",
             payload
         };
-        dht::crypto::Identity identity{dht::crypto::generateIdentity()};
         std::vector<uint8_t> buffer{MessageSerializer::message_to_buffer(message, identity.first->getSharedPublicKey())};
         Message post_message{MessageDeserializer::message_from_buffer(buffer, identity.first)};
         REQUIRE(message == post_message);
@@ -30,6 +31,7 @@ TEST_CASE("Encrypted Message Serialization & Deserialization") {
         Message message {
             1,
             "user1",
+            "public_key1",
             "user2",
             payload
         };
@@ -39,25 +41,27 @@ TEST_CASE("Encrypted Message Serialization & Deserialization") {
     }
 
     SECTION("encrypting and then not decrypting") {
+        dht::crypto::Identity identity{dht::crypto::generateIdentity()};
         Message message {
             1,
             "user1",
+            identity.first->getSharedPublicKey()->toString(),
             "user2",
             payload
         };
-        dht::crypto::Identity identity{dht::crypto::generateIdentity()};
         std::vector<uint8_t> buffer{MessageSerializer::message_to_buffer(message, identity.first->getSharedPublicKey())};
         REQUIRE_THROWS(MessageDeserializer::message_from_buffer(buffer));
     }
 
     SECTION("not encrypting and then decrypting") {
+        dht::crypto::Identity identity{dht::crypto::generateIdentity()};
         Message message {
             1,
             "user1",
+            identity.first->getSharedPublicKey()->toString(),
             "user2",
             payload
         };
-        dht::crypto::Identity identity{dht::crypto::generateIdentity()};
         std::vector<uint8_t> buffer{MessageSerializer::message_to_buffer(message)};
         REQUIRE_THROWS(MessageDeserializer::message_from_buffer(buffer, identity.first));
     }

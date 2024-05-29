@@ -2,6 +2,7 @@
 #define MESSAGE_SENDER_H
 
 #include <cstdint>
+#include <memory>
 #include <string>
 #include <utility>
 
@@ -16,7 +17,8 @@ class MessageSender {
 public:
     using SendMessageHandler = std::function<void(const std::string&, const std::string&)>;
 
-    MessageSender(net::io_context& io_context, DhtIpResolver& dht_ip_resolver, const std::string& source_login, SendMessageHandler handler);
+    MessageSender(net::io_context& io_context, DhtIpResolver& dht_ip_resolver,
+                  const std::string& source_login, const dht::crypto::Identity& identity, SendMessageHandler handler);
     ~MessageSender();
 
     void send_message(const std::string& destination_login, const dht::InfoHash& public_key_id, const std::string& text);
@@ -28,6 +30,7 @@ private:
     net::io_context& io_context_;
     DhtIpResolver& dht_ip_resolver_;
     std::string source_login_;
+    dht::crypto::Identity identity_;
     udp::socket socket_;
     SendMessageHandler handler_;
 };

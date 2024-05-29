@@ -43,7 +43,7 @@ void MessageReceiver::async_wait_handler(const sys::error_code& ec) {
         std::vector<uint8_t> buffer(socket_.available());
 
         udp::endpoint remote_endpoint;
-        std::size_t bytes_received{socket_.receive_from(net::buffer(buffer), remote_endpoint)};
+        size_t bytes_received{socket_.receive_from(net::buffer(buffer), remote_endpoint)};
 
         if (buffer.size() != bytes_received) {
             throw std::logic_error{"Bytes available is not equal bytes read"};

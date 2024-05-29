@@ -21,7 +21,7 @@ std::vector<uint8_t> MessageSerializer::message_to_buffer(const Message& message
         payload_buffer = PayloadSerializer::encrypt(payload_buffer, *public_key);
     }
 
-    std::size_t size{sizeof(message.id)
+    size_t size{sizeof(message.id)
                      + sizeof(uint8_t) + message.source_login.size()
                      + sizeof(uint16_t) + message.source_public_key.size()
                      + sizeof(uint8_t) + message.destination_login.size()
@@ -69,7 +69,7 @@ std::vector<uint8_t> MessageSerializer::sign(const std::vector<uint8_t>& buffer,
 }
 
 std::vector<uint8_t> MessageSerializer::signed_message_to_buffer(const SignedMessage& signed_message) {
-    std::size_t size{sizeof(uint16_t) + signed_message.message.size()
+    size_t size{sizeof(uint16_t) + signed_message.message.size()
                      + sizeof(uint16_t) + signed_message.signature.size()};
 
     std::vector<uint8_t> buffer(size);

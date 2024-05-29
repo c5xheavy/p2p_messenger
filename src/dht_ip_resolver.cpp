@@ -106,7 +106,7 @@ void DhtIpResolver::listen(const std::string& login) {
                 std::string address{value->data.begin(), value->data.end()};
                 std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Found address: " << address << std::endl;
                 if (!expired) {
-                    std::size_t pos = address.find(':');
+                    size_t pos = address.find(':');
                     if (pos == std::string::npos) {
                         throw std::invalid_argument{"Invalid address"};
                     }

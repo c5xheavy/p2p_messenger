@@ -34,7 +34,7 @@ P2PMessengerImpl::P2PMessengerImpl(const std::string& my_login, uint16_t dht_por
     dht_ip_resolver_.listen(my_login_);
 
     threads_.reserve(num_threads_);
-    for (std::size_t i = 0; i < num_threads_; ++i) {
+    for (size_t i = 0; i < num_threads_; ++i) {
         threads_.emplace_back([this] {
             std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Running io_context thread" << std::endl;
             io_context_.run();

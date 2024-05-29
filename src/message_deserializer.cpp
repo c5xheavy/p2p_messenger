@@ -17,7 +17,7 @@ namespace json = boost::json;
 SignedMessage MessageDeserializer::signed_message_from_buffer(const std::vector<uint8_t>& buffer) {
     SignedMessage signed_message{};
 
-    std::size_t size{sizeof(uint16_t)
+    size_t size{sizeof(uint16_t)
                      + sizeof(uint16_t)};
 
     if (buffer.size() < size) {
@@ -58,7 +58,7 @@ bool MessageDeserializer::check_signature(const SignedMessage& signed_message, s
 Message MessageDeserializer::message_from_buffer(const std::vector<uint8_t>& buffer, std::shared_ptr<dht::crypto::PrivateKey> private_key) {
     Message message{};
 
-    std::size_t size{sizeof(message.id)
+    size_t size{sizeof(message.id)
                      + sizeof(uint8_t)
                      + sizeof(uint16_t)
                      + sizeof(uint8_t)

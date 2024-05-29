@@ -10,6 +10,7 @@
 #define emit
 #endif
 
+#include "message.h"
 #include "p2p_messenger_impl.h"
 
 ChatPage::ChatPage(QWidget *parent) :
@@ -34,15 +35,15 @@ void ChatPage::log_in(const std::string& login, uint16_t dht_port, const std::st
     std::osyncstream(std::cout) << "Crypto identity path: " << crypto_identity_path << std::endl;
     p2p_messenger_impl_ = std::make_shared<P2PMessengerImpl>(login, dht_port, ip, port, generate_crypto_identity, crypto_identity_path,
         [this](const std::string& login, const std::string& message) {
-            std::cout << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Send message: " << message << std::endl;
+            std::cout << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "SendMessageHandler called" << std::endl;
             emit message_sent(login, message);
         },
-        [this](const std::string& login, const std::string& message) {
-            std::cout << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Received message from " << login << ": " << message << std::endl;
-            emit message_received(login, message);
+        [this](const Message& message) {
+            std::cout << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "ReceiveMessageHandler called" << std::endl;
+            emit message_received(message);
         },
         [this](const std::string& login, const dht::InfoHash& public_key_id) {
-            std::cout << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Received contact " << login << ": " << public_key_id.toString() << std::endl;
+            std::cout << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "ListenLoginHandler called" << std::endl;
             emit contact_received(login, public_key_id);
         }
     );
@@ -54,15 +55,17 @@ void ChatPage::log_in(const std::string& login, uint16_t dht_port, const std::st
 }
 
 void ChatPage::update_chat_with_sent_message(const std::string& login, const std::string message) {
+    std::cout << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "update_chat_with_sent_message called" << std::endl;
     ui_->chatTextEdit->append(QString::fromStdString(login + ": " + message));
 }
 
-void ChatPage::update_chat_with_received_message(const std::string& login, const std::string& message) {
-    ui_->chatTextEdit->append(QString::fromStdString(login + ": " + message));
+void ChatPage::update_chat_with_received_message(const Message& message) {
+    std::cout << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "update_chat_with_received_message called" << std::endl;
+    ui_->chatTextEdit->append(QString::fromStdString(message.destination_login + ": " + message.payload.text));
 }
 
 void ChatPage::update_contacts_list_with_received_contact(const std::string& login, const dht::InfoHash& public_key_id) {
-    std::osyncstream(std::cout) << "update_contacts_list_with_received_contact" << std::endl;
+    std::cout << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "update_contacts_list_with_received_contact called" << std::endl;
     if (public_key_id) {
         QString item{QString::fromStdString(login_and_public_key_id_to_contact(login, public_key_id))};
         if (ui_->contactsListWidget->findItems(item, Qt::MatchExactly).empty()) {

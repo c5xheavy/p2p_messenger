@@ -6,6 +6,7 @@
 #include <QDialog>
 #include <QListWidgetItem>
 
+#include "message.h"
 #include "p2p_messenger_impl.h"
 
 namespace Ui {
@@ -28,7 +29,7 @@ signals:
     void logged_in();
     void logged_out();
     void message_sent(const std::string& login, const std::string message);
-    void message_received(const std::string& login, const std::string& message);
+    void message_received(const Message& message);
     void contact_received(const std::string& login, const dht::InfoHash& public_key_id);
 
 public slots:
@@ -37,7 +38,7 @@ public slots:
 
 private slots:
     void update_chat_with_sent_message(const std::string& login, const std::string message);
-    void update_chat_with_received_message(const std::string& login, const std::string& message);
+    void update_chat_with_received_message(const Message& message);
     void update_contacts_list_with_received_contact(const std::string& login, const dht::InfoHash& public_key_id);
 
 private slots:

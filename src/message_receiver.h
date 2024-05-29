@@ -10,13 +10,15 @@
 #include <boost/system.hpp>
 #include <opendht.h>
 
+#include "message.h"
+
 namespace net = boost::asio;
 using net::ip::udp;
 namespace sys = boost::system;
 
 class MessageReceiver {
 public:
-    using ReceiveMessageHandler = std::function<void(const std::string&, const std::string&)>;
+    using ReceiveMessageHandler = std::function<void(const Message&)>;
 
     MessageReceiver(net::io_context& io_context, uint16_t port, std::shared_ptr<dht::crypto::PrivateKey> private_key, ReceiveMessageHandler handler);
     ~MessageReceiver();

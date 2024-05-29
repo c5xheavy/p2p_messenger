@@ -17,10 +17,12 @@
 namespace net = boost::asio;
 using net::ip::udp;
 
-MessageSender::MessageSender(net::io_context& io_context, DhtIpResolver& dht_ip_resolver,
+MessageSender::MessageSender(net::io_context& io_context, DhtIpResolver& dht_ip_resolver, const std::string& source_ip, uint16_t source_port,
                              const std::string& source_login, const dht::crypto::Identity& identity, SendMessageHandler handler)
     : io_context_{io_context}
     , dht_ip_resolver_{dht_ip_resolver}
+    , source_ip_{source_ip}
+    , source_port_{source_port}
     , source_login_{source_login}
     , identity_{identity}
     , socket_{io_context, udp::v4()}
@@ -39,6 +41,8 @@ void MessageSender::send_message(const std::string& destination_login, const dht
     try {
         Message message {
             1,
+            source_ip_,
+            source_port_,
             source_login_,
             identity_.first->getSharedPublicKey()->toString(),
             destination_login,

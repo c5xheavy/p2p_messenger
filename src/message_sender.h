@@ -17,7 +17,7 @@ class MessageSender {
 public:
     using SendMessageHandler = std::function<void(const std::string&, const std::string&)>;
 
-    MessageSender(net::io_context& io_context, DhtIpResolver& dht_ip_resolver,
+    MessageSender(net::io_context& io_context, DhtIpResolver& dht_ip_resolver, const std::string& source_ip, uint16_t source_port,
                   const std::string& source_login, const dht::crypto::Identity& identity, SendMessageHandler handler);
     ~MessageSender();
 
@@ -29,6 +29,8 @@ private:
 private:
     net::io_context& io_context_;
     DhtIpResolver& dht_ip_resolver_;
+    std::string source_ip_;
+    uint16_t source_port_;
     std::string source_login_;
     dht::crypto::Identity identity_;
     udp::socket socket_;

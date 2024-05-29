@@ -19,6 +19,8 @@ TEST_CASE("Signed Message Serialization & Deserialization") {
         dht::crypto::Identity identity{dht::crypto::generateIdentity()};
         Message message {
             1,
+            "127.0.0.1",
+            3001,
             "user1",
             identity.first->getSharedPublicKey()->toString(),
             "user2",
@@ -41,6 +43,8 @@ TEST_CASE("Signed Message Serialization & Deserialization") {
         dht::crypto::Identity identity{dht::crypto::generateIdentity()};
         Message message {
             1,
+            "127.0.0.1",
+            3001,
             "user1",
             identity.first->getSharedPublicKey()->toString(),
             "user2",
@@ -63,6 +67,8 @@ TEST_CASE("Signed Message Serialization & Deserialization") {
         dht::crypto::Identity identity1{dht::crypto::generateIdentity()};
         Message message {
             1,
+            "127.0.0.1",
+            3001,
             "user1",
             identity1.first->getSharedPublicKey()->toString(),
             "user2",
@@ -86,6 +92,8 @@ TEST_CASE("Signed Message Serialization & Deserialization") {
         dht::crypto::Identity identity1{dht::crypto::generateIdentity()};
         Message message {
             1,
+            "127.0.0.1",
+            3001,
             "user1",
             identity1.first->getSharedPublicKey()->toString(),
             "user2",

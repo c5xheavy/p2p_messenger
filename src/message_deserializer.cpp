@@ -59,10 +59,12 @@ Message MessageDeserializer::message_from_buffer(const std::vector<uint8_t>& buf
     Message message{};
 
     size_t size{sizeof(message.id)
-                     + sizeof(uint8_t)
-                     + sizeof(uint16_t)
-                     + sizeof(uint8_t)
-                     + sizeof(uint16_t)};
+                     + sizeof(uint8_t) // source_ip_size
+                     + sizeof(uint16_t) // source_port_size
+                     + sizeof(uint8_t) // source_login_size
+                     + sizeof(uint16_t) // source_public_key_size
+                     + sizeof(uint8_t) // destination_login_size
+                     + sizeof(uint16_t)}; // destination_public_key_size
 
     if (buffer.size() < size) {
         throw std::length_error{"Not enough buffer size"};
@@ -72,6 +74,18 @@ Message MessageDeserializer::message_from_buffer(const std::vector<uint8_t>& buf
 
     std::memcpy(&message.id, ptr, sizeof(message.id));
     ptr += sizeof(message.id);
+
+    uint8_t source_ip_size;
+    std::memcpy(&source_ip_size, ptr, sizeof(source_ip_size));
+    ptr += sizeof(source_ip_size);
+
+    size += source_ip_size;
+
+    message.source_ip = {ptr, ptr + source_ip_size};
+    ptr += source_ip_size;
+
+    std::memcpy(&message.source_port, ptr, sizeof(message.source_port));
+    ptr += sizeof(message.source_port);
 
     uint8_t source_login_size;
     std::memcpy(&source_login_size, ptr, sizeof(source_login_size));

@@ -14,6 +14,8 @@ TEST_CASE("Message Serialization & Deserialization") {
     SECTION("simple") {
         Message message {
             1,
+            "127.0.0.1",
+            3001,
             "user1",
             "public_key1",
             "user2",
@@ -27,6 +29,8 @@ TEST_CASE("Message Serialization & Deserialization") {
     SECTION("64 byte sized logins") {
         Message message {
             1,
+            "127.0.0.1",
+            3001,
             "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
             "public_key1",
             "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
@@ -40,6 +44,8 @@ TEST_CASE("Message Serialization & Deserialization") {
     SECTION("big id") {
         Message message {
             999999999999999,
+            "127.0.0.1",
+            3001,
             "user1",
             "public_key1",
             "user2",
@@ -57,6 +63,8 @@ TEST_CASE("Message Serialization & Deserialization") {
         };
         Message message {
             123123123123123,
+            "127.0.0.1",
+            3001,
             "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
             "public_key1",
             "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
@@ -70,6 +78,8 @@ TEST_CASE("Message Serialization & Deserialization") {
     SECTION("special symbols logins") {
         Message message {
             1,
+            "127.0.0.1",
+            3001,
             "qweasdzxcrtyfghvbnuiojklm,.p[];'/1234567689   53742y52734805",
             "public_key1",
             "раводлыофврадцукенщцшгукрповмтоывмтьлждьфылоывшщ15468768   ",

@@ -17,6 +17,8 @@ TEST_CASE("Encrypted Message Serialization & Deserialization") {
         dht::crypto::Identity identity{dht::crypto::generateIdentity()};
         Message message {
             1,
+            "127.0.0.1",
+            3001,
             "user1",
             identity.first->getSharedPublicKey()->toString(),
             "user2",
@@ -30,6 +32,8 @@ TEST_CASE("Encrypted Message Serialization & Deserialization") {
     SECTION("no encrypting or decrypting") {
         Message message {
             1,
+            "127.0.0.1",
+            3001,
             "user1",
             "public_key1",
             "user2",
@@ -44,6 +48,8 @@ TEST_CASE("Encrypted Message Serialization & Deserialization") {
         dht::crypto::Identity identity{dht::crypto::generateIdentity()};
         Message message {
             1,
+            "127.0.0.1",
+            3001,
             "user1",
             identity.first->getSharedPublicKey()->toString(),
             "user2",
@@ -57,6 +63,8 @@ TEST_CASE("Encrypted Message Serialization & Deserialization") {
         dht::crypto::Identity identity{dht::crypto::generateIdentity()};
         Message message {
             1,
+            "127.0.0.1",
+            3001,
             "user1",
             identity.first->getSharedPublicKey()->toString(),
             "user2",

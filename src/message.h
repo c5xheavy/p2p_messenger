@@ -7,7 +7,7 @@
 #include "payload.h"
 
 struct Message {
-    std::uint64_t id;
+    uint64_t id;
     std::string source_login;
     std::string source_public_key;
     std::string destination_login;

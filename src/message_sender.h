@@ -24,7 +24,7 @@ public:
     void send_message(const std::string& destination_login, const dht::InfoHash& public_key_id, const std::string& text);
 
 private:
-    std::pair<std::string, std::uint16_t> get_ip_and_port_from_address(const std::string& address);
+    std::pair<std::string, uint16_t> get_ip_and_port_from_address(const std::string& address);
 
 private:
     net::io_context& io_context_;

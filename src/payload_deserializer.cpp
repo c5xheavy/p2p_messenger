@@ -15,7 +15,7 @@ Payload PayloadDeserializer::payload_from_buffer(const std::vector<uint8_t>& buf
     std::string str_payload{buffer.begin(), buffer.end()};
     json::object json_payload = json::parse(str_payload).as_object();
     return {
-        json_payload.at("time").to_number<std::uint64_t>(),
+        json_payload.at("time").to_number<uint64_t>(),
         json::value_to<std::string>(json_payload.at("text"))
     };
 }

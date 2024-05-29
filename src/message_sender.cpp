@@ -69,12 +69,12 @@ void MessageSender::send_message(const std::string& destination_login, const dht
     }
 }
 
-std::pair<std::string, std::uint16_t> MessageSender::get_ip_and_port_from_address(const std::string& address) {
+std::pair<std::string, uint16_t> MessageSender::get_ip_and_port_from_address(const std::string& address) {
     std::size_t pos = address.find(':');
     if (pos == std::string::npos) {
         throw std::invalid_argument{"Invalid address"};
     }
     std::string ip{address.substr(0, pos)};
-    std::uint16_t port = std::stoi(address.substr(pos + 1));
+    uint16_t port = std::stoi(address.substr(pos + 1));
     return {ip, port};
 }

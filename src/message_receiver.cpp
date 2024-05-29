@@ -16,7 +16,7 @@ namespace net = boost::asio;
 using net::ip::udp;
 namespace sys = boost::system;
 
-MessageReceiver::MessageReceiver(net::io_context& io_context, std::uint16_t port, std::shared_ptr<dht::crypto::PrivateKey> private_key, ReceiveMessageHandler handler)
+MessageReceiver::MessageReceiver(net::io_context& io_context, uint16_t port, std::shared_ptr<dht::crypto::PrivateKey> private_key, ReceiveMessageHandler handler)
     : io_context_{io_context}
     , socket_{io_context, udp::endpoint(udp::v4(), port)}
     , private_key_{private_key}

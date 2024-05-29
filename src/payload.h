@@ -5,7 +5,7 @@
 #include <string>
 
 struct Payload {
-    std::uint64_t time;
+    uint64_t time;
     std::string text;
 };
 

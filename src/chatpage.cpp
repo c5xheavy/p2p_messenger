@@ -23,8 +23,8 @@ ChatPage::~ChatPage() {
     delete ui_;
 }
 
-void ChatPage::log_in(const std::string& login, std::uint16_t dht_port, const std::string& ip,
-                      std::uint16_t port, bool generate_crypto_identity, const std::string& crypto_identity_path) {
+void ChatPage::log_in(const std::string& login, uint16_t dht_port, const std::string& ip,
+                      uint16_t port, bool generate_crypto_identity, const std::string& crypto_identity_path) {
     std::osyncstream(std::cout) << "Successful login!" << std::endl;
     std::osyncstream(std::cout) << "Login: " << login << std::endl;
     std::osyncstream(std::cout) << "DHT Port: " << dht_port << std::endl;

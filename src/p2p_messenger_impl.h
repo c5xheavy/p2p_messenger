@@ -32,8 +32,8 @@ namespace sys = boost::system;
 class P2PMessengerImpl
 {
 public:
-    P2PMessengerImpl(const std::string& my_login, std::uint16_t dht_port,
-                     const std::string& my_ip, std::uint16_t my_port,
+    P2PMessengerImpl(const std::string& my_login, uint16_t dht_port,
+                     const std::string& my_ip, uint16_t my_port,
                      bool generate_crypto_identity, const std::string& crypto_identity_path,
                      MessageSender::SendMessageHandler send_message_handler,
                      MessageReceiver::ReceiveMessageHandler receive_message_handler,
@@ -50,9 +50,9 @@ private:
 
 private:
     std::string my_login_;
-    std::uint16_t dht_port_;
+    uint16_t dht_port_;
     std::string my_ip_;
-    std::uint16_t my_port_;
+    uint16_t my_port_;
     bool generate_crypto_identity_;
     const std::string& crypto_identity_path_;
     dht::crypto::Identity identity_;

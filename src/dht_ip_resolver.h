@@ -21,11 +21,11 @@ class DhtIpResolver {
 public:
     using ListenLoginHandler = std::function<void(const std::string&, const dht::InfoHash&)>;
 
-    DhtIpResolver(net::io_context& io_context, std::uint16_t port, const dht::crypto::Identity& identity, ListenLoginHandler handler);
+    DhtIpResolver(net::io_context& io_context, uint16_t port, const dht::crypto::Identity& identity, ListenLoginHandler handler);
     ~DhtIpResolver();
 
-    void put(const std::string& login, const std::string& ip, std::uint16_t port, net::system_timer::duration interval = std::chrono::seconds{60});
-    void put_signed(const std::string& login, const std::string& ip, std::uint16_t port, net::system_timer::duration interval = std::chrono::seconds{60});
+    void put(const std::string& login, const std::string& ip, uint16_t port, net::system_timer::duration interval = std::chrono::seconds{60});
+    void put_signed(const std::string& login, const std::string& ip, uint16_t port, net::system_timer::duration interval = std::chrono::seconds{60});
     void listen(const std::string& login);
     std::optional<std::string> resolve(const std::string& login, const dht::InfoHash& public_key_id);
     std::shared_ptr<dht::crypto::PublicKey> get_public_key_by_public_key_id(const dht::InfoHash& public_key_id);
@@ -36,7 +36,7 @@ private:
 
 private:
     dht::DhtRunner node_;
-    std::uint16_t port_;
+    uint16_t port_;
     dht::crypto::Identity identity_;
     net::system_timer timer_;
     std::map<std::string, std::map<dht::InfoHash, std::string>> login_to_public_key_id_to_address_;

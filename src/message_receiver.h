@@ -18,7 +18,7 @@ class MessageReceiver {
 public:
     using ReceiveMessageHandler = std::function<void(const std::string&, const std::string&)>;
 
-    MessageReceiver(net::io_context& io_context, std::uint16_t port, std::shared_ptr<dht::crypto::PrivateKey> private_key, ReceiveMessageHandler handler);
+    MessageReceiver(net::io_context& io_context, uint16_t port, std::shared_ptr<dht::crypto::PrivateKey> private_key, ReceiveMessageHandler handler);
     ~MessageReceiver();
 
 private:

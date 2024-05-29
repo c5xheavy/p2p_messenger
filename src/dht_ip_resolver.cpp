@@ -20,7 +20,7 @@
 namespace net = boost::asio;
 namespace sys = boost::system;
 
-DhtIpResolver::DhtIpResolver(net::io_context& io_context, std::uint16_t port, const dht::crypto::Identity& identity, ListenLoginHandler handler)
+DhtIpResolver::DhtIpResolver(net::io_context& io_context, uint16_t port, const dht::crypto::Identity& identity, ListenLoginHandler handler)
     : node_{}
     , port_{port}
     , identity_{identity}
@@ -58,18 +58,18 @@ DhtIpResolver::~DhtIpResolver() {
     std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "DhtIpResolver destructor finished" << std::endl;
 }
 
-void DhtIpResolver::put(const std::string& login, const std::string& ip, std::uint16_t port, net::system_timer::duration interval) {
+void DhtIpResolver::put(const std::string& login, const std::string& ip, uint16_t port, net::system_timer::duration interval) {
     std::string address{ip + ":" + std::to_string(port)};
     put(std::make_shared<std::string>(login), std::make_shared<std::string>(address), interval);
 }
 
-void DhtIpResolver::put_signed(const std::string& login, const std::string& ip, std::uint16_t port, net::system_timer::duration interval) {
+void DhtIpResolver::put_signed(const std::string& login, const std::string& ip, uint16_t port, net::system_timer::duration interval) {
     std::string address{ip + ":" + std::to_string(port)};
     put_signed(std::make_shared<std::string>(login), std::make_shared<std::string>(address), interval);
 }
 
 void DhtIpResolver::put(std::shared_ptr<std::string> login, std::shared_ptr<std::string> address, net::system_timer::duration interval) {
-    node_.put(dht::InfoHash::get(*login), {(const std::uint8_t*)address->data(), address->size()});
+    node_.put(dht::InfoHash::get(*login), {(const uint8_t*)address->data(), address->size()});
     timer_.expires_after(interval);
     timer_.async_wait([this, login, address, interval](const sys::error_code& ec) {
         if (ec) {
@@ -80,7 +80,7 @@ void DhtIpResolver::put(std::shared_ptr<std::string> login, std::shared_ptr<std:
 }
 
 void DhtIpResolver::put_signed(std::shared_ptr<std::string> login, std::shared_ptr<std::string> address, net::system_timer::duration interval) {
-    node_.putSigned(dht::InfoHash::get(*login), {(const std::uint8_t*)address->data(), address->size()});
+    node_.putSigned(dht::InfoHash::get(*login), {(const uint8_t*)address->data(), address->size()});
     timer_.expires_after(interval);
     timer_.async_wait([this, login, address, interval](const sys::error_code& ec) {
         if (ec) {

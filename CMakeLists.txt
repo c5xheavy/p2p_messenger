@@ -37,6 +37,8 @@ add_library(p2p_messenger_lib STATIC
     src/signed_message.h
     src/dht_ip_resolver.h
     src/dht_ip_resolver.cpp
+    src/p2p_messenger_impl.h
+    src/p2p_messenger_impl.cpp
 )
 
 target_link_libraries(p2p_messenger_lib PRIVATE "${OPENDHT_LIB}" PRIVATE Threads::Threads)
@@ -89,8 +91,6 @@ set(PROJECT_SOURCES
         src/loginpage.cpp
         src/loginpage.h
         src/loginpage.ui
-        src/p2p_messenger_impl.h
-        src/p2p_messenger_impl.cpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

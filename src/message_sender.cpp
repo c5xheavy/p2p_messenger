@@ -37,7 +37,8 @@ MessageSender::~MessageSender() {
     std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "MessageSender destructor finished" << std::endl;
 }
 
-void MessageSender::send_message(const std::string& destination_login, const dht::InfoHash& public_key_id, const std::string& text) {
+void MessageSender::send_message(const std::string& destination_address, const std::string& destination_login,
+                                 std::shared_ptr<dht::crypto::PublicKey> public_key, const std::string& text) {
     try {
         Message message {
             1,
@@ -51,18 +52,14 @@ void MessageSender::send_message(const std::string& destination_login, const dht
                 text
             }
         };
-        std::vector<uint8_t> buffer{MessageSerializer::message_to_buffer(message, dht_ip_resolver_.get_public_key_by_public_key_id(public_key_id))};
+        std::vector<uint8_t> buffer{MessageSerializer::message_to_buffer(message, public_key)};
         SignedMessage signed_message {
             buffer,
             MessageSerializer::sign(buffer, identity_.first)
         };
         buffer = MessageSerializer::signed_message_to_buffer(signed_message);
 
-        std::optional<std::string> destination_address = dht_ip_resolver_.resolve(destination_login, public_key_id);
-        if (!destination_address) {
-            throw std::logic_error{"Destination address is not set"};
-        }
-        auto [destination_ip, destination_port]{get_ip_and_port_from_address(*destination_address)};
+        auto [destination_ip, destination_port]{get_ip_and_port_from_address(destination_address)};
 
         udp::endpoint endpoint{net::ip::make_address(destination_ip), destination_port};
         std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Send message to " << destination_ip << ':' << destination_port << std::endl;

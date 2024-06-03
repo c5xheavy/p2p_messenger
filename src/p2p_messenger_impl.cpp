@@ -87,8 +87,8 @@ void P2PMessengerImpl::send_message(const std::string& login, const dht::InfoHas
                 std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Destination address is set" << std::endl;
                 std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Sending message to " << login << '\n';
                 std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Calling send_message" << '\n';
-                net::post(io_context_, [this, login, public_key_id, message]() {
-                    message_sender_.send_message(login, public_key_id, message);
+                net::post(io_context_, [this, destination_address, login, public_key_id, message]() {
+                    message_sender_.send_message(*destination_address, login, dht_ip_resolver_.get_public_key_by_public_key_id(public_key_id), message);
                 });
                 std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Called send_message" << '\n';
             } else {

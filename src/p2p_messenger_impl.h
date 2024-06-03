@@ -45,6 +45,7 @@ public:
     void send_message(const std::string& login, const dht::InfoHash& public_key_id, const std::string& message);
     void listen(const std::string& login);
     std::optional<std::string> resolve(const std::string& login, const dht::InfoHash& public_key_id);
+    std::shared_ptr<dht::crypto::PublicKey> get_public_key_by_public_key_id(const dht::InfoHash& public_key_id);
 
 private:
     dht::crypto::Identity get_identity(bool generate_crypto_identity, const std::string& crypto_identity_path);

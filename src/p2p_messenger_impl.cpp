@@ -88,13 +88,22 @@ void P2PMessengerImpl::send_message(const std::string& login, const dht::InfoHas
                 std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Sending message to " << login << '\n';
                 std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Calling send_message" << '\n';
                 net::post(io_context_, [this, destination_address, login, public_key_id, message]() {
-                    message_sender_.send_message(*destination_address, login, dht_ip_resolver_.get_public_key_by_public_key_id(public_key_id), message);
+                    message_sender_.send_message(*destination_address, login, get_public_key_by_public_key_id(public_key_id), message);
                 });
                 std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Called send_message" << '\n';
             } else {
                 std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Destination address is not set" << std::endl;
             }
         }});
+}
+
+void P2PMessengerImpl::listen(const std::string& login) {
+    std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "on_listen called" << std::endl;
+    if (login.empty()) {
+        std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Login is empty" << std::endl;
+        return;
+    }
+    dht_ip_resolver_.listen(login);
 }
 
 std::optional<std::string> P2PMessengerImpl::resolve(const std::string& login, const dht::InfoHash& public_key_id) {
@@ -107,13 +116,12 @@ std::optional<std::string> P2PMessengerImpl::resolve(const std::string& login, c
     return metadata_ip_resolver_.resolve(login, public_key_id);
 }
 
-void P2PMessengerImpl::listen(const std::string& login) {
-    std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "on_listen called" << std::endl;
-    if (login.empty()) {
-        std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Login is empty" << std::endl;
-        return;
+std::shared_ptr<dht::crypto::PublicKey> P2PMessengerImpl::get_public_key_by_public_key_id(const dht::InfoHash& public_key_id) {
+    std::shared_ptr<dht::crypto::PublicKey> public_key{dht_ip_resolver_.get_public_key_by_public_key_id(public_key_id)};
+    if (!public_key) {
+        public_key = metadata_ip_resolver_.get_public_key_by_public_key_id(public_key_id);
     }
-    dht_ip_resolver_.listen(login);
+    return public_key;
 }
 
 dht::crypto::Identity P2PMessengerImpl::get_identity(bool generate_crypto_identity, const std::string& crypto_identity_path) {

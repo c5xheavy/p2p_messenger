@@ -19,6 +19,7 @@
 #include <opendht.h>
 
 #include "dht_ip_resolver.h"
+#include "metadata_ip_resolver.h"
 #include "message.h"
 #include "message_receiver.h"
 #include "message_sender.h"
@@ -35,9 +36,9 @@ public:
     P2PMessengerImpl(const std::string& my_login, uint16_t dht_port,
                      const std::string& my_ip, uint16_t my_port,
                      bool generate_crypto_identity, const std::string& crypto_identity_path,
-                     MessageSender::SendMessageHandler send_message_handler,
-                     MessageReceiver::ReceiveMessageHandler receive_message_handler,
-                     DhtIpResolver::ListenLoginHandler listen_login_handler);
+                     MessageSender::SendMessageHandler&& send_message_handler,
+                     MessageReceiver::ReceiveMessageHandler&& receive_message_handler,
+                     DhtIpResolver::ListenLoginHandler&& listen_login_handler);
     ~P2PMessengerImpl();
 
 public:
@@ -60,9 +61,10 @@ private:
     std::vector<std::jthread> threads_;
     net::io_context io_context_;
     net::executor_work_guard<net::io_context::executor_type> work_guard_;
-    DhtIpResolver dht_ip_resolver_;
     MessageSender message_sender_;
     MessageReceiver message_receiver_;
+    DhtIpResolver dht_ip_resolver_;
+    MetadataIpResolver metadata_ip_resolver_;
 };
 
 #endif // P2P_MESSENGER_IMPL_H

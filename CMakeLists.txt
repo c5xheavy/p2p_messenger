@@ -37,6 +37,8 @@ add_library(p2p_messenger_lib STATIC
     src/signed_message.h
     src/dht_ip_resolver.h
     src/dht_ip_resolver.cpp
+    src/metadata_ip_resolver.h
+    src/metadata_ip_resolver.cpp
     src/contact.h
     src/p2p_messenger_impl.h
     src/p2p_messenger_impl.cpp

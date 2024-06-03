@@ -15,11 +15,13 @@
 #include <boost/asio.hpp>
 #include <opendht.h>
 
+#include "contact.h"
+
 namespace net = boost::asio;
 
 class DhtIpResolver {
 public:
-    using ListenLoginHandler = std::function<void(std::string&&, dht::InfoHash&&)>;
+    using ListenLoginHandler = std::function<void(Contact&&)>;
 
     DhtIpResolver(net::io_context& io_context, uint16_t port, const dht::crypto::Identity& identity, ListenLoginHandler handler);
     ~DhtIpResolver();

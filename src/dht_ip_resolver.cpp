@@ -121,7 +121,7 @@ void DhtIpResolver::listen(const std::string& login) {
                             std::lock_guard<std::mutex> lock{public_key_id_to_public_key_mutex_};
                             public_key_id_to_public_key_[public_key_id] =  value->owner;
                         }
-                        handler_(std::string{login}, std::move(public_key_id));
+                        handler_({login, std::move(public_key_id)});
                     } else {
                         std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "In listen public key is null" << std::endl;
                     }

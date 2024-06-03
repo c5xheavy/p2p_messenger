@@ -10,6 +10,7 @@
 #define emit
 #endif
 
+#include "contact.h"
 #include "message.h"
 #include "p2p_messenger_impl.h"
 
@@ -36,7 +37,7 @@ void ChatPage::log_in(const std::string& login, uint16_t dht_port, const std::st
     p2p_messenger_impl_ = std::make_shared<P2PMessengerImpl>(login, dht_port, ip, port, generate_crypto_identity, crypto_identity_path,
         std::bind(&ChatPage::send_message_handler, this, std::placeholders::_1),
         std::bind(&ChatPage::receive_message_handler, this, std::placeholders::_1),
-        std::bind(&ChatPage::listen_login_handler, this, std::placeholders::_1, std::placeholders::_2)
+        std::bind(&ChatPage::listen_login_handler, this, std::placeholders::_1)
     );
     connect(this, &ChatPage::message_sent, this, &ChatPage::update_chat_with_sent_message);
     connect(this, &ChatPage::message_received, this, &ChatPage::update_chat_with_received_message);
@@ -55,9 +56,9 @@ void ChatPage::receive_message_handler(Message&& message) {
     emit message_received(std::make_shared<Message>(std::move(message)));
 }
 
-void ChatPage::listen_login_handler(std::string&& login, dht::InfoHash&& public_key_id) {
+void ChatPage::listen_login_handler(Contact&& contact) {
     std::cout << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "ListenLoginHandler called" << std::endl;
-    emit contact_received(std::make_shared<std::string>(std::move(login)), std::make_shared<dht::InfoHash>(std::move(public_key_id)));
+    emit contact_received(std::make_shared<Contact>(std::move(contact)));
 }
 
 void ChatPage::update_chat_with_sent_message(std::shared_ptr<Message> message) {
@@ -70,10 +71,10 @@ void ChatPage::update_chat_with_received_message(std::shared_ptr<Message> messag
     ui_->chatTextEdit->append(QString::fromStdString(message->destination_login + ": " + message->payload.text));
 }
 
-void ChatPage::update_contacts_list_with_received_contact(std::shared_ptr<std::string> login, std::shared_ptr<dht::InfoHash> public_key_id) {
+void ChatPage::update_contacts_list_with_received_contact(std::shared_ptr<Contact> contact) {
     std::cout << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "update_contacts_list_with_received_contact called" << std::endl;
-    if (*public_key_id) {
-        QString item{QString::fromStdString(login_and_public_key_id_to_contact(*login, *public_key_id))};
+    if (contact->public_key_id) {
+        QString item{QString::fromStdString(contact_to_string(*contact))};
         if (ui_->contactsListWidget->findItems(item, Qt::MatchExactly).empty()) {
             ui_->contactsListWidget->addItem(item);
         }
@@ -93,14 +94,14 @@ void ChatPage::send_message() {
         std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "No contact is selected" << std::endl;
         return;
     }
-    auto [login, public_key_id]{contact_to_login_and_public_key_id(ui_->contactsListWidget->currentItem()->text().toStdString())};
+    Contact contact{contact_from_string(ui_->contactsListWidget->currentItem()->text().toStdString())};
     std::string message = ui_->messageLineEdit->text().toStdString();
     if (message.empty()) {
         std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Message is empty" << std::endl;
         return;
     }
     ui_->messageLineEdit->clear();
-    p2p_messenger_impl_->send_message(login, public_key_id, message);
+    p2p_messenger_impl_->send_message(contact.login, contact.public_key_id, message);
 }
 
 void ChatPage::on_sendPushButton_clicked() {
@@ -126,9 +127,9 @@ void ChatPage::on_searchLoginPushButton_clicked() {
 }
 
 void ChatPage::on_contactsListWidget_itemClicked(QListWidgetItem *item) {
-    auto [login, public_key_id]{contact_to_login_and_public_key_id(item->text().toStdString())};
-    ui_->destinationLoginLabel->setText(QString::fromStdString(login));
-    std::optional<std::string> address = p2p_messenger_impl_->resolve(login, public_key_id);
+    Contact contact{contact_from_string(item->text().toStdString())};
+    ui_->destinationLoginLabel->setText(QString::fromStdString(contact.login));
+    std::optional<std::string> address = p2p_messenger_impl_->resolve(contact.login, contact.public_key_id);
     if (address) {
         ui_->destinationAddressLabel->setText(QString::fromStdString(*address));
     } else {
@@ -136,22 +137,22 @@ void ChatPage::on_contactsListWidget_itemClicked(QListWidgetItem *item) {
     }
 }
 
-std::pair<std::string, dht::InfoHash> ChatPage::contact_to_login_and_public_key_id(const std::string& contact) {
-    size_t start = contact.find('[');
-    size_t end = contact.find(']');
+Contact ChatPage::contact_from_string(const std::string& str_contact) {
+    size_t start = str_contact.find('[');
+    size_t end = str_contact.find(']');
 
     if (start == std::string::npos || end == std::string::npos || start >= end) {
         throw std::invalid_argument("Invalid contact format");
     }
 
-    std::string public_key_str = contact.substr(start + 1, end - start - 1);
-    std::string login = contact.substr(end + 2); // +2 to skip '] ' (closing bracket and space)
+    std::string public_key_str = str_contact.substr(start + 1, end - start - 1);
+    std::string login = str_contact.substr(end + 2); // +2 to skip '] ' (closing bracket and space)
 
-    dht::InfoHash public_key(public_key_str);
+    dht::InfoHash public_key_id(public_key_str);
 
-    return {login, public_key};
+    return {login, public_key_id};
 }
 
-std::string ChatPage::login_and_public_key_id_to_contact(const std::string& login, const dht::InfoHash& public_key_id) {
-    return "[" + public_key_id.toString() + "] " + login;
+std::string ChatPage::contact_to_string(const Contact& contact) {
+    return "[" + contact.public_key_id.toString() + "] " + contact.login;
 }

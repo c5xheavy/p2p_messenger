@@ -6,6 +6,7 @@
 #include <QDialog>
 #include <QListWidgetItem>
 
+#include "contact.h"
 #include "message.h"
 #include "p2p_messenger_impl.h"
 
@@ -22,19 +23,19 @@ public:
 
     void send_message_handler(Message&& message);
     void receive_message_handler(Message&& message);
-    void listen_login_handler(std::string&& login, dht::InfoHash&& public_key_id);
+    void listen_login_handler(Contact&& contact);
 
 private:
     void send_message();
-    std::pair<std::string, dht::InfoHash> contact_to_login_and_public_key_id(const std::string& contact);
-    std::string login_and_public_key_id_to_contact(const std::string& login, const dht::InfoHash& public_key_id);
+    Contact contact_from_string(const std::string& str_contact);
+    std::string contact_to_string(const Contact& contact);
 
 signals:
     void logged_in();
     void logged_out();
     void message_sent(std::shared_ptr<Message> message);
     void message_received(std::shared_ptr<Message> message);
-    void contact_received(std::shared_ptr<std::string> login, std::shared_ptr<dht::InfoHash> public_key_id);
+    void contact_received(std::shared_ptr<Contact> contact);
 
 public slots:
     void log_in(const std::string& login, uint16_t dht_port, const std::string& ip,
@@ -43,7 +44,7 @@ public slots:
 private slots:
     void update_chat_with_sent_message(std::shared_ptr<Message> message);
     void update_chat_with_received_message(std::shared_ptr<Message> message);
-    void update_contacts_list_with_received_contact(std::shared_ptr<std::string> login, std::shared_ptr<dht::InfoHash> public_key_id);
+    void update_contacts_list_with_received_contact(std::shared_ptr<Contact> contact);
 
 private slots:
     void on_logoutPushButton_clicked();

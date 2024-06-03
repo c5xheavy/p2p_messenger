@@ -10,6 +10,7 @@
 #define emit
 #endif
 
+#include "chat_history.h"
 #include "contact.h"
 #include "message.h"
 #include "p2p_messenger_impl.h"
@@ -68,7 +69,17 @@ void ChatPage::update_chat_with_sent_message(std::shared_ptr<Message> message) {
 
 void ChatPage::update_chat_with_received_message(std::shared_ptr<Message> message) {
     std::cout << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "update_chat_with_received_message called" << std::endl;
-    ui_->chatTextEdit->append(QString::fromStdString(message->destination_login + ": " + message->payload.text));
+    if (!ui_->contactsListWidget->currentItem()) {
+        notify(message);
+        return;
+    }
+    Contact contact{contact_from_string(ui_->contactsListWidget->currentItem()->text().toStdString())};
+    dht::crypto::PublicKey public_key{message->source_public_key};
+    if (contact.public_key_id != public_key.getId()) {
+        notify(message);
+        return;
+    }
+    ui_->chatTextEdit->append(QString::fromStdString(message->source_login + ": " + message->payload.text));
 }
 
 void ChatPage::update_contacts_list_with_received_contact(std::shared_ptr<Contact> contact) {
@@ -135,6 +146,16 @@ void ChatPage::on_contactsListWidget_itemClicked(QListWidgetItem *item) {
     } else {
         ui_->destinationAddressLabel->setText("Not found");
     }
+    QFont font = item->font();
+    font.setBold(false);
+    item->setFont(font);
+    const std::list<std::pair<std::string, std::string>>* chat_history = p2p_messenger_impl_->get(contact.public_key_id);
+    ui_->chatTextEdit->clear();
+    if (chat_history) {
+        for (const auto& message : *chat_history) {
+            ui_->chatTextEdit->append(QString::fromStdString(message.first + ": " + message.second));
+        }
+    }
 }
 
 Contact ChatPage::contact_from_string(const std::string& str_contact) {
@@ -155,4 +176,19 @@ Contact ChatPage::contact_from_string(const std::string& str_contact) {
 
 std::string ChatPage::contact_to_string(const Contact& contact) {
     return "[" + contact.public_key_id.toString() + "] " + contact.login;
+}
+
+void ChatPage::notify(std::shared_ptr<Message> message) {
+    std::osyncstream(std::cout) << "ChatPage::notify called" << std::endl;
+    Contact contact{message->source_login, dht::crypto::PublicKey{message->source_public_key}.getId()};
+    QString str_item = QString::fromStdString(contact_to_string(contact));
+    QList<QListWidgetItem*> items = ui_->contactsListWidget->findItems(str_item, Qt::MatchExactly);
+    if (items.empty()) {
+        std::osyncstream(std::cout) << "ChatPage::notify git notified but there was no such contact" << std::endl;
+        ui_->contactsListWidget->addItem(str_item);
+    }
+    QListWidgetItem* item = items.first();
+    QFont font = item->font();
+    font.setBold(true);
+    item->setFont(font);
 }

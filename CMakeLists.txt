@@ -40,6 +40,8 @@ add_library(p2p_messenger_lib STATIC
     src/metadata_ip_resolver.h
     src/metadata_ip_resolver.cpp
     src/contact.h
+    src/chat_history.h
+    src/chat_history.cpp
     src/p2p_messenger_impl.h
     src/p2p_messenger_impl.cpp
 )

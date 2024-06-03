@@ -18,6 +18,7 @@
 #include <boost/asio.hpp>
 #include <opendht.h>
 
+#include "chat_history.h"
 #include "dht_ip_resolver.h"
 #include "metadata_ip_resolver.h"
 #include "message.h"
@@ -46,6 +47,7 @@ public:
     void listen(const std::string& login);
     std::optional<std::string> resolve(const std::string& login, const dht::InfoHash& public_key_id);
     std::shared_ptr<dht::crypto::PublicKey> get_public_key_by_public_key_id(const dht::InfoHash& public_key_id);
+    const std::list<std::pair<std::string, std::string>>* get(const dht::InfoHash& public_key_id);
 
 private:
     dht::crypto::Identity get_identity(bool generate_crypto_identity, const std::string& crypto_identity_path);
@@ -66,6 +68,7 @@ private:
     MessageReceiver message_receiver_;
     DhtIpResolver dht_ip_resolver_;
     MetadataIpResolver metadata_ip_resolver_;
+    ChatHistory chat_history_;
 };
 
 #endif // P2P_MESSENGER_IMPL_H

@@ -7,6 +7,7 @@
 #include <QListWidgetItem>
 
 #include "contact.h"
+#include "chat_history.h"
 #include "message.h"
 #include "p2p_messenger_impl.h"
 
@@ -29,6 +30,7 @@ private:
     void send_message();
     Contact contact_from_string(const std::string& str_contact);
     std::string contact_to_string(const Contact& contact);
+    void notify(std::shared_ptr<Message> message);
 
 signals:
     void logged_in();

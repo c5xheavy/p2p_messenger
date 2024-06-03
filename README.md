@@ -11,6 +11,7 @@ sudo apt install catch2
 sudo apt install qtbase5-dev qtcreator qt5-qmake qt5-doc
 sudo apt install qt6-base-dev qtcreator
 sudo apt-get install libcppunit-dev
+sudo apt-get install pkg-config
 
 # Install OpenDHT dependencies
 sudo apt install libncurses5-dev libreadline-dev nettle-dev libgnutls28-dev libargon2-0-dev libmsgpack-dev  libssl-dev libfmt-dev libjsoncpp-dev libhttp-parser-dev libasio-dev

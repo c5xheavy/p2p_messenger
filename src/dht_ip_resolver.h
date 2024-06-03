@@ -19,7 +19,7 @@ namespace net = boost::asio;
 
 class DhtIpResolver {
 public:
-    using ListenLoginHandler = std::function<void(const std::string&, const dht::InfoHash&)>;
+    using ListenLoginHandler = std::function<void(std::string&&, dht::InfoHash&&)>;
 
     DhtIpResolver(net::io_context& io_context, uint16_t port, const dht::crypto::Identity& identity, ListenLoginHandler handler);
     ~DhtIpResolver();

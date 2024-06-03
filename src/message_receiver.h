@@ -18,7 +18,7 @@ namespace sys = boost::system;
 
 class MessageReceiver {
 public:
-    using ReceiveMessageHandler = std::function<void(const Message&)>;
+    using ReceiveMessageHandler = std::function<void(Message&&)>;
 
     MessageReceiver(net::io_context& io_context, uint16_t port, std::shared_ptr<dht::crypto::PrivateKey> private_key, ReceiveMessageHandler handler);
     ~MessageReceiver();

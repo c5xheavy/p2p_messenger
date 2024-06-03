@@ -9,13 +9,14 @@
 #include <boost/asio.hpp>
 
 #include "dht_ip_resolver.h"
+#include "message.h"
 
 namespace net = boost::asio;
 using net::ip::udp;
 
 class MessageSender {
 public:
-    using SendMessageHandler = std::function<void(const std::string&, const std::string&)>;
+    using SendMessageHandler = std::function<void(Message&& message)>;
 
     MessageSender(net::io_context& io_context, DhtIpResolver& dht_ip_resolver, const std::string& source_ip, uint16_t source_port,
                   const std::string& source_login, const dht::crypto::Identity& identity, SendMessageHandler handler);

@@ -34,18 +34,9 @@ void ChatPage::log_in(const std::string& login, uint16_t dht_port, const std::st
     std::osyncstream(std::cout) << "Generate crypto identity: " << generate_crypto_identity << std::endl;
     std::osyncstream(std::cout) << "Crypto identity path: " << crypto_identity_path << std::endl;
     p2p_messenger_impl_ = std::make_shared<P2PMessengerImpl>(login, dht_port, ip, port, generate_crypto_identity, crypto_identity_path,
-        [this](const std::string& login, const std::string& message) {
-            std::cout << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "SendMessageHandler called" << std::endl;
-            emit message_sent(login, message);
-        },
-        [this](const Message& message) {
-            std::cout << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "ReceiveMessageHandler called" << std::endl;
-            emit message_received(message);
-        },
-        [this](const std::string& login, const dht::InfoHash& public_key_id) {
-            std::cout << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "ListenLoginHandler called" << std::endl;
-            emit contact_received(login, public_key_id);
-        }
+        std::bind(&ChatPage::send_message_handler, this, std::placeholders::_1),
+        std::bind(&ChatPage::receive_message_handler, this, std::placeholders::_1),
+        std::bind(&ChatPage::listen_login_handler, this, std::placeholders::_1, std::placeholders::_2)
     );
     connect(this, &ChatPage::message_sent, this, &ChatPage::update_chat_with_sent_message);
     connect(this, &ChatPage::message_received, this, &ChatPage::update_chat_with_received_message);
@@ -54,20 +45,35 @@ void ChatPage::log_in(const std::string& login, uint16_t dht_port, const std::st
     emit logged_in();
 }
 
-void ChatPage::update_chat_with_sent_message(const std::string& login, const std::string message) {
+void ChatPage::send_message_handler(Message&& message) {
+    std::cout << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "SendMessageHandler called" << std::endl;
+    emit message_sent(std::make_shared<Message>(std::move(message)));
+}
+
+void ChatPage::receive_message_handler(Message&& message) {
+    std::cout << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "ReceiveMessageHandler called" << std::endl;
+    emit message_received(std::make_shared<Message>(std::move(message)));
+}
+
+void ChatPage::listen_login_handler(std::string&& login, dht::InfoHash&& public_key_id) {
+    std::cout << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "ListenLoginHandler called" << std::endl;
+    emit contact_received(std::make_shared<std::string>(std::move(login)), std::make_shared<dht::InfoHash>(std::move(public_key_id)));
+}
+
+void ChatPage::update_chat_with_sent_message(std::shared_ptr<Message> message) {
     std::cout << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "update_chat_with_sent_message called" << std::endl;
-    ui_->chatTextEdit->append(QString::fromStdString(login + ": " + message));
+    ui_->chatTextEdit->append(QString::fromStdString(message->source_login + ": " + message->payload.text));
 }
 
-void ChatPage::update_chat_with_received_message(const Message& message) {
+void ChatPage::update_chat_with_received_message(std::shared_ptr<Message> message) {
     std::cout << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "update_chat_with_received_message called" << std::endl;
-    ui_->chatTextEdit->append(QString::fromStdString(message.destination_login + ": " + message.payload.text));
+    ui_->chatTextEdit->append(QString::fromStdString(message->destination_login + ": " + message->payload.text));
 }
 
-void ChatPage::update_contacts_list_with_received_contact(const std::string& login, const dht::InfoHash& public_key_id) {
+void ChatPage::update_contacts_list_with_received_contact(std::shared_ptr<std::string> login, std::shared_ptr<dht::InfoHash> public_key_id) {
     std::cout << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "update_contacts_list_with_received_contact called" << std::endl;
-    if (public_key_id) {
-        QString item{QString::fromStdString(login_and_public_key_id_to_contact(login, public_key_id))};
+    if (*public_key_id) {
+        QString item{QString::fromStdString(login_and_public_key_id_to_contact(*login, *public_key_id))};
         if (ui_->contactsListWidget->findItems(item, Qt::MatchExactly).empty()) {
             ui_->contactsListWidget->addItem(item);
         }

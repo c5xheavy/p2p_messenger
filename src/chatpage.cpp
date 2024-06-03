@@ -83,6 +83,10 @@ void ChatPage::on_logoutPushButton_clicked() {
 }
 
 void ChatPage::send_message() {
+    if (!ui_->contactsListWidget->currentItem()) {
+        std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "No contact is selected" << std::endl;
+        return;
+    }
     auto [login, public_key_id]{contact_to_login_and_public_key_id(ui_->contactsListWidget->currentItem()->text().toStdString())};
     std::string message = ui_->messageLineEdit->text().toStdString();
     if (message.empty()) {

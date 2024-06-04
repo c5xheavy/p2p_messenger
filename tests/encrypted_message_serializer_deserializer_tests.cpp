@@ -14,18 +14,20 @@ TEST_CASE("Encrypted Message Serialization & Deserialization") {
     };
 
     SECTION("encrypting and decrypting with the same RSA key pair") {
-        dht::crypto::Identity identity{dht::crypto::generateIdentity()};
+        dht::crypto::Identity identity1{dht::crypto::generateIdentity()};
+        dht::crypto::Identity identity2{dht::crypto::generateIdentity()};
         Message message {
             1,
             "127.0.0.1",
             3001,
             "user1",
-            identity.first->getSharedPublicKey()->toString(),
+            identity1.first->getSharedPublicKey()->toString(),
             "user2",
+            identity2.first->getSharedPublicKey()->toString(),
             payload
         };
-        std::vector<uint8_t> buffer{MessageSerializer::message_to_buffer(message, identity.first->getSharedPublicKey())};
-        Message post_message{MessageDeserializer::message_from_buffer(buffer, identity.first)};
+        std::vector<uint8_t> buffer{MessageSerializer::message_to_buffer(message, identity2.first->getSharedPublicKey())};
+        Message post_message{MessageDeserializer::message_from_buffer(buffer, identity2.first)};
         REQUIRE(message == post_message);
     }
 
@@ -37,6 +39,7 @@ TEST_CASE("Encrypted Message Serialization & Deserialization") {
             "user1",
             "public_key1",
             "user2",
+            "public_key2",
             payload
         };
         std::vector<uint8_t> buffer{MessageSerializer::message_to_buffer(message)};
@@ -45,32 +48,36 @@ TEST_CASE("Encrypted Message Serialization & Deserialization") {
     }
 
     SECTION("encrypting and then not decrypting") {
-        dht::crypto::Identity identity{dht::crypto::generateIdentity()};
+        dht::crypto::Identity identity1{dht::crypto::generateIdentity()};
+        dht::crypto::Identity identity2{dht::crypto::generateIdentity()};
         Message message {
             1,
             "127.0.0.1",
             3001,
             "user1",
-            identity.first->getSharedPublicKey()->toString(),
+            identity1.first->getSharedPublicKey()->toString(),
             "user2",
+            identity2.first->getSharedPublicKey()->toString(),
             payload
         };
-        std::vector<uint8_t> buffer{MessageSerializer::message_to_buffer(message, identity.first->getSharedPublicKey())};
+        std::vector<uint8_t> buffer{MessageSerializer::message_to_buffer(message, identity2.first->getSharedPublicKey())};
         REQUIRE_THROWS(MessageDeserializer::message_from_buffer(buffer));
     }
 
     SECTION("not encrypting and then decrypting") {
-        dht::crypto::Identity identity{dht::crypto::generateIdentity()};
+        dht::crypto::Identity identity1{dht::crypto::generateIdentity()};
+        dht::crypto::Identity identity2{dht::crypto::generateIdentity()};
         Message message {
             1,
             "127.0.0.1",
             3001,
             "user1",
-            identity.first->getSharedPublicKey()->toString(),
+            identity1.first->getSharedPublicKey()->toString(),
             "user2",
+            identity2.first->getSharedPublicKey()->toString(),
             payload
         };
         std::vector<uint8_t> buffer{MessageSerializer::message_to_buffer(message)};
-        REQUIRE_THROWS(MessageDeserializer::message_from_buffer(buffer, identity.first));
+        REQUIRE_THROWS(MessageDeserializer::message_from_buffer(buffer, identity2.first));
     }
 }

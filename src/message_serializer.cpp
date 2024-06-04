@@ -27,6 +27,7 @@ std::vector<uint8_t> MessageSerializer::message_to_buffer(const Message& message
                      + sizeof(uint8_t) + message.source_login.size()
                      + sizeof(uint16_t) + message.source_public_key.size()
                      + sizeof(uint8_t) + message.destination_login.size()
+                     + sizeof(uint16_t) + message.destination_public_key.size()
                      + sizeof(uint16_t) + payload_buffer.size()};
 
     std::vector<uint8_t> buffer(size);
@@ -65,6 +66,13 @@ std::vector<uint8_t> MessageSerializer::message_to_buffer(const Message& message
 
     std::memcpy(ptr, message.destination_login.data(), destination_login_size);
     ptr += destination_login_size;
+
+    uint16_t destination_public_key_size{static_cast<uint16_t>(message.destination_public_key.size())};
+    std::memcpy(ptr, &destination_public_key_size, sizeof(destination_public_key_size));
+    ptr += sizeof(destination_public_key_size);
+
+    std::memcpy(ptr, message.destination_public_key.data(), destination_public_key_size);
+    ptr += destination_public_key_size;
 
     uint16_t payload_buffer_size{static_cast<uint16_t>(payload_buffer.size())};
     std::memcpy(ptr, &payload_buffer_size, sizeof(payload_buffer_size));

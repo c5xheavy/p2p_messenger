@@ -19,6 +19,7 @@ TEST_CASE("Message Serialization & Deserialization") {
             "user1",
             "public_key1",
             "user2",
+            "public_key2",
             payload
         };
         std::vector<uint8_t> buffer{MessageSerializer::message_to_buffer(message)};
@@ -34,6 +35,7 @@ TEST_CASE("Message Serialization & Deserialization") {
             "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
             "public_key1",
             "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "public_key2",
             payload
         };
         std::vector<uint8_t> buffer{MessageSerializer::message_to_buffer(message)};
@@ -49,6 +51,7 @@ TEST_CASE("Message Serialization & Deserialization") {
             "user1",
             "public_key1",
             "user2",
+            "public_key2",
             payload
         };
         std::vector<uint8_t> buffer{MessageSerializer::message_to_buffer(message)};
@@ -68,6 +71,7 @@ TEST_CASE("Message Serialization & Deserialization") {
             "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
             "public_key1",
             "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "public_key2",
             long_payload
         };
         std::vector<uint8_t> buffer{MessageSerializer::message_to_buffer(message)};
@@ -83,6 +87,7 @@ TEST_CASE("Message Serialization & Deserialization") {
             "qweasdzxcrtyfghvbnuiojklm,.p[];'/1234567689   53742y52734805",
             "public_key1",
             "раводлыофврадцукенщцшгукрповмтоывмтьлждьфылоывшщ15468768   ",
+            "public_key2",
             payload
         };
         std::vector<uint8_t> buffer{MessageSerializer::message_to_buffer(message)};

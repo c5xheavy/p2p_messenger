@@ -64,7 +64,8 @@ Message MessageDeserializer::message_from_buffer(const std::vector<uint8_t>& buf
                      + sizeof(uint8_t) // source_login_size
                      + sizeof(uint16_t) // source_public_key_size
                      + sizeof(uint8_t) // destination_login_size
-                     + sizeof(uint16_t)}; // destination_public_key_size
+                     + sizeof(uint16_t) // destination_public_key_size
+                     + sizeof(uint16_t)}; // payload_buffer_size
 
     if (buffer.size() < size) {
         throw std::length_error{"Not enough buffer size"};
@@ -113,6 +114,15 @@ Message MessageDeserializer::message_from_buffer(const std::vector<uint8_t>& buf
 
     message.destination_login = {ptr, ptr + destination_login_size};
     ptr += destination_login_size;
+
+    uint16_t destination_public_key_size;
+    std::memcpy(&destination_public_key_size, ptr, sizeof(destination_public_key_size));
+    ptr += sizeof(destination_public_key_size);
+
+    size += destination_public_key_size;
+
+    message.destination_public_key = {ptr, ptr + destination_public_key_size};
+    ptr += destination_public_key_size;
 
     uint16_t payload_buffer_size;
     std::memcpy(&payload_buffer_size, ptr, sizeof(payload_buffer_size));

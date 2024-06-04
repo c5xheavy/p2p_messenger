@@ -13,6 +13,7 @@ struct Message {
     std::string source_login;
     std::string source_public_key;
     std::string destination_login;
+    std::string destination_public_key;
     Payload payload;
 };
 

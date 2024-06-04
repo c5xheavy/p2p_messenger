@@ -47,6 +47,7 @@ void MessageSender::send_message(const std::string& destination_address, const s
             source_login_,
             identity_.first->getSharedPublicKey()->toString(),
             destination_login,
+            public_key->toString(),
             {
                 1700000000,
                 text

@@ -27,7 +27,7 @@ P2PMessengerImpl::P2PMessengerImpl(const std::string& my_login, uint16_t dht_por
     , work_guard_{net::make_work_guard(io_context_)}
     , message_sender_{io_context_, dht_ip_resolver_, my_ip_, my_port_, my_login_, identity_, [this, send_message_handler = std::move(send_message_handler)](Message&& message) {
         std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Message sent" << std::endl;
-        chat_history_.append(dht::crypto::PublicKey{message.source_public_key}.getId(), message.source_login, message.payload.text);
+        chat_history_.append(dht::crypto::PublicKey{message.destination_public_key}.getId(), message.source_login, message.payload.text);
         send_message_handler(std::move(message));
     }}
     , message_receiver_{io_context_, my_port_, identity_.first, [this, receive_message_handler = std::move(receive_message_handler), listen_login_handler](Message&& message) {

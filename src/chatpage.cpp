@@ -97,6 +97,12 @@ void ChatPage::update_contacts_list_with_received_contact(std::shared_ptr<Contac
 void ChatPage::on_logoutPushButton_clicked() {
     std::osyncstream(std::cout) << "Loging out!" << std::endl;
     p2p_messenger_impl_.reset();
+    ui_->contactsListWidget->clear();
+    ui_->chatTextEdit->clear();
+    ui_->destinationLoginLabel->clear();
+    ui_->destinationAddressLabel->clear();
+    ui_->messageLineEdit->clear();
+    ui_->searchLoginLineEdit->clear();
     emit logged_out();
 }
 

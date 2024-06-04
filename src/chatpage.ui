@@ -73,7 +73,7 @@
        <item>
         <widget class="QLabel" name="destinationLoginLabel">
          <property name="text">
-          <string>Destination Login</string>
+          <string/>
          </property>
         </widget>
        </item>
@@ -93,7 +93,7 @@
        <item>
         <widget class="QLabel" name="destinationAddressLabel">
          <property name="text">
-          <string>Destination Address</string>
+          <string/>
          </property>
         </widget>
        </item>

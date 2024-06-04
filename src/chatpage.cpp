@@ -40,9 +40,9 @@ void ChatPage::log_in(const std::string& login, uint16_t dht_port, const std::st
         std::bind(&ChatPage::receive_message_handler, this, std::placeholders::_1),
         std::bind(&ChatPage::listen_login_handler, this, std::placeholders::_1)
     );
-    connect(this, &ChatPage::message_sent, this, &ChatPage::update_chat_with_sent_message);
-    connect(this, &ChatPage::message_received, this, &ChatPage::update_chat_with_received_message);
-    connect(this, &ChatPage::contact_received, this, &ChatPage::update_contacts_list_with_received_contact);
+    connect(this, &ChatPage::message_sent, this, &ChatPage::update_chat_with_sent_message, Qt::UniqueConnection);
+    connect(this, &ChatPage::message_received, this, &ChatPage::update_chat_with_received_message, Qt::UniqueConnection);
+    connect(this, &ChatPage::contact_received, this, &ChatPage::update_contacts_list_with_received_contact, Qt::UniqueConnection);
     std::osyncstream(std::cout) << "P2P Messenger created!" << std::endl;
     emit logged_in();
 }

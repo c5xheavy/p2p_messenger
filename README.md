@@ -4,31 +4,10 @@
 
 ```shell
 sudo apt update
-sudo apt install git
-sudo apt install build-essential gdb
-sudo apt install cmake
-sudo apt install catch2
-sudo apt install qtbase5-dev qtcreator qt5-qmake qt5-doc
-sudo apt install qt6-base-dev qtcreator
-sudo apt-get install libcppunit-dev
-sudo apt-get install pkg-config
+sudo apt install -y git build-essential gdb libcppunit-dev pkg-config cmake catch2 qtbase5-dev qtcreator qt5-qmake qt5-doc
 
 # Install OpenDHT dependencies
-sudo apt install libncurses5-dev libreadline-dev nettle-dev libgnutls28-dev libargon2-0-dev libmsgpack-dev  libssl-dev libfmt-dev libjsoncpp-dev libhttp-parser-dev libasio-dev
-
-## Install python binding dependencies
-#sudo apt-get install cython3 python3-dev python3-setuptools
-
-## Build & install restinio (for proxy server/client):
-#mkdir restinio && cd restinio \
-#    && wget https://github.com/aberaud/restinio/archive/2224ffedef52cb2b74645d63d871d61dbd0f165e.tar.gz \
-#    && ls -l && tar -xzf 2224ffedef52cb2b74645d63d871d61dbd0f165e.tar.gz \
-#    && cd restinio-2224ffedef52cb2b74645d63d871d61dbd0f165e/dev \
-#    && cmake -DCMAKE_INSTALL_PREFIX=/usr -DRESTINIO_TEST=OFF -DRESTINIO_SAMPLE=OFF \
-#             -DRESTINIO_INSTALL_SAMPLES=OFF -DRESTINIO_BENCH=OFF -DRESTINIO_INSTALL_BENCHES=OFF \
-#             -DRESTINIO_FIND_DEPS=ON -DRESTINIO_ALLOW_SOBJECTIZER=Off -DRESTINIO_USE_BOOST_ASIO=none . \
-#    && make -j8 && make install \
-#    && cd ../../ && rm -rf restinio
+sudo apt install -y libncurses5-dev libreadline-dev nettle-dev libgnutls28-dev libargon2-0-dev libmsgpack-dev  libssl-dev libfmt-dev libjsoncpp-dev libhttp-parser-dev libasio-dev
 ```
 
 ## Build

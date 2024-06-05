@@ -103,7 +103,7 @@
         </widget>
        </item>
        <item row="5" column="0">
-        <widget class="QLabel" name="label">
+        <widget class="QLabel" name="cryptoIdentityPathLabel">
          <property name="text">
           <string>Crypto identity path</string>
          </property>

@@ -89,6 +89,14 @@ void ChatPage::update_contacts_list_with_received_contact(std::shared_ptr<Contac
         if (ui_->contactsListWidget->findItems(item, Qt::MatchExactly).empty()) {
             ui_->contactsListWidget->addItem(item);
         }
+        if (ui_->contactsListWidget->currentItem() && item == ui_->contactsListWidget->currentItem()->text()) {
+            std::optional<std::string> address = p2p_messenger_impl_->resolve(contact->login, contact->public_key_id);
+            if (address) {
+                ui_->destinationAddressLabel->setText(QString::fromStdString(*address));
+            } else {
+                ui_->destinationAddressLabel->setText("Not found");
+            }
+        }
     } else {
         std::osyncstream(std::cout) << "Public key ID is null" << std::endl;
     }

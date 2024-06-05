@@ -16,7 +16,8 @@ public:
 
 signals:
     void log_in_requsted(const std::string& login, uint16_t dht_port, const std::string& ip,
-                         uint16_t port, const std::string& bootstrap_node_ip, uint16_t bootstrap_node_port, 
+                         uint16_t port, const std::string& bootstrap_node_ip, uint16_t bootstrap_node_port,
+                         const std::string& relay_node_ip, uint16_t relay_node_port, bool relay,
                          bool generate_crypto_identity, const std::string& crypto_identity_path);
 
 private slots:

@@ -11,6 +11,7 @@
 P2PMessengerImpl::P2PMessengerImpl(const std::string& my_login, uint16_t dht_port,
                                    const std::string& my_ip, uint16_t my_port,
                                    const std::string& bootstrap_node_ip, uint16_t bootstrap_node_port,
+                                   const std::string& relay_node_ip, uint16_t relay_node_port, bool relay,
                                    bool generate_crypto_identity, const std::string& crypto_identity_path,
                                    MessageSender::SendMessageHandler&& send_message_handler,
                                    MessageReceiver::ReceiveMessageHandler&& receive_message_handler,
@@ -21,6 +22,9 @@ P2PMessengerImpl::P2PMessengerImpl(const std::string& my_login, uint16_t dht_por
     , my_port_{my_port}
     , bootstrap_node_ip_{bootstrap_node_ip}
     , bootstrap_node_port_{bootstrap_node_port}
+    , relay_node_ip_{relay_node_ip}
+    , relay_node_port_{relay_node_port}
+    , relay_{relay}
     , generate_crypto_identity_{generate_crypto_identity}
     , crypto_identity_path_{crypto_identity_path}
     , identity_{get_identity(generate_crypto_identity_, crypto_identity_path_)}

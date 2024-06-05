@@ -19,6 +19,9 @@ void LoginPage::on_loginPushButton_clicked() {
         ui_->portLineEdit->text().toUShort(),
         ui_->bootstrapNodeIPLineEdit->text().toStdString(),
         ui_->bootstrapNodePortLineEdit->text().toUShort(),
+        ui_->relayNodeIPLineEdit->text().toStdString(),
+        ui_->relayNodePortLineEdit->text().toUShort(),
+        ui_->serveAsRelayCheckBox->isChecked(),
         ui_->generateCryptoIdentityCheckBox->isChecked(),
         ui_->cryptoIdentityPathLineEdit->text().toStdString()
     );

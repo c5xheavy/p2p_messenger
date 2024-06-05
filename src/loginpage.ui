@@ -95,28 +95,28 @@
        <item row="3" column="1">
         <widget class="QLineEdit" name="portLineEdit"/>
        </item>
-       <item row="6" column="1">
+       <item row="9" column="1">
         <widget class="QCheckBox" name="generateCryptoIdentityCheckBox">
          <property name="text">
           <string>Generate crypto identity</string>
          </property>
         </widget>
        </item>
-       <item row="7" column="0">
+       <item row="10" column="0">
         <widget class="QLabel" name="cryptoIdentityPathLabel">
          <property name="text">
           <string>Crypto identity path</string>
          </property>
         </widget>
        </item>
-       <item row="7" column="1">
+       <item row="10" column="1">
         <widget class="QLineEdit" name="cryptoIdentityPathLineEdit">
          <property name="text">
           <string/>
          </property>
         </widget>
        </item>
-       <item row="8" column="1">
+       <item row="11" column="1">
         <widget class="QPushButton" name="loginPushButton">
          <property name="text">
           <string>Login</string>
@@ -148,6 +148,37 @@
         <widget class="QLabel" name="bootstrapNodePortLabel">
          <property name="text">
           <string>Bootstrap node port</string>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="1">
+        <widget class="QLineEdit" name="relayNodeIPLineEdit">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="1">
+        <widget class="QLineEdit" name="relayNodePortLineEdit"/>
+       </item>
+       <item row="6" column="0">
+        <widget class="QLabel" name="relayNodeIPLabel">
+         <property name="text">
+          <string>Relay node IP</string>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="0">
+        <widget class="QLabel" name="relayNodePortLabel">
+         <property name="text">
+          <string>Relay node port</string>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="1">
+        <widget class="QCheckBox" name="serveAsRelayCheckBox">
+         <property name="text">
+          <string>Serve as relay</string>
          </property>
         </widget>
        </item>

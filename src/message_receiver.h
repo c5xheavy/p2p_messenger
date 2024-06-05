@@ -20,7 +20,7 @@ class MessageReceiver {
 public:
     using ReceiveMessageHandler = std::function<void(Message&&)>;
 
-    MessageReceiver(net::io_context& io_context, uint16_t port, std::shared_ptr<dht::crypto::PrivateKey> private_key, ReceiveMessageHandler handler);
+    MessageReceiver(udp::socket& socket, std::shared_ptr<dht::crypto::PrivateKey> private_key, ReceiveMessageHandler handler);
     ~MessageReceiver();
 
 private:
@@ -28,8 +28,7 @@ private:
     void async_wait_handler(const sys::error_code& ec);
 
 private:
-    net::io_context& io_context_;
-    udp::socket socket_;
+    udp::socket& socket_;
     std::shared_ptr<dht::crypto::PrivateKey> private_key_;
     ReceiveMessageHandler handler_;
 };

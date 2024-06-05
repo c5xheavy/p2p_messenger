@@ -64,6 +64,7 @@ private:
     std::vector<std::jthread> threads_;
     net::io_context io_context_;
     net::executor_work_guard<net::io_context::executor_type> work_guard_;
+    udp::socket socket_;
     MessageSender message_sender_;
     MessageReceiver message_receiver_;
     DhtIpResolver dht_ip_resolver_;

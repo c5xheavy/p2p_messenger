@@ -137,9 +137,7 @@ Message MessageDeserializer::message_from_buffer(const std::vector<uint8_t>& buf
     std::vector<uint8_t> payload_buffer{ptr, ptr + payload_buffer_size};
     ptr += payload_buffer_size;
 
-    if (private_key) {
-        payload_buffer = PayloadDeserializer::decrypt(payload_buffer, *private_key);
-    }
+    payload_buffer = PayloadDeserializer::decrypt(payload_buffer, *private_key);
 
     message.payload = PayloadDeserializer::payload_from_buffer(payload_buffer);
 

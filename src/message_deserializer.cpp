@@ -143,3 +143,41 @@ Message MessageDeserializer::message_from_buffer(const std::vector<uint8_t>& buf
 
     return message;
 }
+
+std::string MessageDeserializer::destinantion_public_key_from_buffer(const std::vector<uint8_t>& buffer) {
+    const uint8_t* ptr{buffer.data()};
+
+    ptr += sizeof(Message::id);
+
+    uint8_t source_ip_size;
+    std::memcpy(&source_ip_size, ptr, sizeof(source_ip_size));
+    ptr += sizeof(source_ip_size);
+
+    ptr += source_ip_size;
+
+    ptr += sizeof(Message::source_port);
+
+    uint8_t source_login_size;
+    std::memcpy(&source_login_size, ptr, sizeof(source_login_size));
+    ptr += sizeof(source_login_size);
+
+    ptr += source_login_size;
+
+    uint16_t source_public_key_size;
+    std::memcpy(&source_public_key_size, ptr, sizeof(source_public_key_size));
+    ptr += sizeof(source_public_key_size);
+
+    ptr += source_public_key_size;
+
+    uint8_t destination_login_size;
+    std::memcpy(&destination_login_size, ptr, sizeof(destination_login_size));
+    ptr += sizeof(destination_login_size);
+
+    ptr += destination_login_size;
+
+    uint16_t destination_public_key_size;
+    std::memcpy(&destination_public_key_size, ptr, sizeof(destination_public_key_size));
+    ptr += sizeof(destination_public_key_size);
+
+    return {ptr, ptr + destination_public_key_size};
+}

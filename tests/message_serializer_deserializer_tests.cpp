@@ -11,6 +11,8 @@ TEST_CASE("Message Serialization & Deserialization") {
         "hello"
     };
 
+    dht::crypto::Identity identity{dht::crypto::generateIdentity()};
+
     SECTION("simple") {
         Message message {
             1,
@@ -22,8 +24,8 @@ TEST_CASE("Message Serialization & Deserialization") {
             "public_key2",
             payload
         };
-        std::vector<uint8_t> buffer{MessageSerializer::message_to_buffer(message)};
-        Message post_message{MessageDeserializer::message_from_buffer(buffer)};
+        std::vector<uint8_t> buffer{MessageSerializer::message_to_buffer(message, identity.first->getSharedPublicKey())};
+        Message post_message{MessageDeserializer::message_from_buffer(buffer, identity.first)};
         REQUIRE(message == post_message);
     }
 
@@ -38,8 +40,8 @@ TEST_CASE("Message Serialization & Deserialization") {
             "public_key2",
             payload
         };
-        std::vector<uint8_t> buffer{MessageSerializer::message_to_buffer(message)};
-        Message post_message{MessageDeserializer::message_from_buffer(buffer)};
+        std::vector<uint8_t> buffer{MessageSerializer::message_to_buffer(message, identity.first->getSharedPublicKey())};
+        Message post_message{MessageDeserializer::message_from_buffer(buffer, identity.first)};
         REQUIRE(message == post_message);
     }
 
@@ -54,8 +56,8 @@ TEST_CASE("Message Serialization & Deserialization") {
             "public_key2",
             payload
         };
-        std::vector<uint8_t> buffer{MessageSerializer::message_to_buffer(message)};
-        Message post_message{MessageDeserializer::message_from_buffer(buffer)};
+        std::vector<uint8_t> buffer{MessageSerializer::message_to_buffer(message, identity.first->getSharedPublicKey())};
+        Message post_message{MessageDeserializer::message_from_buffer(buffer, identity.first)};
         REQUIRE(message == post_message);
     }
 
@@ -74,8 +76,8 @@ TEST_CASE("Message Serialization & Deserialization") {
             "public_key2",
             long_payload
         };
-        std::vector<uint8_t> buffer{MessageSerializer::message_to_buffer(message)};
-        Message post_message{MessageDeserializer::message_from_buffer(buffer)};
+        std::vector<uint8_t> buffer{MessageSerializer::message_to_buffer(message, identity.first->getSharedPublicKey())};
+        Message post_message{MessageDeserializer::message_from_buffer(buffer, identity.first)};
         REQUIRE(message == post_message);
     }
 
@@ -90,8 +92,8 @@ TEST_CASE("Message Serialization & Deserialization") {
             "public_key2",
             payload
         };
-        std::vector<uint8_t> buffer{MessageSerializer::message_to_buffer(message)};
-        Message post_message{MessageDeserializer::message_from_buffer(buffer)};
+        std::vector<uint8_t> buffer{MessageSerializer::message_to_buffer(message, identity.first->getSharedPublicKey())};
+        Message post_message{MessageDeserializer::message_from_buffer(buffer, identity.first)};
         REQUIRE(message == post_message);
     }
 }

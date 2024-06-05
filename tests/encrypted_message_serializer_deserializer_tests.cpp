@@ -31,23 +31,7 @@ TEST_CASE("Encrypted Message Serialization & Deserialization") {
         REQUIRE(message == post_message);
     }
 
-    SECTION("no encrypting or decrypting") {
-        Message message {
-            1,
-            "127.0.0.1",
-            3001,
-            "user1",
-            "public_key1",
-            "user2",
-            "public_key2",
-            payload
-        };
-        std::vector<uint8_t> buffer{MessageSerializer::message_to_buffer(message)};
-        Message post_message{MessageDeserializer::message_from_buffer(buffer)};
-        REQUIRE(message == post_message);
-    }
-
-    SECTION("encrypting and then not decrypting") {
+    SECTION("encrypting and false decrypting with wrong RSA key pair") {
         dht::crypto::Identity identity1{dht::crypto::generateIdentity()};
         dht::crypto::Identity identity2{dht::crypto::generateIdentity()};
         Message message {
@@ -60,8 +44,8 @@ TEST_CASE("Encrypted Message Serialization & Deserialization") {
             identity2.first->getSharedPublicKey()->toString(),
             payload
         };
-        std::vector<uint8_t> buffer{MessageSerializer::message_to_buffer(message, identity2.first->getSharedPublicKey())};
-        REQUIRE_THROWS(MessageDeserializer::message_from_buffer(buffer));
+        std::vector<uint8_t> buffer{MessageSerializer::message_to_buffer(message, identity1.first->getSharedPublicKey())};
+        REQUIRE_THROWS(MessageDeserializer::message_from_buffer(buffer, identity2.first));
     }
 
     SECTION("not encrypting and then decrypting") {

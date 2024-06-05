@@ -41,32 +41,6 @@ TEST_CASE("Signed Message Serialization & Deserialization") {
         REQUIRE(MessageDeserializer::check_signature(signed_message, std::make_shared<dht::crypto::PublicKey>(message.source_public_key)));
     }
 
-    SECTION("signing and verifying non-encrypted message") {
-        dht::crypto::Identity identity1{dht::crypto::generateIdentity()};
-        dht::crypto::Identity identity2{dht::crypto::generateIdentity()};
-        Message message {
-            1,
-            "127.0.0.1",
-            3001,
-            "user1",
-            identity1.first->getSharedPublicKey()->toString(),
-            "user2",
-            identity2.first->getSharedPublicKey()->toString(),
-            payload
-        };
-        std::vector<uint8_t> buffer{MessageSerializer::message_to_buffer(message)};
-        SignedMessage signed_message {
-            buffer,
-            MessageSerializer::sign(buffer, identity1.first)
-        };
-        buffer = MessageSerializer::signed_message_to_buffer(signed_message);
-        SignedMessage post_signed_message{MessageDeserializer::signed_message_from_buffer(buffer)};
-        REQUIRE(signed_message == post_signed_message);
-        Message post_message{MessageDeserializer::message_from_buffer(signed_message.message)};
-        REQUIRE(message == post_message);
-        REQUIRE(MessageDeserializer::check_signature(signed_message, std::make_shared<dht::crypto::PublicKey>(message.source_public_key)));
-    }
-
     SECTION("false signing and verifying encrypted message") {
         dht::crypto::Identity identity1{dht::crypto::generateIdentity()};
         dht::crypto::Identity identity2{dht::crypto::generateIdentity()};
@@ -89,32 +63,6 @@ TEST_CASE("Signed Message Serialization & Deserialization") {
         SignedMessage post_signed_message{MessageDeserializer::signed_message_from_buffer(buffer)};
         REQUIRE(signed_message == post_signed_message);
         Message post_message{MessageDeserializer::message_from_buffer(signed_message.message, identity2.first)};
-        REQUIRE(message == post_message);
-        REQUIRE(!MessageDeserializer::check_signature(signed_message, identity2.first->getSharedPublicKey()));
-    }
-
-    SECTION("false signing and verifying non-encrypted message") {
-        dht::crypto::Identity identity1{dht::crypto::generateIdentity()};
-        dht::crypto::Identity identity2{dht::crypto::generateIdentity()};
-        Message message {
-            1,
-            "127.0.0.1",
-            3001,
-            "user1",
-            identity1.first->getSharedPublicKey()->toString(),
-            "user2",
-            identity2.first->getSharedPublicKey()->toString(),
-            payload
-        };
-        std::vector<uint8_t> buffer{MessageSerializer::message_to_buffer(message)};
-        SignedMessage signed_message {
-            buffer,
-            MessageSerializer::sign(buffer, identity1.first)
-        };
-        buffer = MessageSerializer::signed_message_to_buffer(signed_message);
-        SignedMessage post_signed_message{MessageDeserializer::signed_message_from_buffer(buffer)};
-        REQUIRE(signed_message == post_signed_message);
-        Message post_message{MessageDeserializer::message_from_buffer(signed_message.message)};
         REQUIRE(message == post_message);
         REQUIRE(!MessageDeserializer::check_signature(signed_message, identity2.first->getSharedPublicKey()));
     }

@@ -23,7 +23,9 @@ class DhtIpResolver {
 public:
     using ListenLoginHandler = std::function<void(Contact&&)>;
 
-    DhtIpResolver(net::io_context& io_context, uint16_t port, const dht::crypto::Identity& identity, ListenLoginHandler handler);
+    DhtIpResolver(net::io_context& io_context, uint16_t port,
+                  const std::string& bootstrap_node_ip, uint16_t bootstrap_node_port,
+                  const dht::crypto::Identity& identity, ListenLoginHandler handler);
     ~DhtIpResolver();
 
     void put(const std::string& login, const std::string& ip, uint16_t port, net::system_timer::duration interval = std::chrono::seconds{60});

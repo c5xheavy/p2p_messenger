@@ -20,7 +20,9 @@
 namespace net = boost::asio;
 namespace sys = boost::system;
 
-DhtIpResolver::DhtIpResolver(net::io_context& io_context, uint16_t port, const dht::crypto::Identity& identity, ListenLoginHandler handler)
+DhtIpResolver::DhtIpResolver(net::io_context& io_context, uint16_t port,
+                             const std::string& bootstrap_node_ip, uint16_t bootstrap_node_port,
+                             const dht::crypto::Identity& identity, ListenLoginHandler handler)
     : node_{}
     , port_{port}
     , identity_{identity}
@@ -38,7 +40,7 @@ DhtIpResolver::DhtIpResolver(net::io_context& io_context, uint16_t port, const d
 
     // Join the network through any running node,
     // here using a known bootstrap node.
-    node_.bootstrap("bootstrap.jami.net", "4222");
+    node_.bootstrap(bootstrap_node_ip, std::to_string(bootstrap_node_port));
 }
 
 DhtIpResolver::~DhtIpResolver() {

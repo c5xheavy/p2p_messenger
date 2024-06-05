@@ -27,15 +27,18 @@ ChatPage::~ChatPage() {
 }
 
 void ChatPage::log_in(const std::string& login, uint16_t dht_port, const std::string& ip,
-                      uint16_t port, bool generate_crypto_identity, const std::string& crypto_identity_path) {
+                      uint16_t port, const std::string& bootstrap_node_ip, uint16_t bootstrap_node_port, 
+                      bool generate_crypto_identity, const std::string& crypto_identity_path) {
     std::osyncstream(std::cout) << "Successful login!" << std::endl;
     std::osyncstream(std::cout) << "Login: " << login << std::endl;
     std::osyncstream(std::cout) << "DHT Port: " << dht_port << std::endl;
     std::osyncstream(std::cout) << "IP: " << ip << std::endl;
     std::osyncstream(std::cout) << "Port: " << port << std::endl;
+    std::osyncstream(std::cout) << "Bootstrap node IP: " << bootstrap_node_ip << std::endl;
+    std::osyncstream(std::cout) << "Bootstrap node port: " << bootstrap_node_port << std::endl;
     std::osyncstream(std::cout) << "Generate crypto identity: " << generate_crypto_identity << std::endl;
     std::osyncstream(std::cout) << "Crypto identity path: " << crypto_identity_path << std::endl;
-    p2p_messenger_impl_ = std::make_shared<P2PMessengerImpl>(login, dht_port, ip, port, generate_crypto_identity, crypto_identity_path,
+    p2p_messenger_impl_ = std::make_shared<P2PMessengerImpl>(login, dht_port, ip, port, bootstrap_node_ip, bootstrap_node_port, generate_crypto_identity, crypto_identity_path,
         std::bind(&ChatPage::send_message_handler, this, std::placeholders::_1),
         std::bind(&ChatPage::receive_message_handler, this, std::placeholders::_1),
         std::bind(&ChatPage::listen_login_handler, this, std::placeholders::_1)

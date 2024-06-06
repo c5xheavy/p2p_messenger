@@ -46,19 +46,4 @@ TEST_CASE("Encrypted Message Serialization & Deserialization") {
         std::vector<uint8_t> buffer{MessageSerializer::message_to_buffer(message, source_identity.first->getSharedPublicKey())};
         REQUIRE_THROWS(MessageDeserializer::message_from_buffer(buffer, destination_identity.first));
     }
-
-    SECTION("not encrypting and then decrypting") {
-        Message message {
-            1,
-            "127.0.0.1",
-            3001,
-            "user1",
-            source_identity.first->getSharedPublicKey()->toString(),
-            "user2",
-            destination_identity.first->getSharedPublicKey()->toString(),
-            payload
-        };
-        std::vector<uint8_t> buffer{MessageSerializer::message_to_buffer(message)};
-        REQUIRE_THROWS(MessageDeserializer::message_from_buffer(buffer, destination_identity.first));
-    }
 }

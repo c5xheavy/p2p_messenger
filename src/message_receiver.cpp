@@ -48,7 +48,6 @@ void MessageReceiver::async_wait_handler(const sys::error_code& ec) {
         std::ofstream ofs("log.txt", std::ios_base::app);
         ofs << "Address: " << remote_endpoint.address().to_string() << std::endl;
         ofs << "Port: " << std::to_string(remote_endpoint.port()) << std::endl;
-        socket_.send_to(net::buffer(buffer), remote_endpoint);
 
         if (buffer.size() != bytes_received) {
             throw std::logic_error{"Bytes available is not equal bytes read"};

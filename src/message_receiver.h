@@ -11,6 +11,7 @@
 #include <opendht.h>
 
 #include "message.h"
+#include "metadata_ip_resolver.h"
 
 namespace net = boost::asio;
 using net::ip::udp;
@@ -20,7 +21,7 @@ class MessageReceiver {
 public:
     using ReceiveMessageHandler = std::function<void(Message&&)>;
 
-    MessageReceiver(udp::socket& socket, std::shared_ptr<dht::crypto::PrivateKey> private_key, ReceiveMessageHandler handler);
+    MessageReceiver(udp::socket& socket, std::shared_ptr<dht::crypto::PrivateKey> private_key, MetadataIpResolver& metadata_ip_resolver, ReceiveMessageHandler handler);
     ~MessageReceiver();
 
 private:
@@ -30,6 +31,7 @@ private:
 private:
     udp::socket& socket_;
     std::shared_ptr<dht::crypto::PrivateKey> private_key_;
+    MetadataIpResolver& metadata_ip_resolver_;
     ReceiveMessageHandler handler_;
 };
 

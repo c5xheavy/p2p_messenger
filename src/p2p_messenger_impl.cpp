@@ -38,10 +38,9 @@ P2PMessengerImpl::P2PMessengerImpl(const std::string& my_login, uint16_t dht_por
         chat_history_.append(dht::crypto::PublicKey{message.destination_public_key}.getId(), message.source_login, message.payload.text);
         send_message_handler(std::move(message));
     }}
-    , message_receiver_{socket_, identity_.first, [this, receive_message_handler = std::move(receive_message_handler), listen_login_handler](Message&& message) {
+    , message_receiver_{socket_, identity_.first, metadata_ip_resolver_, [this, receive_message_handler = std::move(receive_message_handler), listen_login_handler](Message&& message) {
         std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Message received" << std::endl;
         chat_history_.append(dht::crypto::PublicKey{message.source_public_key}.getId(), message.source_login, message.payload.text);
-        metadata_ip_resolver_.put(message.source_login, std::make_shared<dht::crypto::PublicKey>(message.source_public_key), message.source_ip, message.source_port);
         listen_login_handler({message.source_login, dht::crypto::PublicKey{message.source_public_key}.getId()});
         receive_message_handler(std::move(message));
     }}
@@ -104,17 +103,17 @@ void P2PMessengerImpl::listen(const std::string& login) {
 
 std::optional<std::string> P2PMessengerImpl::resolve(const std::string& login, const dht::InfoHash& public_key_id) {
     std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "P2PMessengerImpl::resolve called" << std::endl;
-    std::optional<std::string> address = dht_ip_resolver_.resolve(login, public_key_id);
+    std::optional<std::string> address = metadata_ip_resolver_.resolve(login, public_key_id);
     if (address) {
         return address;
     }
-    return metadata_ip_resolver_.resolve(login, public_key_id);
+    return dht_ip_resolver_.resolve(login, public_key_id);
 }
 
 std::shared_ptr<dht::crypto::PublicKey> P2PMessengerImpl::get_public_key_by_public_key_id(const dht::InfoHash& public_key_id) {
-    std::shared_ptr<dht::crypto::PublicKey> public_key{dht_ip_resolver_.get_public_key_by_public_key_id(public_key_id)};
+    std::shared_ptr<dht::crypto::PublicKey> public_key{metadata_ip_resolver_.get_public_key_by_public_key_id(public_key_id)};
     if (!public_key) {
-        public_key = metadata_ip_resolver_.get_public_key_by_public_key_id(public_key_id);
+        public_key = dht_ip_resolver_.get_public_key_by_public_key_id(public_key_id);
     }
     return public_key;
 }

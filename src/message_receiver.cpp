@@ -16,9 +16,10 @@ namespace net = boost::asio;
 using net::ip::udp;
 namespace sys = boost::system;
 
-MessageReceiver::MessageReceiver(udp::socket& socket, std::shared_ptr<dht::crypto::PrivateKey> private_key, ReceiveMessageHandler handler)
+MessageReceiver::MessageReceiver(udp::socket& socket, std::shared_ptr<dht::crypto::PrivateKey> private_key, MetadataIpResolver& metadata_ip_resolver, ReceiveMessageHandler handler)
     : socket_{socket}
     , private_key_{private_key}
+    , metadata_ip_resolver_{metadata_ip_resolver}
     , handler_{handler} {
     async_wait();
 }
@@ -59,6 +60,7 @@ void MessageReceiver::async_wait_handler(const sys::error_code& ec) {
             std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << message.payload.text << std::endl;
             std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "End of message" << std::endl;
 
+            metadata_ip_resolver_.put(message.source_login, std::make_shared<dht::crypto::PublicKey>(message.source_public_key), remote_endpoint.address().to_string(), remote_endpoint.port());
             handler_(std::move(message));
         }
     } else {

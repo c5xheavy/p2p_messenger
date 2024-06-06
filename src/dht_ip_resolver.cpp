@@ -36,7 +36,7 @@ DhtIpResolver::DhtIpResolver(net::io_context& io_context, uint16_t port,
     , handler_{handler} {
     // Launch a dht node on a new thread, using a
     // generated RSA key pair, and listen on port.
-    node_.run(port, identity_, true);
+    node_.run(port_, identity_, true);
 
     // Join the network through any running node,
     // here using a known bootstrap node.

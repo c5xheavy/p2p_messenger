@@ -18,7 +18,7 @@ class MessageSender {
 public:
     using SendMessageHandler = std::function<void(Message&& message)>;
 
-    MessageSender(udp::socket& socket, DhtIpResolver& dht_ip_resolver, const std::string& source_ip, uint16_t source_port,
+    MessageSender(udp::socket& socket, const std::string& source_ip, uint16_t source_port,
                   const std::string& source_login, const dht::crypto::Identity& identity, SendMessageHandler handler);
     ~MessageSender();
 
@@ -30,7 +30,6 @@ private:
 
 private:
     udp::socket& socket_;
-    DhtIpResolver& dht_ip_resolver_;
     std::string source_ip_;
     uint16_t source_port_;
     std::string source_login_;

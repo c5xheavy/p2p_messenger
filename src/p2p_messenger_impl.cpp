@@ -33,7 +33,7 @@ P2PMessengerImpl::P2PMessengerImpl(const std::string& my_login, uint16_t dht_por
     , io_context_{static_cast<int>(num_threads_)}
     , work_guard_{net::make_work_guard(io_context_)}
     , socket_{io_context_, udp::endpoint{udp::v4(), my_port_}}
-    , message_sender_{socket_, dht_ip_resolver_, my_ip_, my_port_, my_login_, identity_, [this, send_message_handler = std::move(send_message_handler)](Message&& message) {
+    , message_sender_{socket_, my_ip_, my_port_, my_login_, identity_, [this, send_message_handler = std::move(send_message_handler)](Message&& message) {
         std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Message sent" << std::endl;
         chat_history_.append(dht::crypto::PublicKey{message.destination_public_key}.getId(), message.source_login, message.payload.text);
         send_message_handler(std::move(message));
@@ -56,6 +56,10 @@ P2PMessengerImpl::P2PMessengerImpl(const std::string& my_login, uint16_t dht_por
 
     // listen for data on the dht
     dht_ip_resolver_.listen(my_login_);
+
+    std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << relay_node_ip_ << std::endl;
+    std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << relay_node_port_ << std::endl;
+    std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << relay_ << std::endl;
 
     threads_.reserve(num_threads_);
     for (size_t i = 0; i < num_threads_; ++i) {

@@ -147,10 +147,17 @@
        <item row="7" column="1">
         <widget class="QLineEdit" name="relayNodePortLineEdit"/>
        </item>
-       <item row="8" column="1">
-        <widget class="QCheckBox" name="serveAsRelayCheckBox">
+       <item row="8" column="0">
+        <widget class="QLabel" name="cryptoIdentityPathLabel">
          <property name="text">
-          <string>Serve as relay</string>
+          <string>Crypto identity path</string>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="1">
+        <widget class="QLineEdit" name="cryptoIdentityPathLineEdit">
+         <property name="text">
+          <string/>
          </property>
         </widget>
        </item>
@@ -161,17 +168,10 @@
          </property>
         </widget>
        </item>
-       <item row="10" column="0">
-        <widget class="QLabel" name="cryptoIdentityPathLabel">
-         <property name="text">
-          <string>Crypto identity path</string>
-         </property>
-        </widget>
-       </item>
        <item row="10" column="1">
-        <widget class="QLineEdit" name="cryptoIdentityPathLineEdit">
+        <widget class="QCheckBox" name="serveAsRelayCheckBox">
          <property name="text">
-          <string/>
+          <string>Serve as relay</string>
          </property>
         </widget>
        </item>

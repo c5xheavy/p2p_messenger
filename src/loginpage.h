@@ -22,6 +22,7 @@ signals:
 
 private slots:
     void on_loginPushButton_clicked();
+    void on_resolvePushButton_clicked();
 
 private:
     Ui::LoginPage *ui_;

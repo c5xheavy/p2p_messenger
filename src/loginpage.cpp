@@ -1,6 +1,14 @@
 #include "loginpage.h"
 #include "ui_loginpage.h"
 
+#include <iostream>
+#include <stdexcept>
+
+#include <boost/asio.hpp>
+
+namespace net = boost::asio;
+using net::ip::tcp;
+
 LoginPage::LoginPage(QWidget *parent) :
     QDialog(parent),
     ui_(new Ui::LoginPage) {
@@ -25,4 +33,47 @@ void LoginPage::on_loginPushButton_clicked() {
         ui_->generateCryptoIdentityCheckBox->isChecked(),
         ui_->cryptoIdentityPathLineEdit->text().toStdString()
     );
+}
+
+void LoginPage::on_resolvePushButton_clicked() {
+    try {
+        net::io_context io_context;
+        tcp::resolver resolver{io_context};
+        tcp::resolver::results_type endpoints = resolver.resolve("ifconfig.me", "http");
+
+        tcp::socket socket{io_context};
+        net::connect(socket, endpoints);
+
+        std::string request = "GET / HTTP/1.1\r\n";
+        request += "Host: ifconfig.me\r\n";
+        request += "Connection: close\r\n\r\n";
+
+        net::write(socket, net::buffer(request));
+
+        net::streambuf response;
+        net::read_until(socket, response, "\r\n\r\n");
+
+        std::istream response_stream{&response};
+        std::string http_version;
+        unsigned int status_code;
+        std::string status_message;
+
+        response_stream >> http_version;
+        response_stream >> status_code;
+        std::getline(response_stream, status_message);
+
+        std::string header;
+        while (std::getline(response_stream, header) && header != "\r") {}
+
+        if (status_code == 200) {
+            std::ostringstream ss;
+            ss << &response;
+            std::string ip = ss.str();
+            ui_->IPLineEdit->setText(QString::fromStdString(ip));
+        } else {
+            std::cout << "Failed to get IP address. HTTP status code: " << status_code << std::endl;
+        }
+    } catch (std::exception& e) {
+        std::cerr << "Exception: " << e.what() << std::endl;
+    }
 }

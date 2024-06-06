@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include <functional>
+#include <fstream>
 #include <iostream>
 #include <syncstream>
 
@@ -43,6 +44,9 @@ void MessageReceiver::async_wait_handler(const sys::error_code& ec) {
 
         udp::endpoint remote_endpoint;
         size_t bytes_received{socket_.receive_from(net::buffer(buffer), remote_endpoint)};
+        std::ofstream ofs("log.txt", std::ios_base::app);
+        ofs << "Address: " << remote_endpoint.address().to_string() << std::endl;
+        ofs << "Port: " << std::to_string(remote_endpoint.port()) << std::endl;
 
         if (buffer.size() != bytes_received) {
             throw std::logic_error{"Bytes available is not equal bytes read"};

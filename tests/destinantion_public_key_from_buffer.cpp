@@ -8,8 +8,8 @@
 
 TEST_CASE("Destination public key from buffer") {
 
-    dht::crypto::Identity identity1{dht::crypto::generateIdentity()};
-    dht::crypto::Identity identity2{dht::crypto::generateIdentity()};
+    dht::crypto::Identity source_identity{dht::crypto::generateIdentity()};
+    dht::crypto::Identity destination_identity{dht::crypto::generateIdentity()};
 
     Payload payload {
         1700000000,
@@ -22,13 +22,13 @@ TEST_CASE("Destination public key from buffer") {
             "127.0.0.1",
             3001,
             "user1",
-            identity1.first->getSharedPublicKey()->toString(),
+            source_identity.first->getSharedPublicKey()->toString(),
             "user2",
-            identity2.first->getSharedPublicKey()->toString(),
+            destination_identity.first->getSharedPublicKey()->toString(),
             payload
         };
-        std::vector<uint8_t> buffer{MessageSerializer::message_to_buffer(message, identity2.first->getSharedPublicKey())};
-        REQUIRE(MessageDeserializer::destinantion_public_key_from_buffer(buffer) == identity2.first->getSharedPublicKey()->toString());
+        std::vector<uint8_t> buffer{MessageSerializer::message_to_buffer(message, destination_identity.first->getSharedPublicKey())};
+        REQUIRE(MessageDeserializer::destinantion_public_key_from_buffer(buffer) == destination_identity.first->getSharedPublicKey()->toString());
     }
 
     SECTION("destinantion public key from with wrong receiver public key") {
@@ -37,12 +37,12 @@ TEST_CASE("Destination public key from buffer") {
             "127.0.0.1",
             3001,
             "user1",
-            identity1.first->getSharedPublicKey()->toString(),
+            source_identity.first->getSharedPublicKey()->toString(),
             "user2",
-            identity2.first->getSharedPublicKey()->toString(),
+            destination_identity.first->getSharedPublicKey()->toString(),
             payload
         };
-        std::vector<uint8_t> buffer{MessageSerializer::message_to_buffer(message, identity2.first->getSharedPublicKey())};
-        REQUIRE(MessageDeserializer::destinantion_public_key_from_buffer(buffer) != identity1.first->getSharedPublicKey()->toString());
+        std::vector<uint8_t> buffer{MessageSerializer::message_to_buffer(message, destination_identity.first->getSharedPublicKey())};
+        REQUIRE(MessageDeserializer::destinantion_public_key_from_buffer(buffer) != source_identity.first->getSharedPublicKey()->toString());
     }
 }

@@ -6,12 +6,12 @@
 
 TEST_CASE("Message Serialization & Deserialization") {
 
+    dht::crypto::Identity identity{dht::crypto::generateIdentity()};
+
     Payload payload {
         1700000000,
         "hello"
     };
-
-    dht::crypto::Identity identity{dht::crypto::generateIdentity()};
 
     SECTION("simple") {
         Message message {

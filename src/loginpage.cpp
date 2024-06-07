@@ -5,6 +5,7 @@
 #include <stdexcept>
 
 #include <boost/asio.hpp>
+#include <boost/algorithm/string.hpp> 
 
 namespace net = boost::asio;
 using net::ip::tcp;
@@ -39,13 +40,13 @@ void LoginPage::on_resolvePushButton_clicked() {
     try {
         net::io_context io_context;
         tcp::resolver resolver{io_context};
-        tcp::resolver::results_type endpoints = resolver.resolve("ifconfig.me", "http");
+        tcp::resolver::results_type endpoints = resolver.resolve("ipv4.icanhazip.com", "http");
 
         tcp::socket socket{io_context};
         net::connect(socket, endpoints);
 
         std::string request = "GET / HTTP/1.1\r\n";
-        request += "Host: ifconfig.me\r\n";
+        request += "Host: ipv4.icanhazip.com\r\n";
         request += "Connection: close\r\n\r\n";
 
         net::write(socket, net::buffer(request));
@@ -69,6 +70,7 @@ void LoginPage::on_resolvePushButton_clicked() {
             std::ostringstream ss;
             ss << &response;
             std::string ip = ss.str();
+            boost::algorithm::trim(ip);
             ui_->IPLineEdit->setText(QString::fromStdString(ip));
         } else {
             std::cout << "Failed to get IP address. HTTP status code: " << status_code << std::endl;

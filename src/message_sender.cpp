@@ -69,7 +69,7 @@ void MessageSender::send_message(const std::string& destination_address, const s
         udp::endpoint endpoint{net::ip::make_address(destination_ip), destination_port};
         std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Send message to " << destination_ip << ':' << destination_port << std::endl;
         socket_.send_to(net::buffer(buffer), endpoint);
-        if (!relay_node_ip_.empty() && destination_ip != relay_node_ip_ && destination_port != relay_node_port_) {
+        if (!relay_node_ip_.empty() && destination_ip != relay_node_ip_) {
             udp::endpoint relay_endpoint{net::ip::make_address(relay_node_ip_), relay_node_port_};
             socket_.send_to(net::buffer(buffer), endpoint);
         }

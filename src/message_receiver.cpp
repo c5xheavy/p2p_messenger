@@ -121,6 +121,8 @@ void MessageReceiver::async_wait_handler(const sys::error_code& ec) {
             }
         } catch(std::exception&) {
             ofs << "received udp hole punch" << std::endl;
+            auto [login, public_key] = MessageDeserializer::metadata_from_buffer(buffer);
+            metadata_ip_resolver_.put(login, std::make_shared<dht::crypto::PublicKey>(std::move(public_key)), remote_endpoint.address().to_string(), remote_endpoint.port());
         }
     } else {
         std::osyncstream(std::cerr) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Wait message error: " << ec.what() << std::endl;

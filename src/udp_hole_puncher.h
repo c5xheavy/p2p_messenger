@@ -16,7 +16,7 @@ namespace sys = boost::system;
 
 class UdpHolePuncher {
 public:
-    UdpHolePuncher(udp::socket& socket, net::io_context& io_context);
+    UdpHolePuncher(udp::socket& socket, net::io_context& io_context, const std::string& login, const std::string public_key);
 
     void start_hole_punching(const std::string& ip, uint16_t port, net::system_timer::duration interval = std::chrono::seconds{10});
 
@@ -26,7 +26,9 @@ private:
 private:
     udp::socket& socket_;
     net::io_context& io_context_;
-    std::vector<uint8_t> buffer{1};
+    std::string login_;
+    std::string public_key_;
+    std::vector<uint8_t> buffer_;
 };
 
 #endif // UDP_HOLE_PUNCHER_H

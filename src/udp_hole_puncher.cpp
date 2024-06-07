@@ -1,8 +1,13 @@
 #include "udp_hole_puncher.h"
 
-UdpHolePuncher::UdpHolePuncher(udp::socket& socket, net::io_context& io_context)
+#include "message_serializer.h"
+
+UdpHolePuncher::UdpHolePuncher(udp::socket& socket, net::io_context& io_context, const std::string& login, const std::string public_key)
     : socket_{socket} 
-    , io_context_{io_context} {
+    , io_context_{io_context}
+    , login_{login}
+    , public_key_{public_key}
+    , buffer_{MessageSerializer::metadata_to_buffer(login_, public_key_)} {
 }
 
 void UdpHolePuncher::start_hole_punching(const std::string& ip, uint16_t port, net::system_timer::duration interval) {
@@ -10,7 +15,7 @@ void UdpHolePuncher::start_hole_punching(const std::string& ip, uint16_t port, n
 }
 
 void UdpHolePuncher::hole_punch(std::shared_ptr<net::system_timer> timer, std::shared_ptr<udp::endpoint> endpoint, net::system_timer::duration interval) {
-    socket_.send_to(net::buffer(buffer), *endpoint);
+    socket_.send_to(net::buffer(buffer_), *endpoint);
     timer->expires_after(interval);
     timer->async_wait([this, timer, endpoint, interval](const sys::error_code& ec) {
         if (ec) {

@@ -123,3 +123,27 @@ std::vector<uint8_t> MessageSerializer::signed_message_to_buffer(const SignedMes
 
     return buffer;
 }
+
+std::vector<uint8_t> MessageSerializer::metadata_to_buffer(const std::string& login, const std::string public_key) {
+    size_t size{sizeof(uint8_t) + login.size()
+              + sizeof(uint16_t) + public_key.size()};
+
+    std::vector<uint8_t> buffer(size);
+    uint8_t* ptr{buffer.data()};
+
+    uint16_t login_size{static_cast<uint16_t>(login.size())};
+    std::memcpy(ptr, &login_size, sizeof(login_size));
+    ptr += sizeof(login_size);
+
+    std::memcpy(ptr, login.data(), login_size);
+    ptr += login_size;
+
+    uint16_t public_key_size{static_cast<uint16_t>(public_key.size())};
+    std::memcpy(ptr, &public_key_size, sizeof(public_key_size));
+    ptr += sizeof(public_key_size);
+
+    std::memcpy(ptr, public_key.data(), public_key_size);
+    ptr += public_key_size;
+
+    return buffer;
+}

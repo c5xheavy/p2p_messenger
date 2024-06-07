@@ -299,3 +299,23 @@ std::string MessageDeserializer::destinantion_public_key_from_buffer(const std::
 
     return {ptr, ptr + destination_public_key_size};
 }
+
+std::pair<std::string, std::string> MessageDeserializer::metadata_from_buffer(const std::vector<uint8_t>& buffer) {
+    const uint8_t* ptr{buffer.data()};
+
+    uint16_t login_size;
+    std::memcpy(&login_size, ptr, sizeof(login_size));
+    ptr += sizeof(login_size);
+
+    std::string login = {ptr, ptr + login_size};
+    ptr += login_size;
+
+    uint16_t public_key_size;
+    std::memcpy(&public_key_size, ptr, sizeof(public_key_size));
+    ptr += sizeof(public_key_size);
+
+    std::string public_key = {ptr, ptr + public_key_size};
+    ptr += public_key_size;
+
+    return {login, public_key};
+}

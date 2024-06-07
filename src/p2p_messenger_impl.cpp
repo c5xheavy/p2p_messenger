@@ -52,7 +52,7 @@ P2PMessengerImpl::P2PMessengerImpl(const std::string& my_login, uint16_t dht_por
     }}
     , metadata_ip_resolver_{} 
     , chat_history_{} 
-    , udp_hole_puncher_{socket_, io_context_} {
+    , udp_hole_puncher_{socket_, io_context_, my_login_, identity_.first->getSharedPublicKey()->toString()} {
     // put data on the dht
     dht_ip_resolver_.put_signed(my_login_, my_ip_, my_port_);
 

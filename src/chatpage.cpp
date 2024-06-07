@@ -74,6 +74,7 @@ void ChatPage::listen_login_handler(Contact&& contact) {
 
 void ChatPage::update_chat_with_sent_message(std::shared_ptr<Message> message) {
     std::cout << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "update_chat_with_sent_message called" << std::endl;
+    if (message->source_public_key == message->destination_public_key) return;
     ui_->chatTextEdit->append(QString::fromStdString(message->source_login + ": " + message->payload.text));
 }
 

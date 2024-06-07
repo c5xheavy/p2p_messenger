@@ -38,12 +38,16 @@ MessageSender::~MessageSender() {
 void MessageSender::send_message(const std::string& destination_address, const std::string& destination_login,
                                  std::shared_ptr<dht::crypto::PublicKey> public_key, const std::string& text) {
     try {
+        auto [destination_ip, destination_port]{get_ip_and_port_from_address(destination_address)};
+
         Message message {
             1,
             source_ip_,
             source_port_,
             source_login_,
             identity_.first->getSharedPublicKey()->toString(),
+            destination_ip,
+            destination_port,
             destination_login,
             public_key->toString(),
             {
@@ -57,8 +61,6 @@ void MessageSender::send_message(const std::string& destination_address, const s
             MessageSerializer::sign(buffer, identity_.first)
         };
         buffer = MessageSerializer::signed_message_to_buffer(signed_message);
-
-        auto [destination_ip, destination_port]{get_ip_and_port_from_address(destination_address)};
 
         udp::endpoint endpoint{net::ip::make_address(destination_ip), destination_port};
         std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Send message to " << destination_ip << ':' << destination_port << std::endl;

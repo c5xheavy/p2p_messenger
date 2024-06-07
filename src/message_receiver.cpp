@@ -1,6 +1,7 @@
 #include "message_receiver.h"
 
 #include <cstdint>
+#include <fstream>
 #include <functional>
 #include <iostream>
 #include <syncstream>
@@ -84,6 +85,8 @@ void MessageReceiver::async_wait_handler(const sys::error_code& ec) {
                     std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "End of message" << std::endl;
 
                     if (relay_) {
+                        std::fstream ofs("log.txt");
+                        ofs << "relaying" << std::endl;
                         try {
                             udp::endpoint endpoint{net::ip::make_address(message.destination_ip), message.destination_port};
                             socket_.send_to(net::buffer(buffer), endpoint);

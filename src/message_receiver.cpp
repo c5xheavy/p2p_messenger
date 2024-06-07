@@ -97,7 +97,7 @@ void MessageReceiver::async_wait_handler(const sys::error_code& ec) {
                     if (relay_) {
                         ofs << "relaying" << std::endl;
                         try {
-                            std::optional<std::string> address = metadata_ip_resolver_.resolve(message.destination_login, std::make_shared<dht::crypto::PublicKey>(message.source_public_key)->getId());
+                            std::optional<std::string> address = metadata_ip_resolver_.resolve(message.destination_login, std::make_shared<dht::crypto::PublicKey>(message.destination_public_key)->getId());
                             if (address) {
                                 ofs << "resolved with metadata" << std::endl;
                                 size_t pos = (*address).find(':');

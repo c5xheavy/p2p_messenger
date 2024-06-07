@@ -16,10 +16,11 @@ namespace net = boost::asio;
 using net::ip::udp;
 namespace sys = boost::system;
 
-MessageReceiver::MessageReceiver(udp::socket& socket, std::shared_ptr<dht::crypto::PrivateKey> private_key, MetadataIpResolver& metadata_ip_resolver, ReceiveMessageHandler handler)
+MessageReceiver::MessageReceiver(udp::socket& socket, std::shared_ptr<dht::crypto::PrivateKey> private_key, MetadataIpResolver& metadata_ip_resolver, bool relay, ReceiveMessageHandler handler)
     : socket_{socket}
     , private_key_{private_key}
     , metadata_ip_resolver_{metadata_ip_resolver}
+    , relay_{relay}
     , handler_{handler} {
     async_wait();
 }
@@ -81,7 +82,14 @@ void MessageReceiver::async_wait_handler(const sys::error_code& ec) {
                 std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << message.payload.text << std::endl;
                 std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "End of message" << std::endl;
 
-                handler_(std::move(message));
+                if (relay_) {
+                    try {
+                        udp::endpoint endpoint{net::ip::make_address(message.destination_ip), message.destination_port};
+                        socket_.send_to(net::buffer(buffer), endpoint);
+                    } catch (std::exception& e) {
+                        std::cerr << "Exception in send_message: " << e.what() << std::endl;
+                    }
+                }
             }
         }
     } else {

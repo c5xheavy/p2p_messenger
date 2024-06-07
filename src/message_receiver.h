@@ -21,7 +21,7 @@ class MessageReceiver {
 public:
     using ReceiveMessageHandler = std::function<void(Message&&)>;
 
-    MessageReceiver(udp::socket& socket, std::shared_ptr<dht::crypto::PrivateKey> private_key, MetadataIpResolver& metadata_ip_resolver, ReceiveMessageHandler handler);
+    MessageReceiver(udp::socket& socket, std::shared_ptr<dht::crypto::PrivateKey> private_key, MetadataIpResolver& metadata_ip_resolver, bool relay, ReceiveMessageHandler handler);
     ~MessageReceiver();
 
 private:
@@ -32,6 +32,7 @@ private:
     udp::socket& socket_;
     std::shared_ptr<dht::crypto::PrivateKey> private_key_;
     MetadataIpResolver& metadata_ip_resolver_;
+    bool relay_;
     ReceiveMessageHandler handler_;
 };
 

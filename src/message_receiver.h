@@ -13,6 +13,7 @@
 
 #include "message.h"
 #include "metadata_ip_resolver.h"
+#include "udp_hole_puncher.h"
 
 namespace net = boost::asio;
 using net::ip::udp;
@@ -22,7 +23,8 @@ class MessageReceiver {
 public:
     using ReceiveMessageHandler = std::function<void(Message&&)>;
 
-    MessageReceiver(udp::socket& socket, std::shared_ptr<dht::crypto::PrivateKey> private_key, MetadataIpResolver& metadata_ip_resolver, bool relay, ReceiveMessageHandler handler);
+    MessageReceiver(udp::socket& socket, std::shared_ptr<dht::crypto::PrivateKey> private_key, MetadataIpResolver& metadata_ip_resolver,
+                    bool relay, UdpHolePuncher& upd_hole_puncher, ReceiveMessageHandler handler);
     ~MessageReceiver();
 
 private:
@@ -34,6 +36,7 @@ private:
     std::shared_ptr<dht::crypto::PrivateKey> private_key_;
     MetadataIpResolver& metadata_ip_resolver_;
     bool relay_;
+    UdpHolePuncher& upd_hole_puncher_;
     ReceiveMessageHandler handler_;
     std::fstream ofs{"log.txt", std::ios_base::app};
 };

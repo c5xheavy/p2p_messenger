@@ -16,16 +16,16 @@ namespace sys = boost::system;
 
 class UdpHolePuncher {
 public:
-    UdpHolePuncher(udp::socket& socket);
+    UdpHolePuncher(udp::socket& socket, net::io_context& io_context);
 
     void start_hole_punching(const std::string& ip, uint16_t port, net::system_timer::duration interval = std::chrono::seconds{10});
 
 private:
-    void hole_punch(std::shared_ptr<udp::endpoint> endpoint, net::system_timer::duration interval);
+    void hole_punch(std::shared_ptr<net::system_timer> timer, std::shared_ptr<udp::endpoint> endpoint, net::system_timer::duration interval);
 
 private:
     udp::socket& socket_;
-    net::system_timer timer_;
+    net::io_context& io_context_;
     std::vector<uint8_t> buffer{1};
 };
 

@@ -38,7 +38,7 @@ P2PMessengerImpl::P2PMessengerImpl(const std::string& my_login, uint16_t dht_por
         chat_history_.append(dht::crypto::PublicKey{message.destination_public_key}.getId(), message.source_login, message.payload.text);
         send_message_handler(std::move(message));
     }}
-    , message_receiver_{socket_, identity_.first, metadata_ip_resolver_, relay_, [this, receive_message_handler = std::move(receive_message_handler), listen_login_handler](Message&& message) {
+    , message_receiver_{socket_, identity_.first, metadata_ip_resolver_, relay_, udp_hole_puncher_, [this, receive_message_handler = std::move(receive_message_handler), listen_login_handler](Message&& message) {
         std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Message received" << std::endl;
         if (dht::crypto::PublicKey{message.destination_public_key} == identity_.first->getPublicKey()) {
             chat_history_.append(dht::crypto::PublicKey{message.source_public_key}.getId(), message.source_login, message.payload.text);
@@ -52,7 +52,7 @@ P2PMessengerImpl::P2PMessengerImpl(const std::string& my_login, uint16_t dht_por
     }}
     , metadata_ip_resolver_{} 
     , chat_history_{} 
-    , udp_hole_puncher_{socket_} {
+    , udp_hole_puncher_{socket_, io_context_} {
     // put data on the dht
     dht_ip_resolver_.put_signed(my_login_, my_ip_, my_port_);
 

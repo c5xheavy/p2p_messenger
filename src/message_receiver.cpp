@@ -17,11 +17,13 @@ namespace net = boost::asio;
 using net::ip::udp;
 namespace sys = boost::system;
 
-MessageReceiver::MessageReceiver(udp::socket& socket, std::shared_ptr<dht::crypto::PrivateKey> private_key, MetadataIpResolver& metadata_ip_resolver, bool relay, ReceiveMessageHandler handler)
+MessageReceiver::MessageReceiver(udp::socket& socket, std::shared_ptr<dht::crypto::PrivateKey> private_key, MetadataIpResolver& metadata_ip_resolver,
+                                bool relay, UdpHolePuncher& upd_hole_puncher, ReceiveMessageHandler handler)
     : socket_{socket}
     , private_key_{private_key}
     , metadata_ip_resolver_{metadata_ip_resolver}
     , relay_{relay}
+    , upd_hole_puncher_{upd_hole_puncher}
     , handler_{handler} {
     async_wait();
 }
@@ -56,7 +58,7 @@ void MessageReceiver::async_wait_handler(const sys::error_code& ec) {
             SignedMessage signed_message{MessageDeserializer::signed_message_from_buffer(buffer)};
             ofs << "signed_message_from_buffer" << std::endl;
             if (MessageDeserializer::destinantion_public_key_from_buffer(signed_message.message) == private_key_->getSharedPublicKey()->toString()) {
-                ofs << "" << std::endl;
+                ofs << "Received message" << std::endl;
                 try {
                     Message message{MessageDeserializer::message_from_buffer(signed_message.message, private_key_)};
                     if (MessageDeserializer::check_signature(signed_message, std::make_shared<dht::crypto::PublicKey>(message.source_public_key))) {
@@ -70,6 +72,10 @@ void MessageReceiver::async_wait_handler(const sys::error_code& ec) {
 
                         if (message.source_ip == remote_endpoint.address().to_string()) {
                             metadata_ip_resolver_.put(message.source_login, std::make_shared<dht::crypto::PublicKey>(message.source_public_key), remote_endpoint.address().to_string(), remote_endpoint.port());
+                            upd_hole_puncher_.start_hole_punching(remote_endpoint.address().to_string(), remote_endpoint.port());
+                        } else {
+                            metadata_ip_resolver_.put(message.source_login, std::make_shared<dht::crypto::PublicKey>(message.source_public_key), message.source_ip, message.source_port);
+                            upd_hole_puncher_.start_hole_punching(message.source_ip, message.source_port);
                         }
                         handler_(std::move(message));
                     }

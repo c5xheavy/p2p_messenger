@@ -54,7 +54,9 @@ void MessageReceiver::async_wait_handler(const sys::error_code& ec) {
         ofs << "received buffer" << std::endl;
         try {
             SignedMessage signed_message{MessageDeserializer::signed_message_from_buffer(buffer)};
+            ofs << "signed_message_from_buffer" << std::endl;
             if (MessageDeserializer::destinantion_public_key_from_buffer(signed_message.message) == private_key_->getSharedPublicKey()->toString()) {
+                ofs << "" << std::endl;
                 try {
                     Message message{MessageDeserializer::message_from_buffer(signed_message.message, private_key_)};
                     if (MessageDeserializer::check_signature(signed_message, std::make_shared<dht::crypto::PublicKey>(message.source_public_key))) {
@@ -75,6 +77,7 @@ void MessageReceiver::async_wait_handler(const sys::error_code& ec) {
                     std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << e.what() << std::endl;
                 }
             } else {
+                ofs << "Received someone else's message" << std::endl;
                 Message message{MessageDeserializer::message_with_not_decrypted_payload_from_buffer(signed_message.message)};
                 if (MessageDeserializer::check_signature(signed_message, std::make_shared<dht::crypto::PublicKey>(message.source_public_key))) {
                     std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Received someone else's message:" << std::endl;
@@ -96,7 +99,9 @@ void MessageReceiver::async_wait_handler(const sys::error_code& ec) {
                     }
                 }
             }
-        } catch(std::exception&) {}
+        } catch(std::exception&) {
+            ofs << "received udp hole punch" << std::endl;
+        }
     } else {
         std::osyncstream(std::cerr) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Wait message error: " << ec.what() << std::endl;
     }

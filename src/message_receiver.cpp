@@ -50,8 +50,8 @@ void MessageReceiver::async_wait_handler(const sys::error_code& ec) {
             throw std::logic_error{"Bytes available is not equal bytes read"};
         }
 
-        SignedMessage signed_message{MessageDeserializer::signed_message_from_buffer(buffer)};
         try {
+            SignedMessage signed_message{MessageDeserializer::signed_message_from_buffer(buffer)};
             if (MessageDeserializer::destinantion_public_key_from_buffer(signed_message.message) == private_key_->getSharedPublicKey()->toString()) {
                 try {
                     Message message{MessageDeserializer::message_from_buffer(signed_message.message, private_key_)};

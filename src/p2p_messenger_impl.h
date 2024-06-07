@@ -26,6 +26,7 @@
 #include "message_sender.h"
 #include "message_serializer.h"
 #include "message_deserializer.h"
+#include "udp_hole_puncher.h"
 
 namespace net = boost::asio;
 using net::ip::udp;
@@ -77,6 +78,7 @@ private:
     DhtIpResolver dht_ip_resolver_;
     MetadataIpResolver metadata_ip_resolver_;
     ChatHistory chat_history_;
+    UdpHolePuncher udp_hole_puncher_;
 };
 
 #endif // P2P_MESSENGER_IMPL_H

@@ -51,16 +51,13 @@ P2PMessengerImpl::P2PMessengerImpl(const std::string& my_login, uint16_t dht_por
         listen_login_handler(std::move(contact));
     }}
     , metadata_ip_resolver_{} 
-    , chat_history_{} {
+    , chat_history_{} 
+    , udp_hole_puncher_{socket_} {
     // put data on the dht
     dht_ip_resolver_.put_signed(my_login_, my_ip_, my_port_);
 
     // listen for data on the dht
     dht_ip_resolver_.listen(my_login_);
-
-    std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << relay_node_ip_ << std::endl;
-    std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << relay_node_port_ << std::endl;
-    std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << relay_ << std::endl;
 
     threads_.reserve(num_threads_);
     for (size_t i = 0; i < num_threads_; ++i) {
@@ -70,6 +67,8 @@ P2PMessengerImpl::P2PMessengerImpl(const std::string& my_login, uint16_t dht_por
             std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Stopping io_context thread" << std::endl;
         });
     }
+
+    udp_hole_puncher_.start_hole_punching(relay_node_ip_, relay_node_port_);
 }
 
 P2PMessengerImpl::~P2PMessengerImpl()

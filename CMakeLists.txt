@@ -44,6 +44,8 @@ add_library(p2p_messenger_lib STATIC
     src/chat_history.cpp
     src/p2p_messenger_impl.h
     src/p2p_messenger_impl.cpp
+    src/udp_hole_puncher.h
+    src/udp_hole_puncher.cpp
 )
 
 target_link_libraries(p2p_messenger_lib PRIVATE "${OPENDHT_LIB}" PRIVATE Threads::Threads)

@@ -19,7 +19,9 @@ public:
     using SendMessageHandler = std::function<void(Message&& message)>;
 
     MessageSender(udp::socket& socket, const std::string& source_ip, uint16_t source_port,
-                  const std::string& source_login, const dht::crypto::Identity& identity, SendMessageHandler handler);
+                  const std::string& source_login, const dht::crypto::Identity& identity,
+                  const std::string& relay_node_ip, uint16_t relay_node_port,
+                  SendMessageHandler handler);
     ~MessageSender();
 
     void send_message(const std::string& destination_address, const std::string& destination_login,
@@ -34,6 +36,8 @@ private:
     uint16_t source_port_;
     std::string source_login_;
     dht::crypto::Identity identity_;
+    std::string relay_node_ip_;
+    uint16_t relay_node_port_;
     SendMessageHandler handler_;
 };
 

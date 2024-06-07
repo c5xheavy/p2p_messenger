@@ -18,12 +18,16 @@ namespace net = boost::asio;
 using net::ip::udp;
 
 MessageSender::MessageSender(udp::socket& socket, const std::string& source_ip, uint16_t source_port,
-                             const std::string& source_login, const dht::crypto::Identity& identity, SendMessageHandler handler)
+                             const std::string& source_login, const dht::crypto::Identity& identity,
+                             const std::string& relay_node_ip, uint16_t relay_node_port,
+                             SendMessageHandler handler)
     : socket_{socket}
     , source_ip_{source_ip}
     , source_port_{source_port}
     , source_login_{source_login}
     , identity_{identity}
+    , relay_node_ip_{relay_node_ip}
+    , relay_node_port_{relay_node_port}
     , handler_{handler} {
 }
 
@@ -64,6 +68,8 @@ void MessageSender::send_message(const std::string& destination_address, const s
 
         udp::endpoint endpoint{net::ip::make_address(destination_ip), destination_port};
         std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Send message to " << destination_ip << ':' << destination_port << std::endl;
+        socket_.send_to(net::buffer(buffer), endpoint);
+        udp::endpoint relay_endpoint{net::ip::make_address(relay_node_ip_), relay_node_port_};
         socket_.send_to(net::buffer(buffer), endpoint);
         handler_(std::move(message));
     } catch (std::exception& e) {

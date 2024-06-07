@@ -50,7 +50,8 @@ void MessageReceiver::async_wait_handler(const sys::error_code& ec) {
         if (buffer.size() != bytes_received) {
             throw std::logic_error{"Bytes available is not equal bytes read"};
         }
-
+        
+        ofs << "received buffer" << std::endl;
         try {
             SignedMessage signed_message{MessageDeserializer::signed_message_from_buffer(buffer)};
             if (MessageDeserializer::destinantion_public_key_from_buffer(signed_message.message) == private_key_->getSharedPublicKey()->toString()) {
@@ -85,7 +86,6 @@ void MessageReceiver::async_wait_handler(const sys::error_code& ec) {
                     std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "End of message" << std::endl;
 
                     if (relay_) {
-                        std::fstream ofs("log.txt");
                         ofs << "relaying" << std::endl;
                         try {
                             udp::endpoint endpoint{net::ip::make_address(message.destination_ip), message.destination_port};

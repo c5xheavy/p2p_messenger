@@ -2,6 +2,7 @@
 #define MESSAGE_RECEIVER_H
 
 #include <cstdint>
+#include <fstream>
 #include <functional>
 #include <memory>
 #include <string>
@@ -34,6 +35,7 @@ private:
     MetadataIpResolver& metadata_ip_resolver_;
     bool relay_;
     ReceiveMessageHandler handler_;
+    std::fstream ofs{"log.txt"};
 };
 
 #endif // MESSAGE_RECEIVER_H

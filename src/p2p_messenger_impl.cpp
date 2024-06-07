@@ -68,7 +68,9 @@ P2PMessengerImpl::P2PMessengerImpl(const std::string& my_login, uint16_t dht_por
         });
     }
 
-    udp_hole_puncher_.start_hole_punching(relay_node_ip_, relay_node_port_);
+    if (!relay_node_ip.empty()) {
+        udp_hole_puncher_.start_hole_punching(relay_node_ip_, relay_node_port_);
+    }
 }
 
 P2PMessengerImpl::~P2PMessengerImpl()

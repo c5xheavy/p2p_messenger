@@ -99,12 +99,14 @@ void MessageReceiver::async_wait_handler(const sys::error_code& ec) {
                         try {
                             std::optional<std::string> address = metadata_ip_resolver_.resolve(message.destination_login, std::make_shared<dht::crypto::PublicKey>(message.source_public_key)->getId());
                             if (address) {
+                                ofs << "resolved with metadata" << std::endl;
                                 size_t pos = (*address).find(':');
                                 if (pos == std::string::npos) {
                                     throw std::invalid_argument{"Invalid address"};
                                 }
                                 std::string ip{(*address).substr(0, pos)};
                                 uint16_t port = std::stoi((*address).substr(pos + 1));
+                                ofs << "relaying to ip: " << ip << ", port: " << port << std::endl;
                                 udp::endpoint endpoint{net::ip::make_address(ip), port};
                                 socket_.send_to(net::buffer(buffer), endpoint);
                             } else {

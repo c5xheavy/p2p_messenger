@@ -40,9 +40,11 @@ P2PMessengerImpl::P2PMessengerImpl(const std::string& my_login, uint16_t dht_por
     }}
     , message_receiver_{socket_, identity_.first, metadata_ip_resolver_, [this, receive_message_handler = std::move(receive_message_handler), listen_login_handler](Message&& message) {
         std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Message received" << std::endl;
-        chat_history_.append(dht::crypto::PublicKey{message.source_public_key}.getId(), message.source_login, message.payload.text);
-        listen_login_handler({message.source_login, dht::crypto::PublicKey{message.source_public_key}.getId()});
-        receive_message_handler(std::move(message));
+        if (dht::crypto::PublicKey{message.destination_public_key} == identity_.first->getPublicKey()) {
+            chat_history_.append(dht::crypto::PublicKey{message.source_public_key}.getId(), message.source_login, message.payload.text);
+            listen_login_handler({message.source_login, dht::crypto::PublicKey{message.source_public_key}.getId()});
+            receive_message_handler(std::move(message));
+        }
     }}
     , dht_ip_resolver_{io_context_, dht_port_, bootstrap_node_ip_, bootstrap_node_port_, identity_, [listen_login_handler](Contact&& contact) {
         std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "Contact received" << std::endl;

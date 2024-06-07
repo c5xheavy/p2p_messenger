@@ -110,6 +110,7 @@ void MessageReceiver::async_wait_handler(const sys::error_code& ec) {
                                 udp::endpoint endpoint{net::ip::make_address(ip), port};
                                 socket_.send_to(net::buffer(buffer), endpoint);
                             } else {
+                                ofs << "couldn't resolve with metadata" << std::endl;
                                 udp::endpoint endpoint{net::ip::make_address(message.destination_ip), message.destination_port};
                                 socket_.send_to(net::buffer(buffer), endpoint);
                             }

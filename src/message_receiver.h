@@ -35,7 +35,7 @@ private:
     MetadataIpResolver& metadata_ip_resolver_;
     bool relay_;
     ReceiveMessageHandler handler_;
-    std::fstream ofs{"log.txt"};
+    std::fstream ofs{"log.txt", std::ios_base::app};
 };
 
 #endif // MESSAGE_RECEIVER_H

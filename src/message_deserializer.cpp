@@ -63,6 +63,8 @@ Message MessageDeserializer::message_from_buffer(const std::vector<uint8_t>& buf
                      + sizeof(uint16_t) // source_port_size
                      + sizeof(uint8_t) // source_login_size
                      + sizeof(uint16_t) // source_public_key_size
+                     + sizeof(uint8_t) // destination_ip_size
+                     + sizeof(uint16_t) // destination_port_size
                      + sizeof(uint8_t) // destination_login_size
                      + sizeof(uint16_t) // destination_public_key_size
                      + sizeof(uint16_t)}; // payload_buffer_size
@@ -105,6 +107,18 @@ Message MessageDeserializer::message_from_buffer(const std::vector<uint8_t>& buf
 
     message.source_public_key = {ptr, ptr + source_public_key_size};
     ptr += source_public_key_size;
+
+    uint8_t destination_ip_size;
+    std::memcpy(&destination_ip_size, ptr, sizeof(destination_ip_size));
+    ptr += sizeof(destination_ip_size);
+
+    size += destination_ip_size;
+
+    message.destination_ip = {ptr, ptr + destination_ip_size};
+    ptr += destination_ip_size;
+
+    std::memcpy(&message.destination_port, ptr, sizeof(message.destination_port));
+    ptr += sizeof(message.destination_port);
 
     uint8_t destination_login_size;
     std::memcpy(&destination_login_size, ptr, sizeof(destination_login_size));
@@ -152,6 +166,8 @@ Message MessageDeserializer::message_with_not_decrypted_payload_from_buffer(cons
                      + sizeof(uint16_t) // source_port_size
                      + sizeof(uint8_t) // source_login_size
                      + sizeof(uint16_t) // source_public_key_size
+                     + sizeof(uint8_t) // destination_ip_size
+                     + sizeof(uint16_t) // destination_port_size
                      + sizeof(uint8_t) // destination_login_size
                      + sizeof(uint16_t) // destination_public_key_size
                      + sizeof(uint16_t)}; // payload_buffer_size
@@ -194,6 +210,18 @@ Message MessageDeserializer::message_with_not_decrypted_payload_from_buffer(cons
 
     message.source_public_key = {ptr, ptr + source_public_key_size};
     ptr += source_public_key_size;
+
+    uint8_t destination_ip_size;
+    std::memcpy(&destination_ip_size, ptr, sizeof(destination_ip_size));
+    ptr += sizeof(destination_ip_size);
+
+    size += destination_ip_size;
+
+    message.destination_ip = {ptr, ptr + destination_ip_size};
+    ptr += destination_ip_size;
+
+    std::memcpy(&message.destination_port, ptr, sizeof(message.destination_port));
+    ptr += sizeof(message.destination_port);
 
     uint8_t destination_login_size;
     std::memcpy(&destination_login_size, ptr, sizeof(destination_login_size));
@@ -250,6 +278,14 @@ std::string MessageDeserializer::destinantion_public_key_from_buffer(const std::
     ptr += sizeof(source_public_key_size);
 
     ptr += source_public_key_size;
+
+    uint8_t destination_ip_size;
+    std::memcpy(&destination_ip_size, ptr, sizeof(destination_ip_size));
+    ptr += sizeof(destination_ip_size);
+
+    ptr += destination_ip_size;
+
+    ptr += sizeof(Message::destination_port);
 
     uint8_t destination_login_size;
     std::memcpy(&destination_login_size, ptr, sizeof(destination_login_size));

@@ -20,6 +20,8 @@ TEST_CASE("Message Serialization & Deserialization") {
             3001,
             "user1",
             "public_key1",
+            "127.0.0.1",
+            4001,
             "user2",
             "public_key2",
             payload
@@ -36,6 +38,8 @@ TEST_CASE("Message Serialization & Deserialization") {
             3001,
             "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
             "public_key1",
+            "127.0.0.1",
+            4001,
             "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
             "public_key2",
             payload
@@ -52,6 +56,8 @@ TEST_CASE("Message Serialization & Deserialization") {
             3001,
             "user1",
             "public_key1",
+            "127.0.0.1",
+            4001,
             "user2",
             "public_key2",
             payload
@@ -72,6 +78,8 @@ TEST_CASE("Message Serialization & Deserialization") {
             3001,
             "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
             "public_key1",
+            "127.0.0.1",
+            4001,
             "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
             "public_key2",
             long_payload
@@ -88,6 +96,8 @@ TEST_CASE("Message Serialization & Deserialization") {
             3001,
             "qweasdzxcrtyfghvbnuiojklm,.p[];'/1234567689   53742y52734805",
             "public_key1",
+            "127.0.0.1",
+            4001,
             "раводлыофврадцукенщцшгукрповмтоывмтьлждьфылоывшщ15468768   ",
             "public_key2",
             payload

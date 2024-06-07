@@ -23,6 +23,8 @@ TEST_CASE("Destination public key from buffer") {
             3001,
             "user1",
             source_identity.first->getSharedPublicKey()->toString(),
+            "127.0.0.1",
+            4001,
             "user2",
             destination_identity.first->getSharedPublicKey()->toString(),
             payload
@@ -38,6 +40,8 @@ TEST_CASE("Destination public key from buffer") {
             3001,
             "user1",
             source_identity.first->getSharedPublicKey()->toString(),
+            "127.0.0.1",
+            4001,
             "user2",
             destination_identity.first->getSharedPublicKey()->toString(),
             payload

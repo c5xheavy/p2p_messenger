@@ -26,6 +26,8 @@ std::vector<uint8_t> MessageSerializer::message_to_buffer(const Message& message
                      + sizeof(message.source_port)
                      + sizeof(uint8_t) + message.source_login.size()
                      + sizeof(uint16_t) + message.source_public_key.size()
+                     + sizeof(uint8_t) + message.destination_ip.size()
+                     + sizeof(message.destination_port)
                      + sizeof(uint8_t) + message.destination_login.size()
                      + sizeof(uint16_t) + message.destination_public_key.size()
                      + sizeof(uint16_t) + payload_buffer.size()};
@@ -59,6 +61,16 @@ std::vector<uint8_t> MessageSerializer::message_to_buffer(const Message& message
 
     std::memcpy(ptr, message.source_public_key.data(), source_public_key_size);
     ptr += source_public_key_size;
+
+    uint8_t destination_ip_size{static_cast<uint8_t>(message.destination_ip.size())};
+    std::memcpy(ptr, &destination_ip_size, sizeof(destination_ip_size));
+    ptr += sizeof(destination_ip_size);
+
+    std::memcpy(ptr, message.destination_ip.data(), destination_ip_size);
+    ptr += destination_ip_size;
+
+    std::memcpy(ptr, &message.destination_port, sizeof(message.destination_port));
+    ptr += sizeof(message.destination_port);
 
     uint8_t destination_login_size{static_cast<uint8_t>(message.destination_login.size())};
     std::memcpy(ptr, &destination_login_size, sizeof(destination_login_size));

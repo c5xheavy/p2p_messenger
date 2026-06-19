@@ -1,4 +1,4 @@
-#include <catch2/catch.hpp>
+#include <catch2/catch_all.hpp>
 
 #include "../src/payload_serializer.h"
 #include "../src/payload_deserializer.h"

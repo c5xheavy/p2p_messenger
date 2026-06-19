@@ -70,12 +70,17 @@ void MessageReceiver::async_wait_handler(const sys::error_code& ec) {
                         std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << message.payload.text << std::endl;
                         std::osyncstream(std::cout) << '[' << std::hash<std::thread::id>{}(std::this_thread::get_id()) << "] " << "End of message" << std::endl;
 
+                        bool is_self = (std::make_shared<dht::crypto::PublicKey>(message.source_public_key)->getId() == private_key_->getPublicKey().getId());
                         if (message.source_ip == remote_endpoint.address().to_string()) {
                             metadata_ip_resolver_.put(message.source_login, std::make_shared<dht::crypto::PublicKey>(message.source_public_key), remote_endpoint.address().to_string(), remote_endpoint.port());
-                            upd_hole_puncher_.start_hole_punching(remote_endpoint.address().to_string(), remote_endpoint.port());
+                            if (!is_self) {
+                                upd_hole_puncher_.start_hole_punching(remote_endpoint.address().to_string(), remote_endpoint.port());
+                            }
                         } else {
                             metadata_ip_resolver_.put(message.source_login, std::make_shared<dht::crypto::PublicKey>(message.source_public_key), message.source_ip, message.source_port);
-                            upd_hole_puncher_.start_hole_punching(message.source_ip, message.source_port);
+                            if (!is_self) {
+                                upd_hole_puncher_.start_hole_punching(message.source_ip, message.source_port);
+                            }
                         }
                         handler_(std::move(message));
                     }
